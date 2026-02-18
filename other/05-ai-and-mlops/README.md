@@ -1,439 +1,545 @@
 # Фактор 5: ИИ и MLOps
 
-VOICEOVER: ИИ — это не угроза для DevOps-инженера. Это твой самый мощный инструмент. А MLOps — это на 80% тот же DevOps, только для машинного обучения. В 2026 году инженер, который игнорирует ИИ, проигрывает тому, кто использует его ежедневно. А рынок MLOps растёт быстрее, чем рынок классического DevOps.
-
-ON SCREEN: Два графика — рост зарплат в MLOps и рост использования ИИ-инструментов DevOps-инженерами
+![AI & MLOps](../../en/05-ai-and-mlops/05-ai-and-mlops.png)
 
 ---
 
 ## Почему это важно в 2026
 
-1. **ИИ как мультипликатор продуктивности.** DevOps-инженер с ИИ пишет Terraform-модули в 3-5 раз быстрее. Дебажит K8s-проблемы по логам за минуты вместо часов. Генерирует CI/CD-pipeline за считанные минуты вместо часов.
+ИИ меняет DevOps дважды. Во-первых, ИИ становится вашим ежедневным помощником. Во-вторых, MLOps -- это новая область, где нужны именно DevOps-навыки.
 
-2. **MLOps — это новый DevOps.** Каждая компания, которая внедряет ML-модели, нуждается в инфраструктуре: пайплайны обучения, serving, мониторинг модели, GPU-кластеры. Это работа для DevOps-инженера, не для Data Scientist.
+85% компаний инвестируют в ИИ. MLOps-инженер -- одна из самых быстрорастущих ролей в 2026.
 
-3. **GPU-инфраструктура — дефицитный навык.** Спрос на GPU-инфраструктуру (NVIDIA, CUDA, K8s с GPU) взрывной. Инженеров, которые умеют это настраивать, катастрофически мало.
+Два измерения ИИ для DevOps-инженера:
 
-4. **ИИ меняет сами инструменты.** Terraform, K8s, CI/CD-платформы — все интегрируют ИИ-помощников. Инженер, который не использует эти возможности, работает с устаревшим подходом.
+**Измерение 1: ИИ как помощник DevOps-инженера**
+- Генерация Terraform/K8s/Docker конфигураций
+- Дебаг и troubleshooting
+- Написание CI/CD-пайплайнов
+- Анализ логов и инцидентов
+- Code review инфраструктурного кода
+
+**Измерение 2: MLOps -- DevOps для ML**
+- ML-пайплайны (training, evaluation, deployment)
+- Serving моделей (inference endpoints)
+- GPU-инфраструктура
+- Model versioning и registry
+- Мониторинг моделей (drift detection)
+
+Почему это критично:
+- **Каждая вторая компания** внедряет ML/ИИ -- и им нужна инфраструктура
+- **MLOps -- это на 80% DevOps**: CI/CD, контейнеры, K8s, мониторинг, IaC
+- **GPU-инфраструктура** -- новый дефицитный навык: мало кто умеет правильно
+- **ИИ-помощники** увеличивают продуктивность DevOps-инженера в 2-5 раз
 
 ---
 
 ## Какую проблему это решает в реальных командах
 
-**Проблема: «Data Scientist обучил модель — а задеплоить некому»**
+### ИИ как помощник
 
-ML-команда обучила модель в Jupyter Notebook. Теперь её нужно вывести в production: API-endpoint, масштабирование, мониторинг, A/B-тестирование. Data Scientist не умеет. Разработчик бэкенда тоже.
+| Проблема | Без ИИ | С ИИ |
+|----------|--------|------|
+| Написать K8s-манифест для нового сервиса | 1-2 часа | 10-15 минут + ревью |
+| Дебаг сложной проблемы | Часы чтения логов | Запросить ИИ с контекстом -> подсказка за минуты |
+| Разобраться с новым инструментом | Дни документации | Интерактивное обучение через диалог |
+| Написать runbook для инцидента | 2-3 часа документации | 30 минут с ИИ-помощью |
+| Ревью Terraform-кода | 30-60 минут | 10 минут с ИИ-подсказками |
 
-**Решение MLOps:** DevOps-инженер строит пайплайн: модель упаковывается в Docker, деплоится в K8s с GPU, мониторится через Prometheus, масштабируется через HPA.
+### MLOps
 
-**Проблема: «Написание Terraform-модуля занимает 2 дня»**
+| Проблема | Без MLOps-инженера | С MLOps-инженером |
+|----------|---------------------|-------------------|
+| ML-инженер деплоит модель | «Я запустил Jupyter на EC2...» | Автоматизированный serving pipeline |
+| Версионирование моделей | «Модель в папке models_v3_final_FINAL» | ML Registry (MLflow, Weights & Biases) |
+| GPU-ресурсы | Постоянно запущенные GPU-инстансы = $$$$ | Auto-scaling GPU на K8s |
+| Мониторинг моделей | «Почему accuracy упала?» -- никто не знает | Drift detection + автоматические алерты |
+| Воспроизводимость | «У меня работало в Jupyter» | Контейнеризированные тренировочные пайплайны |
 
-Инженер с нуля пишет модуль для EKS: VPC, подсети, security groups, IAM-роли, node groups, add-ons.
-
-**Решение с ИИ:** ИИ генерирует 80% кода за 10 минут. Инженер проверяет, адаптирует и тестирует за 2-3 часа вместо 2 дней.
-
-**Проблема: «Непонятные ошибки в K8s-кластере»**
-
-Pod в CrashLoopBackOff. Логи непонятные. Инженер тратит 2 часа на дебаг.
-
-**Решение с ИИ:** Вставь логи и describe в ИИ-чат — получи диагностику за 2 минуты.
+**Реальный пример:** Data Science команда из 5 ML-инженеров. Без MLOps: деплой модели занимал 2 недели (ручная работа DevOps + ML), GPU-инстансы работали 24/7 (счёт $15,000/мес), воспроизвести тренировку было невозможно. После внедрения MLOps: деплой за 30 минут через CI/CD, GPU автоматически масштабируются ($4,000/мес), каждая тренировка версионирована и воспроизводима.
 
 ---
 
 ## Что нужно изучить (ключевые навыки)
 
-### ИИ как ежедневный инструмент DevOps
+### 1. Промпт-инжиниринг для инфраструктуры
+
+Это не про «использовать ChatGPT». Это про **системное использование ИИ** в ежедневной работе DevOps:
 
 ```
-Области применения ИИ для DevOps:
-├── Генерация кода
-│   ├── Terraform-модули и ресурсы
-│   ├── Kubernetes-манифесты и Helm-чарты
-│   ├── CI/CD-пайплайны (GitHub Actions, GitLab CI)
-│   ├── Dockerfile и docker-compose
-│   └── Bash/Python-скрипты для автоматизации
-│
-├── Дебаг и диагностика
-│   ├── Анализ логов (pod logs, CloudWatch, ELK)
-│   ├── Интерпретация ошибок и stack trace
-│   ├── Диагностика сетевых проблем
-│   └── Root Cause Analysis (RCA) инцидентов
-│
-├── Ревью и оптимизация
-│   ├── Security-аудит Dockerfile/Terraform/K8s
-│   ├── Оптимизация стоимости облака
-│   ├── Performance-анализ конфигураций
-│   └── Ревью архитектурных решений
-│
-├── Документация и коммуникация
-│   ├── Генерация README и runbooks
-│   ├── Написание постмортемов
-│   ├── ADR (Architecture Decision Records)
-│   └── Onboarding-документация
-│
-└── Обучение
-    ├── Объяснение незнакомых концепций
-    ├── Подготовка к собеседованиям
-    ├── Ревью и улучшение своего кода
-    └── Симуляция инцидентов для практики
+Эффективный промпт для DevOps имеет:
+├── Контекст: «Я использую AWS EKS 1.29 с Terraform»
+├── Задачу: «Создай Deployment для Python API»
+├── Ограничения: «Non-root, resource limits, health probes»
+├── Формат: «Terraform HCL / K8s YAML / Bash script»
+└── Проверку: «Объясни, почему каждый параметр выбран так»
 ```
 
-### Промпт-инжиниринг для инфраструктуры
-
-Навык формулировать промпты — это навык, который напрямую влияет на продуктивность.
-
-**Плохой промпт:**
-```
-"Напиши Terraform для AWS"
-```
-
-**Хороший промпт:**
-```
-"Создай Terraform-модуль для production-ready VPC в AWS (eu-west-1):
-- CIDR: 10.0.0.0/16
-- 3 публичные подсети (10.0.1.0/24, 10.0.2.0/24, 10.0.3.0/24) в разных AZ
-- 3 приватные подсети (10.0.11.0/24, 10.0.12.0/24, 10.0.13.0/24)
-- NAT Gateway (один, для экономии в dev; три в prod)
-- Теги: Project, Environment, ManagedBy=terraform
-- Переменные: environment, project_name, vpc_cidr
-- Outputs: vpc_id, public_subnet_ids, private_subnet_ids, nat_gateway_ips
-- Используй best practices: enable_dns_hostnames, enable_dns_support
-Структура: main.tf, variables.tf, outputs.tf"
-```
-
-**Шаблон промпта для IaC:**
-```
-1. Что создать (конкретный ресурс/модуль)
-2. Для какой платформы (AWS/GCP/Azure)
-3. Контекст (production/dev, требования безопасности)
-4. Конкретные параметры (CIDR, размеры, количество)
-5. Стандарты (именование, теги, структура файлов)
-6. Что НЕ делать (anti-patterns)
-```
-
-### MLOps-пайплайны
+**Примеры эффективных промптов:**
 
 ```
-Компоненты MLOps-пайплайна:
+Промпт 1 (Terraform):
+"Создай Terraform-модуль для AWS EKS со следующей спецификацией:
+- K8s version: 1.29
+- Node groups: general (t3.medium, 2-5), gpu (g4dn.xlarge, 0-3, spot)
+- IRSA enabled
+- Addons: CoreDNS, vpc-cni, ebs-csi, gpu-device-plugin
+- Encryption at rest для secrets
+- Logging: api, audit
+Объясни каждое решение."
+
+Промпт 2 (Troubleshooting):
+"Pod 'ml-api-7d8f9c6b4-xk2mn' в CrashLoopBackOff.
+Логи: 'RuntimeError: CUDA out of memory. Tried to allocate 2.00 GiB'
+Resources: requests gpu 1, limits gpu 1
+Node имеет NVIDIA T4 (16GB VRAM).
+Другие pods на этом node: ml-worker (использует 12GB VRAM).
+Что не так и как решить?"
+
+Промпт 3 (CI/CD):
+"Создай GitHub Actions workflow для ML-проекта:
+- На PR: lint, unit tests, build Docker image
+- На merge в main: train model (GPU runner), evaluate, register в MLflow
+- На tag: deploy model to staging (Kubernetes serving)
+- Manual approval для production
+Проект: Python, PyTorch, FastAPI для serving."
+```
+
+### 2. MLOps-пайплайны
+
+```
+MLOps Pipeline:
 ├── Data Pipeline
 │   ├── Сбор и валидация данных
-│   ├── Feature Store (Feast, AWS SageMaker Feature Store)
-│   └── Версионирование данных (DVC)
-│
+│   ├── Feature store (Feast)
+│   └── Data versioning (DVC)
 ├── Training Pipeline
-│   ├── Оркестрация обучения (Kubeflow, Airflow, Argo Workflows)
-│   ├── GPU-ресурсы (NVIDIA GPU Operator для K8s)
-│   ├── Experiment Tracking (MLflow, Weights & Biases)
-│   └── Model Registry (MLflow, AWS SageMaker)
-│
-├── Serving Pipeline
-│   ├── Model Serving (TorchServe, TensorFlow Serving, Triton)
-│   ├── API Gateway (Kong, Envoy)
-│   ├── A/B Testing / Canary (Istio, Flagger)
-│   └── Autoscaling (KEDA, K8s HPA по кастомным метрикам)
-│
+│   ├── Контейнеризированное обучение
+│   ├── Hyperparameter tuning
+│   ├── Experiment tracking (MLflow, W&B)
+│   └── GPU scheduling (K8s + NVIDIA device plugin)
+├── Evaluation Pipeline
+│   ├── Метрики качества
+│   ├── A/B тестирование
+│   └── Shadow deployment
+├── Deployment Pipeline
+│   ├── Model registry (MLflow)
+│   ├── Serving (TorchServe, Triton, KServe, vLLM)
+│   ├── Canary deployment
+│   └── Rollback
 └── Monitoring Pipeline
-    ├── Model Performance (accuracy, latency, drift)
-    ├── Data Drift Detection (Evidently, Great Expectations)
-    ├── Infrastructure Monitoring (Prometheus, Grafana)
-    └── Alerting (PagerDuty, OpsGenie)
+    ├── Model performance metrics
+    ├── Data drift detection
+    ├── Latency и throughput
+    └── Cost monitoring (GPU utilization)
 ```
 
-### GPU-инфраструктура
+**Ключевые инструменты MLOps:**
+
+| Категория | Инструмент | Для чего |
+|-----------|-----------|----------|
+| Experiment tracking | MLflow, W&B | Трекинг экспериментов, параметров, метрик |
+| Model registry | MLflow, Vertex AI | Версионирование и хранение моделей |
+| Pipeline orchestration | Kubeflow, Airflow, Argo Workflows | Оркестрация ML-пайплайнов |
+| Serving | KServe, Triton, vLLM, TGI | Деплой моделей для inference |
+| Feature store | Feast | Хранение и serving фичей |
+| Data versioning | DVC | Версионирование датасетов |
+| GPU management | NVIDIA GPU Operator, MIG | Управление GPU-ресурсами |
+
+### 3. GPU-инфраструктура
 
 ```
-Ключевые знания:
-├── NVIDIA GPU Operator для K8s
-├── nvidia-device-plugin — доступ к GPU из подов
-├── CUDA и совместимость драйверов
-├── GPU node pools в облаке (p3/p4/g5 в AWS, A100/T4)
-├── Spot/Preemptible GPU-инстансы (экономия 60-90%)
-├── Multi-GPU training (распределённое обучение)
-└── GPU мониторинг (nvidia-smi, DCGM Exporter)
+GPU-навыки для DevOps:
+├── Основы GPU
+│   ├── Разница между CPU и GPU workloads
+│   ├── VRAM vs RAM
+│   ├── CUDA и NVIDIA drivers
+│   └── Типы GPU (T4, A10, A100, H100, L40S)
+├── GPU на K8s
+│   ├── NVIDIA Device Plugin
+│   ├── GPU Operator
+│   ├── Resource requests/limits для GPU
+│   ├── Node selectors и tolerations для GPU-нод
+│   ├── MIG (Multi-Instance GPU) для H100/A100
+│   └── Time-slicing для меньших GPU
+├── GPU в облаке
+│   ├── AWS: p4d, p5, g5, g4dn инстансы
+│   ├── GCP: a2, g2 инстансы
+│   ├── Spot/Preemptible GPU (экономия 60-90%)
+│   └── Reserved GPU instances
+└── Оптимизация расходов
+    ├── Auto-scaling GPU-нод (Karpenter, Cluster Autoscaler)
+    ├── Batch processing вместо real-time
+    ├── Model quantization (уменьшение потребности в GPU)
+    └── Мониторинг GPU utilization (DCGM Exporter + Prometheus)
 ```
 
-**Пример: Pod с GPU в K8s:**
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: gpu-pod
-spec:
-  containers:
-  - name: ml-inference
-    image: my-model:v1.0
-    resources:
-      limits:
-        nvidia.com/gpu: 1  # Запросить 1 GPU
-    env:
-    - name: NVIDIA_VISIBLE_DEVICES
-      value: "all"
-  nodeSelector:
-    accelerator: nvidia-tesla-t4
-  tolerations:
-  - key: nvidia.com/gpu
-    operator: Exists
-    effect: NoSchedule
+### 4. Serving моделей
+
+```
+Serving-стратегии:
+├── Real-time inference
+│   ├── REST API (FastAPI + model)
+│   ├── gRPC (для high-throughput)
+│   └── Managed: SageMaker, Vertex AI
+├── Batch inference
+│   ├── Spark / Dask
+│   ├── Kubernetes Jobs
+│   └── Scheduled pipelines
+├── LLM Serving (особенно актуально в 2026)
+│   ├── vLLM — open-source serving для LLM
+│   ├── TGI (Text Generation Inference) — Hugging Face
+│   ├── Triton Inference Server — NVIDIA
+│   └── KServe — K8s-native
+└── Scaling
+    ├── HPA на основе custom metrics (request queue, GPU util)
+    ├── KEDA для event-driven scaling
+    └── Scale-to-zero для cost optimization
 ```
 
 ---
 
 ## Что можно пропустить / «худший ROI» для начала
 
-| Ловушка | Почему плохой ROI | Что делать вместо |
-|---------|-------------------|-------------------|
-| Создание ML-моделей | Это работа Data Scientist, не DevOps | Учи инфраструктуру для моделей, не модели |
-| Теория Deep Learning | Математика нейросетей не нужна для деплоя | Пойми основы: что такое модель, inference, training |
-| Разработка собственных ИИ-инструментов | Уже есть готовые | Используй существующие: Claude, GPT, Copilot |
-| Fine-tuning LLM | Специализированная задача | Сфокусируйся на промпт-инжиниринге |
-| Полный стек Data Engineering | Отдельная профессия | Освой стыковку: пайплайны, оркестрация, мониторинг |
-| MLflow с нуля без контекста | Бесполезно без понимания процесса | Сначала задеплои простую модель, потом добавляй трекинг |
+### НЕ учите первым:
+
+1. **Создание ML-моделей** -- Вы DevOps/MLOps-инженер, не ML-инженер. Вам не нужно понимать, как работает transformer или CNN. Достаточно знать: что такое модель, как она тренируется, как деплоится.
+
+2. **Теория глубокого обучения** -- Backpropagation, gradient descent, loss functions -- это для Data Scientists. Ваша задача -- инфраструктура для тренировки и деплоя.
+
+3. **Конкретные ML-фреймворки в деталях** -- Вам не нужно знать PyTorch API. Достаточно знать: «это TensorFlow-модель, ей нужен GPU с 16GB VRAM, она деплоится через TorchServe».
+
+4. **Построение feature store с нуля** -- Используйте Feast или managed сервисы. Построение собственного -- это для больших ML-платформенных команд.
+
+5. **Fine-tuning LLM** -- Это задача ML-инженера. Ваша задача -- предоставить GPU-инфраструктуру и CI/CD для fine-tuning pipeline.
 
 ---
 
 ## Насколько глубоко погружаться
 
-### Новичок (0-3 месяца)
+### Новичок (2-3 недели)
 
-- Использовать ИИ ежедневно для DevOps-задач (генерация кода, дебаг)
-- Освоить промпт-инжиниринг для инфраструктурных задач
-- Понимать базовые концепции ML: модель, обучение, inference, датасет
-- Контейнеризировать простую ML-модель (Flask API + scikit-learn модель)
-- Задеплоить контейнер с моделью в K8s
-- **Результат:** Используешь ИИ как ежедневный инструмент, можешь задеплоить простую модель
+- [ ] Ежедневно использовать ИИ для DevOps-задач (Terraform, Docker, K8s, CI/CD)
+- [ ] Понять разницу между training и inference
+- [ ] Понять, что такое модель, версия модели, model registry
+- [ ] Контейнеризировать простой ML-сервис (FastAPI + scikit-learn)
+- [ ] Понять, зачем нужен GPU и какие задачи без него невозможны
+- [ ] Знать основные термины: epoch, batch, inference latency, throughput
 
-### Уверенный (3-6 месяцев)
+**Тест:** Можете объяснить нетехническому человеку, чем MLOps отличается от DevOps? Если да -- идите дальше.
 
-- Настроить MLflow для трекинга экспериментов
-- Построить пайплайн: обучение -> упаковка -> деплой модели
-- Настроить GPU-ноды в K8s (NVIDIA GPU Operator)
-- Мониторинг модели в production (latency, error rate)
-- Автоматическое масштабирование inference-сервиса
-- Использовать ИИ для code review и security-аудита
-- **Результат:** Можешь построить базовый MLOps-пайплайн
+### Уверенный (4-8 недель)
 
-### Эксперт (6-12 месяцев)
+- [ ] Развернуть MLflow для experiment tracking
+- [ ] Создать CI/CD-пайплайн для ML-проекта (train -> evaluate -> register -> deploy)
+- [ ] Настроить GPU-ноды в K8s (NVIDIA Device Plugin)
+- [ ] Задеплоить модель через KServe или TorchServe
+- [ ] Настроить auto-scaling для inference endpoints
+- [ ] Мониторить GPU utilization (DCGM Exporter + Prometheus + Grafana)
+- [ ] Понять model drift и как его выявлять
+- [ ] Использовать Spot GPU-инстансы для тренировки
 
-- Полный MLOps-пайплайн с Kubeflow или Argo Workflows
-- A/B-тестирование моделей в production
-- Data Drift Detection и автоматический re-training
-- Multi-GPU training на K8s
-- Cost Optimization для GPU-нагрузок (Spot, scheduling)
-- Платформа для Data Scientists: JupyterHub на K8s + Model Registry
-- **Результат:** Можешь построить ML-платформу для организации
+**Тест:** Можете построить полный пайплайн от тренировки модели до serving с мониторингом? Если да -- вы уверенный.
+
+### Эксперт (3-6 месяцев)
+
+- [ ] Спроектировать ML-платформу для организации
+- [ ] Внедрить Kubeflow или Argo Workflows для ML-пайплайнов
+- [ ] Настроить multi-GPU training (distributed training)
+- [ ] Оптимизировать GPU-расходы: MIG, time-slicing, spot instances
+- [ ] Внедрить A/B тестирование для моделей
+- [ ] Настроить LLM serving (vLLM на K8s)
+- [ ] Feature store с Feast
+- [ ] Compliance и governance для ML (model cards, audit trail)
+
+**Тест:** Можете спроектировать и внедрить ML-платформу, которая обслуживает 5+ ML-команд? Если да -- вы эксперт.
 
 ---
 
 ## Как ИИ меняет этот фактор (практические примеры)
 
-### Ежедневное использование ИИ для DevOps-задач
+Этот фактор -- про ИИ, поэтому тут не «как ИИ помогает», а «как использовать ИИ каждый день».
 
-**Пример 1: Генерация CI/CD pipeline**
+### Ежедневный ИИ-workflow DevOps-инженера
+
+**Утро: Планирование**
 ```
-Промпт:
-"Создай GitHub Actions workflow для Python-приложения:
-1. Lint (ruff) и тесты (pytest) на PR
-2. Сборка Docker-образа с multi-stage build
-3. Сканирование Trivy
-4. Push в ECR
-5. Деплой в EKS через Helm
-6. Smoke-тесты после деплоя
-7. Уведомление в Slack
-Два окружения: staging (авто на main) и production (manual approve).
-Используй OIDC для авторизации в AWS (не секретные ключи)."
+Промпт: "Мне нужно мигрировать 3 микросервиса с Docker Compose
+на Kubernetes. Сервисы: API (Node.js), Worker (Python), Redis.
+Создай план миграции с конкретными шагами и Helm-чартами для каждого."
 ```
 
-**Пример 2: Дебаг K8s по логам**
+**День: Разработка**
 ```
-Промпт:
-"Мой сервис деградирует в production. Вот метрики:
-- P99 latency выросла с 200ms до 2s за последний час
-- CPU usage нод: 85%
-- Pod restarts: 3 за последний час
-- Вот describe HPA: [вставь]
-- Вот top pods: [вставь kubectl top pods]
-Что происходит? Какие шаги для диагностики?"
+Промпт: "Создай GitHub Actions workflow:
+1. On push to feature branch: lint + test + build image
+2. On PR to main: terraform plan + security scan
+3. On merge to main: terraform apply + deploy to staging
+4. On tag: deploy to production (manual approval)
+Используй OIDC для AWS credentials, не static keys."
 ```
 
-**Пример 3: Архитектурный ревью**
+**Инцидент: Troubleshooting**
 ```
-Промпт:
-"Проведи ревью этой K8s-архитектуры для e-commerce:
-[вставь диаграмму или описание]
-Проверь:
-1. Отказоустойчивость — что будет при падении AZ?
-2. Масштабируемость — справится ли при 10x нагрузке?
-3. Безопасность — какие attack vectors?
-4. Стоимость — где переплачиваем?
-Для каждого пункта — конкретные рекомендации."
+Промпт: "Alertmanager сработал: 'HighMemoryUsage' на pod 'api-server'.
+Вот вывод kubectl top pods, kubectl describe pod, и последние 50 строк логов:
+[вставить данные]
+Что может быть причиной и как исправить?"
 ```
 
-### Построение MLOps-пайплайна
+**Вечер: Документация**
+```
+Промпт: "На основе этого Terraform-кода [вставить] создай:
+1. Architecture Decision Record (ADR) — почему выбрали эту архитектуру
+2. Runbook для восстановления после аварии
+3. Диаграмму архитектуры в Mermaid-формате"
+```
 
-**Пример полного воркфлоу:**
+### Построение MLOps-пайплайнов с ИИ
 
 ```
-1. Data Scientist коммитит модель и training-скрипт в Git
-2. CI/CD запускает обучение на GPU-ноде в K8s
-3. MLflow логирует метрики и артефакты
-4. Если accuracy > threshold — модель регистрируется
-5. ArgoCD деплоит новую версию serving-сервиса
-6. Canary-деплой: 10% трафика на новую модель
-7. Мониторинг: если метрики OK через 1 час — 100% трафика
-8. Data Drift Detection проверяет входные данные ежедневно
+Промпт: "Создай Argo Workflows template для ML-пайплайна:
+1. Step 1: Загрузить данные из S3
+2. Step 2: Preprocessing (Python container)
+3. Step 3: Training (GPU container, PyTorch)
+4. Step 4: Evaluation (сравнить с предыдущей моделью)
+5. Step 5: Если accuracy > threshold -> register в MLflow
+6. Step 6: Deploy через KServe (canary 10% -> 50% -> 100%)
+Каждый step — отдельный контейнер с конкретными resource requests."
 ```
+
+### ИИ-инструменты для DevOps в 2026
+
+| Инструмент | Категория | Как использовать |
+|------------|-----------|---------------------|
+| Claude Code / GitHub Copilot | Кодинг | Генерация Terraform, K8s, CI/CD |
+| ChatGPT / Claude | Troubleshooting | Дебаг, объяснения, планирование |
+| K8sGPT | K8s-специфичный | Автоматический анализ проблем кластера |
+| AWS Application Composer | AWS | Визуальное проектирование архитектуры |
+| Kubecost + ИИ | FinOps | Оптимизация расходов K8s |
 
 ---
 
 ## Типичные ошибки и ловушки
 
-### 1. «ИИ заменит DevOps — пора менять профессию»
+### Ловушка 1: «ИИ меня заменит»
 
-**Проблема:** Страх замены ИИ парализует. Человек перестаёт развиваться или начинает изучать ML вместо DevOps.
+**Что это:** Страх, что ИИ сделает DevOps-инженеров ненужными.
 
-**Реальность:** ИИ делает DevOps-инженеров продуктивнее, а не заменяет их. Нужен человек, который понимает инфраструктуру и использует ИИ как инструмент.
+**Почему вредит:** Парадокс: те, кто боится ИИ и игнорирует его -- действительно станут неконкурентоспособными. Не из-за ИИ, а из-за тех, кто его использует.
 
-**Исправление:** Используй ИИ каждый день. Не бойся, а интегрируй. Твоя ценность — в понимании систем и контексте, а не в скорости набора кода.
+**Исправление:** ИИ -- это инструмент, как Terraform или Docker. Он усиливает ваши навыки, а не заменяет их. DevOps-инженер с ИИ делает за день то, что раньше занимало неделю. Но ИИ нуждается в человеке, который знает, что проверять.
 
-### 2. «Игнорирование ИИ-инструментов»
+### Ловушка 2: Игнорирование ИИ-инструментов
 
-**Проблема:** Инженер продолжает писать Terraform с нуля, вручную дебажить логи, искать ответы в документации 30 минут.
+**Что это:** «Я всё делаю вручную, мне не нужен ИИ».
 
-**Последствие:** Коллега, который использует ИИ, делает ту же работу в 3 раза быстрее.
+**Почему вредит:** Вы в 2-5 раз медленнее коллеги, который использует ИИ. Это как отказываться от IDE в пользу Notepad.
 
-**Исправление:** Установи ИИ-ассистента (Claude, Copilot, Cursor) и используй для КАЖДОЙ задачи. Оцени, где ИИ ускоряет, а где мешает.
+**Исправление:** Начните с простого:
+1. Используйте ИИ для генерации boilerplate (Terraform modules, K8s manifests)
+2. Используйте ИИ для troubleshooting (вставьте логи -> получите решение)
+3. Используйте ИИ для обучения (объясни концепцию -> задай вопрос)
 
-### 3. «Попытка стать ML-инженером»
+### Ловушка 3: Попытка стать ML-инженером
 
-**Проблема:** DevOps-инженер начинает изучать PyTorch, линейную алгебру, архитектуры нейросетей. Это не его работа.
+**Что это:** DevOps-инженер изучает PyTorch, TensorFlow, математику глубокого обучения.
 
-**Последствие:** 6 месяцев потрачены на математику вместо инфраструктурных навыков.
+**Почему вредит:** Вы тратите месяцы на навыки, которые не нужны для вашей роли. ML-инженеры имеют PhD и годы опыта. Вы не станете ML-инженером за 3 месяца.
 
-**Исправление:** Твоя роль — ИНФРАСТРУКТУРА для ML. Знай основы (что такое модель, training, inference), но глубоко изучай деплой, масштабирование и мониторинг.
+**Исправление:** Ваша зона -- **инфраструктура для ML**:
+- CI/CD для ML-проектов
+- GPU scheduling на K8s
+- Model serving и scaling
+- Monitoring и observability
+- Cost optimization для GPU
 
-### 4. «Copy-paste из ИИ без проверки»
+### Ловушка 4: «Слепое доверие к ИИ»
 
-**Проблема:** ИИ сгенерировал Terraform-код, инженер применил без проверки. Security group открыта на 0.0.0.0/0, шифрование отключено.
+**Что это:** Копировать сгенерированный ИИ код без проверки.
 
-**Исправление:** Правило: КАЖДЫЙ сгенерированный код проходит через:
-1. Ручной ревью (ты понимаешь каждую строку)
-2. `terraform plan` (проверка изменений)
-3. Checkov/tfsec (автоматическая проверка безопасности)
-4. Code review коллегой (для production)
+**Почему вредит:** ИИ генерирует код, который выглядит правильно, но может иметь критические ошибки: открытые Security Groups, чрезмерные IAM-привилегии, отсутствие шифрования.
 
-### 5. «ИИ-помощник как замена пониманию»
+**Исправление:** Правило «доверяй, но проверяй»:
+1. ИИ генерирует -> вы ревьюите
+2. Запускайте linting (tflint, checkov) на сгенерированном коде
+3. Тестируйте в staging перед production
+4. Понимайте каждую строку кода, который деплоите
 
-**Проблема:** Инженер использует ИИ для решения каждой проблемы, но не учится. Когда ИИ недоступен или ошибается — ступор.
+### Ловушка 5: GPU-расходы без контроля
 
-**Исправление:** После каждого решения от ИИ задай себе вопрос: «Могу ли я объяснить, ПОЧЕМУ это работает?» Если нет — разберись. ИИ — инструмент обучения, не замена мышлению.
+**Что это:** GPU-инстансы работают 24/7, даже когда inference трафик = 0.
+
+**Почему вредит:** Один g5.xlarge = ~$1/час. 24/7 = $730/мес. 10 таких = $7,300/мес. И это без нагрузки.
+
+**Исправление:**
+- Scale-to-zero для inference (KEDA + KServe)
+- Spot instances для training (экономия 60-90%)
+- Мониторинг GPU utilization (алерт при < 30%)
+- Batch processing вместо real-time где возможно
+- Model quantization (меньшая модель = меньший GPU)
 
 ---
 
-## Мини-практика (упражнения для портфолио)
+## Мини-практика (5 упражнений)
 
-### Упражнение 1: Serving ML-модели на K8s
+### Упражнение 1: Ежедневное использование ИИ для DevOps (новичок)
 
-**Уровень:** Средний
-**Время:** 4-6 часов
+**Цель:** Интегрировать ИИ в ежедневный рабочий процесс.
 
-1. Возьми предобученную модель (ResNet для классификации изображений или BERT для текста)
-2. Создай inference-сервис (FastAPI + модель)
-3. Напиши Dockerfile (multi-stage, non-root)
-4. Задеплои в K8s с:
-   - Deployment (2 реплики)
-   - Service (ClusterIP)
-   - Ingress
-   - HPA по CPU и кастомной метрике (requests per second)
-   - Readiness/Liveness probes
-5. Нагрузочное тестирование (k6 или locust)
-6. Grafana-дашборд с метриками модели
+```
+Неделя-челлендж:
+Понедельник: Сгенерировать Terraform-модуль для S3 + CloudFront с помощью ИИ
+Вторник: Попросить ИИ сделать security review вашего Dockerfile
+Среда: Создать K8s-манифесты для нового сервиса через ИИ
+Четверг: Дебажить реальную проблему с помощью ИИ (вставить логи + описать контекст)
+Пятница: Сгенерировать CI/CD-пайплайн и runbook через ИИ
 
-**Что покажет работодателю:** Умение деплоить ML-модели в production.
+Для каждого дня:
+1. Запишите промпт
+2. Запишите результат
+3. Что пришлось исправить
+4. Сколько времени сэкономлено
 
-### Упражнение 2: Полный CI/CD сгенерированный с помощью ИИ
+Критерий успеха: ИИ используется минимум 5 раз в день для DevOps-задач
+```
 
-**Уровень:** Новичок-Средний
-**Время:** 2-3 часа
+### Упражнение 2: CI/CD для ML-проекта (уверенный)
 
-1. Используй ИИ для генерации полного CI/CD pipeline:
-   - Lint, тесты, сборка, сканирование, деплой
-2. Проверь каждый шаг — исправь ошибки ИИ
-3. Задокументируй:
-   - Какой промпт ты использовал
-   - Что ИИ сгенерировал правильно
-   - Что пришлось исправить и почему
-4. Опубликуй pipeline и документацию на GitHub
+**Цель:** Построить полный пайплайн для ML.
 
-**Что покажет работодателю:** Осознанное использование ИИ, а не слепое копирование.
+```
+Шаги:
+1. Создать простой ML-проект: FastAPI + scikit-learn model
+2. Dockerfile: multi-stage, non-root, health check
+3. GitHub Actions pipeline:
+   - Lint + test
+   - Train model (с фиксированным seed для воспроизводимости)
+   - Evaluate (сравнить с baseline)
+   - Build и push Docker image
+   - Register model в MLflow
+   - Deploy в K8s (Deployment + Service + Ingress)
+4. MLflow:
+   - Установить MLflow server
+   - Логировать experiment parameters, metrics, artifacts
+   - Model registry: staging -> production
+5. Мониторинг: latency, throughput, error rate
 
-### Упражнение 3: GPU-нагрузка на K8s
+Критерий успеха: push в main -> автоматическая тренировка -> evaluation -> deploy
+```
 
-**Уровень:** Продвинутый
-**Время:** 4-6 часов
+### Упражнение 3: GPU-нагрузка на K8s (уверенный -> эксперт)
 
-1. Настрой K8s-кластер с GPU-нодами (cloud или minikube с GPU)
-2. Установи NVIDIA GPU Operator
-3. Задеплои inference-сервис, использующий GPU
-4. Настрой мониторинг GPU (DCGM Exporter + Grafana)
-5. Сравни latency: CPU vs. GPU для одного и того же запроса
-6. Настрой scheduling: GPU-поды только на GPU-нодах (taints/tolerations)
+**Цель:** Научиться работать с GPU на Kubernetes.
 
-**Что покажет работодателю:** Редкий и востребованный навык GPU-инфраструктуры.
+```
+Шаги:
+1. Настроить K8s-кластер с GPU-нодами
+   (EKS с g4dn.xlarge или kind + NVIDIA GPU)
+2. Установить NVIDIA GPU Operator
+3. Создать Pod с GPU:
+   - requests: nvidia.com/gpu: 1
+   - limits: nvidia.com/gpu: 1
+4. Запустить inference-сервис (FastAPI + PyTorch model)
+5. Настроить HPA на custom metrics (request queue length)
+6. Мониторинг: DCGM Exporter -> Prometheus -> Grafana
+   - GPU utilization
+   - GPU memory usage
+   - Temperature
+7. Оптимизация: scale-to-zero при отсутствии трафика
 
-### Упражнение 4: MLflow + простой MLOps pipeline
+Критерий успеха: GPU-нагрузка работает на K8s с auto-scaling и мониторингом
+```
 
-**Уровень:** Средний
-**Время:** 4-5 часов
+### Упражнение 4: Model Serving Pipeline (уверенный -> эксперт)
 
-1. Установи MLflow на K8s (через Helm)
-2. Обучи простую модель (scikit-learn) с логированием в MLflow
-3. Зарегистрируй модель в MLflow Model Registry
-4. Создай CI/CD: при новой версии модели -> Docker build -> деплой в K8s
-5. Мониторинг: Prometheus-метрики inference-сервиса
+**Цель:** Задеплоить ML-модель production-ready способом.
 
-**Что покажет работодателю:** Понимание полного ML-жизненного цикла.
+```
+Шаги:
+1. Выбрать serving framework: KServe или vLLM
+2. Контейнеризировать модель
+3. Создать K8s-ресурсы для serving:
+   - InferenceService (KServe) или Deployment
+   - Auto-scaling (min 0, max 5)
+   - Resource requests/limits
+4. Canary deployment: 10% -> 50% -> 100%
+5. A/B тестирование: старая модель vs новая
+6. Мониторинг:
+   - Latency (p50, p95, p99)
+   - Throughput (requests/sec)
+   - Error rate
+   - Model-specific metrics (accuracy, drift)
+7. Rollback procedure: автоматический при error rate > 5%
 
-### Упражнение 5: Промпт-библиотека для DevOps
+Критерий успеха: модель деплоится через GitOps с canary и автоматическим rollback
+```
 
-**Уровень:** Новичок
-**Время:** Постоянно (собирай в процессе обучения)
+### Упражнение 5: LLM Serving на K8s (эксперт)
 
-1. Создай репозиторий с коллекцией промптов для DevOps
-2. Категории: Terraform, K8s, Docker, CI/CD, Security, Troubleshooting
-3. Для каждого промпта:
-   - Задача
-   - Промпт
-   - Пример вывода ИИ
-   - Что проверить / подводные камни
-4. Обновляй по мере работы
+**Цель:** Задеплоить LLM для inference.
 
-**Что покажет работодателю:** Системный подход к использованию ИИ.
+```
+Шаги:
+1. Выбрать open-source модель (Llama 3, Mistral)
+2. Установить vLLM на K8s:
+   - GPU node с достаточным VRAM
+   - Model weights из Hugging Face Hub или S3
+   - vLLM Deployment с OpenAI-совместимым API
+3. Оптимизация:
+   - Quantization (AWQ или GPTQ) для уменьшения VRAM
+   - Continuous batching (vLLM делает автоматически)
+   - Tensor parallelism для multi-GPU
+4. Ingress + rate limiting
+5. Мониторинг:
+   - Tokens/second
+   - Time-to-first-token (TTFT)
+   - GPU utilization и VRAM usage
+6. Cost analysis: сравнить с OpenAI API pricing
+
+Критерий успеха: LLM работает на K8s, доступен через API, с мониторингом и auto-scaling
+```
 
 ---
 
 ## «Сигналы» готовности к работе (чек-лист)
 
-Ты готов использовать ИИ в DevOps и работать с MLOps, если:
+### Обязательное:
 
-- [ ] Используешь ИИ ежедневно для генерации Terraform/K8s/CI-CD и дебага
-- [ ] Можешь написать эффективный промпт для инфраструктурной задачи (конкретика, контекст, ограничения)
-- [ ] Всегда проверяешь сгенерированный код перед применением
-- [ ] Понимаешь разницу между training и inference
-- [ ] Можешь контейнеризировать и задеплоить ML-модель в K8s
-- [ ] Знаешь, что такое Model Serving (TorchServe, Triton, FastAPI + модель)
-- [ ] Понимаешь основы GPU-инфраструктуры (NVIDIA GPU Operator, resource requests)
-- [ ] Можешь объяснить, что такое MLOps и какие компоненты он включает
-- [ ] Можешь объяснить, КАК ИИ помогает тебе в работе, с конкретными примерами
-- [ ] У тебя есть хотя бы один проект на GitHub, связанный с ML-деплоем или ИИ-автоматизацией
+- [ ] Ежедневно использовать ИИ для DevOps-задач и знать его ограничения
+- [ ] Писать эффективные промпты для генерации Terraform/K8s/CI кода
+- [ ] Объяснить разницу между training и inference
+- [ ] Контейнеризировать ML-сервис (FastAPI + модель)
+- [ ] Понять, зачем нужен GPU и какие есть типы GPU-инстансов
+- [ ] Знать основные MLOps-инструменты: MLflow, KServe, vLLM
+
+### Желательное:
+
+- [ ] Построить CI/CD-пайплайн для ML-проекта
+- [ ] Настроить GPU-ноды в K8s с NVIDIA Device Plugin
+- [ ] Задеплоить модель через KServe или vLLM
+- [ ] Настроить model monitoring (drift detection)
+- [ ] Оптимизировать GPU-расходы (spot instances, scale-to-zero)
+- [ ] Понимать MLflow model registry
+
+### На собеседовании сможете:
+
+- [ ] Объяснить, как ИИ меняет работу DevOps-инженера (с конкретными примерами)
+- [ ] Описать MLOps-пайплайн от тренировки до serving
+- [ ] Объяснить разницу между DevOps и MLOps
+- [ ] Описать, как масштабировать inference endpoint
+- [ ] Объяснить стратегию оптимизации GPU-расходов
+- [ ] Описать, как мониторить ML-модель в production
 
 ---
 
 ## Ссылки внутри репозитория
 
-- **Предыдущий фактор:** [Фактор 4 — Инфраструктура как код](../04-infrastructure-as-code/) (ИИ для IaC)
-- **Связанный фактор:** [Фактор 2 — Контейнеры и Kubernetes](../02-containers-and-kubernetes/) (ML-модели на K8s)
-- **Связанный фактор:** [Фактор 1 — Облачное внедрение](../01-cloud-adoption/) (GPU в облаке)
-- **Связанный фактор:** [Фактор 3 — DevSecOps](../03-devsecops/) (безопасность ML-пайплайнов)
-- **Дорожная карта:** [90-roadmap](../90-roadmap/)
-- **Ошибки:** [91-mistakes](../91-mistakes/)
-- **Главная страница курса:** [README](../)
+- Предыдущий фактор: [Инфраструктура как код](../04-infrastructure-as-code/)
+- Контейнеры для ML: [Контейнеры и Kubernetes](../02-containers-and-kubernetes/)
+- Облачная GPU-инфраструктура: [Облачное внедрение](../01-cloud-adoption/)
+- Безопасность ML-пайплайнов: [DevSecOps](../03-devsecops/)
+- IaC для ML-инфраструктуры: [Инфраструктура как код](../04-infrastructure-as-code/)
+- Общая дорожная карта: [Roadmap](../90-roadmap/)
+- Ошибки, которых стоит избегать: [Типичные ошибки](../91-mistakes/)
+- Вернуться на [главную страницу](../)

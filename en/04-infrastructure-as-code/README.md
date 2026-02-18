@@ -1,374 +1,574 @@
-# Factor 4: Infrastructure as Code
+# Factor 4: Infrastructure as Code (IaC)
 
-> VOICEOVER: If you are still SSHing into servers and running commands manually, you are doing archaeology, not engineering. In 2026, infrastructure is code. It is versioned, reviewed, tested, and deployed through pipelines — exactly like application code. This is not optional. It is the baseline.
+![Infrastructure as Code](04-iac.png)
 
 ---
 
 ## Why It Matters in 2026
 
-Manual infrastructure management does not scale. It never did, but companies tolerated it when they had 5 servers. Now they have 500 containers across 3 environments with auto-scaling, and manual configuration is a liability.
+If your infrastructure is not described in code, it does not exist. In 2026, manual server configuration is technical debt that costs companies millions.
 
-**The business case is simple:**
-- **Reproducibility:** Spin up an identical environment in minutes, not days
-- **Auditability:** Every change is tracked in Git. You know who changed what, when, and why.
-- **Speed:** A new environment goes from a 2-week ticket to a 15-minute pipeline run
-- **Disaster recovery:** Your entire infrastructure is a Git repo. Lose a region, rebuild it from code.
-- **Collaboration:** Infrastructure changes go through code review. No more "someone changed the firewall rule and nobody knows who"
+78% of organizations use IaC. Terraform is the number one IaC tool.
 
-**Market reality:**
-- IaC is mentioned in 70%+ of DevOps job postings
-- Terraform is the most in-demand IaC tool by a wide margin
-- GitOps (ArgoCD/Flux) is becoming the default deployment model for Kubernetes
-- Companies that adopted IaC report 50-75% reduction in deployment failures
+Infrastructure as Code is an approach where all infrastructure is described in configuration files, stored in Git, and deployed automatically. This means:
 
-> ON SCREEN: "Manual config = liability. Infrastructure as Code = engineering."
+- **Reproducibility** -- any engineer can spin up an identical environment in minutes
+- **Versioning** -- git log shows who changed what in the infrastructure and when
+- **Review** -- infrastructure changes go through PR review, just like code
+- **Automation** -- CI/CD for infrastructure instead of manual `terraform apply`
+- **Testing** -- infrastructure can be tested before deployment
+
+In 2026, IaC is a **mandatory skill** for a DevOps engineer. Not "nice to have" -- mandatory. Without it you will not pass any serious interview.
 
 ---
 
 ## What Problem It Solves in Real Teams
 
-**Without IaC:**
-- "Snowflake servers" — every machine is configured slightly differently
-- "It worked in staging" — because staging and prod were set up manually by different people at different times
-- Configuration drift — production slowly diverges from what you think it is
-- No rollback — when a change breaks something, you scramble to remember what you changed
-- Tribal knowledge — only one person knows how the infrastructure is set up, and they are on vacation
+"Who created this security group? When? Why?" -- if the answer is not in Git, the answer is nowhere.
 
-**With IaC:**
-- Every environment is identical because it is generated from the same code
-- Changes are reviewed in PRs before they are applied
-- State is tracked — you always know what is deployed
-- Rollback is a `git revert`
-- New team members read the code and understand the infrastructure
+| Problem | Without IaC | With IaC |
+|---------|-------------|----------|
+| "Snowflake servers" | Every server is unique, nobody knows the config | Identical environments from one template |
+| Configuration drift | Staging differs from production | One codebase = identical infrastructure |
+| Disaster recovery | "Rebuild from scratch? That will take weeks" | `terraform apply` -- and everything is up |
+| Change audit | "Who opened port 22 to 0.0.0.0/0?" | `git blame` shows the author and reason |
+| Scaling | Copy manual steps for a new region | Change the `region` variable and apply |
+| Onboarding | New engineer spends weeks figuring things out | Code = infrastructure documentation |
+
+**Real example:** A company with 200+ servers, all configured manually. One engineer left -- along with knowledge of half the infrastructure. Recovery after an outage took 3 days. After implementing Terraform -- full DR in 45 minutes.
 
 ---
 
 ## What You Must Learn (Core Skills)
 
-### Terraform (Primary Tool — Learn This First)
+### 1. Terraform -- The Primary Tool
 
-Terraform is the industry standard for IaC. It is cloud-agnostic, has the largest community, and is the most requested skill in job postings.
+Terraform by HashiCorp is the de facto standard for IaC. OpenTofu is the open-source fork. The concepts are identical.
 
-**Core concepts in learning order:**
-1. **Providers** — how Terraform talks to AWS, GCP, Azure, Kubernetes, etc.
-2. **Resources** — the building blocks (aws_instance, aws_vpc, etc.)
-3. **Variables and Outputs** — parameterization and return values
-4. **State** — how Terraform tracks what it manages (this is critical)
-5. **Data Sources** — reading existing infrastructure
-6. **Modules** — reusable components (your own and from the registry)
-7. **Workspaces or directory structure** — managing multiple environments
-8. **Lifecycle rules** — controlling create/destroy behavior
-9. **Import** — bringing existing resources under Terraform management
-10. **Testing** — `terraform validate`, `terraform plan`, `terratest`, policy checks
-
-**Example — a well-structured Terraform project:**
 ```
-infrastructure/
-  modules/
-    vpc/
-      main.tf
-      variables.tf
-      outputs.tf
-    eks/
-      main.tf
-      variables.tf
-      outputs.tf
-    rds/
-      main.tf
-      variables.tf
-      outputs.tf
-  environments/
-    dev/
-      main.tf        # calls modules with dev values
-      terraform.tfvars
-      backend.tf     # remote state config for dev
-    staging/
-      main.tf
-      terraform.tfvars
-      backend.tf
-    prod/
-      main.tf
-      terraform.tfvars
-      backend.tf
+Terraform skills (in priority order):
+├── HCL Basics
+│   ├── Resources, Data Sources
+│   ├── Variables, Outputs
+│   ├── Locals
+│   └── Providers
+├── State
+│   ├── What state is and why it exists
+│   ├── Remote state (S3 + DynamoDB, Terraform Cloud)
+│   ├── State locking
+│   ├── terraform import
+│   └── terraform state mv / rm
+├── Modules
+│   ├── Creating your own modules
+│   ├── Modules from Terraform Registry
+│   ├── Module versioning
+│   └── Module composition
+├── Planning and Deployment
+│   ├── terraform plan (ALWAYS before apply)
+│   ├── terraform apply
+│   ├── terraform destroy
+│   └── Targeted apply (-target)
+├── Workspaces
+│   └── Or directories per environment (recommended)
+└── Testing
+    ├── terraform validate
+    ├── terraform fmt
+    ├── tflint
+    ├── Checkov / tfsec
+    └── Terratest (integration tests)
 ```
 
-### State Management (Do NOT Skip This)
+**Minimal Terraform Example:**
 
-State is the hardest part of Terraform and the part most people learn the hard way.
-
-**What you must understand:**
-- State file contains sensitive data — never commit it to Git
-- Remote state (S3 + DynamoDB for locking) is required for team work
-- State locking prevents concurrent modifications
-- `terraform state mv` and `terraform state rm` for refactoring
-- State file structure — so you can debug when things go wrong
-- Importing existing resources into state
-
-**Remote state setup (AWS):**
 ```hcl
+# providers.tf
 terraform {
+  required_version = ">= 1.5"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+
   backend "s3" {
-    bucket         = "my-company-terraform-state"
-    key            = "environments/prod/terraform.tfstate"
+    bucket         = "my-terraform-state"
+    key            = "production/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "terraform-locks"
+    dynamodb_table = "terraform-lock"
     encrypt        = true
   }
 }
+
+provider "aws" {
+  region = var.region
+}
+
+# variables.tf
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "environment" {
+  description = "Environment name"
+  type        = string
+}
+
+# main.tf
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.0.0"
+
+  name = "${var.environment}-vpc"
+  cidr = "10.0.0.0/16"
+
+  azs             = ["${var.region}a", "${var.region}b"]
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+
+  enable_nat_gateway = true
+  single_nat_gateway = var.environment != "production"
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "terraform"
+  }
+}
+
+# outputs.tf
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
 ```
 
-### Modules (Reusable Infrastructure)
+### 2. State Management
 
-**What you must be able to do:**
-- Write modules with clear inputs (variables) and outputs
-- Use modules from the Terraform Registry
-- Version your modules (Git tags)
-- Compose modules — a "platform" module that calls VPC + EKS + RDS modules
+```
+Critical rules for working with state:
+├── NEVER store state locally in production
+├── ALWAYS use a remote backend with locking
+├── NEVER edit state manually (without extreme necessity)
+├── ALWAYS encrypt state (it contains secrets!)
+├── Separate state by environments and components
+└── Back up state (enable S3 bucket versioning)
+```
 
-### Testing Infrastructure Code
+### 3. GitOps with ArgoCD or Flux
 
-**Tools and approaches:**
-- `terraform validate` — syntax check
-- `terraform plan` — preview changes before apply (always review this)
-- **Checkov / tfsec** — static security analysis (see [Factor 3: DevSecOps](../03-devsecops/))
-- **Terratest** — integration tests in Go that create real infrastructure, verify it, and destroy it
-- **terraform-compliance** — BDD-style compliance testing
-- **OPA / Conftest** — policy-as-code for Terraform plans
+```
+GitOps principles:
+├── Git as the single source of truth
+├── Declarative description of desired state
+├── Automatic synchronization (reconciliation)
+└── Pull model (the cluster pulls changes from Git)
 
-### GitOps (ArgoCD / Flux)
+ArgoCD skills:
+├── Installation and configuration
+├── Application and ApplicationSet
+├── Sync policies (auto/manual)
+├── Rollback
+├── Multi-cluster management
+└── Secrets management (Sealed Secrets, External Secrets)
+```
 
-GitOps is the deployment model where Git is the single source of truth. Changes are made via PRs, and a controller in the cluster syncs the desired state automatically.
+### 4. Testing IaC
 
-**Core concepts:**
-- **Git as the source of truth** — the cluster state matches what is in Git, always
-- **Pull-based deployment** — ArgoCD/Flux pulls from Git, not the other way
-- **Drift detection** — if someone manually changes something, GitOps detects and corrects it
-- **ArgoCD** — the most popular GitOps tool, with a strong UI and ApplicationSet
-- **Flux** — lighter-weight, CNCF graduated, more "Kubernetes-native"
-
-**When to use what:**
-- **Terraform** — for infrastructure (VPCs, EKS clusters, RDS, IAM)
-- **ArgoCD/Flux** — for application deployment to Kubernetes
-- Together they cover the full stack: Terraform creates the cluster, ArgoCD deploys the apps
+```
+Testing levels:
+├── Static analysis
+│   ├── terraform validate -- syntax
+│   ├── terraform fmt -- formatting
+│   ├── tflint -- linting
+│   └── Checkov / tfsec -- security
+├── Unit tests
+│   ├── Terratest (Go)
+│   └── pytest + terraform (Python)
+├── Integration tests
+│   ├── Deploy to a test environment
+│   ├── Verify results
+│   └── Destroy
+└── Policy-as-Code
+    ├── OPA / Rego
+    ├── Sentinel (Terraform Enterprise)
+    └── Checkov custom policies
+```
 
 ---
 
 ## What Is Optional / "Worst ROI" to Learn First
 
-1. **Pulumi** — Pulumi lets you write IaC in Python/Go/TypeScript. Great tool. But the market demands Terraform by a 10:1 ratio. Learn Terraform first.
+### Do NOT learn first:
 
-2. **AWS CDK / CDKTF** — Same story. Interesting approach (IaC in general-purpose languages), but Terraform HCL is the lingua franca. Start there.
+1. **Pulumi** -- IaC in programming languages (Python, TypeScript, Go). Good tool but niche. Terraform has a much larger ecosystem and more job postings. Learn Pulumi only if your company uses it.
 
-3. **Crossplane** — Kubernetes-native IaC. Powerful concept, but niche. Learn it after you are solid in Terraform and K8s.
+2. **AWS CDK** -- Similar situation. CDK ties you to AWS. Terraform is multi-cloud. Start with Terraform.
 
-4. **Ansible for cloud provisioning** — Ansible is great for configuration management. It is not great for infrastructure provisioning (no state management). Use Terraform for infra, Ansible for configuration if needed.
+3. **Crossplane from day one** -- Kubernetes-native IaC. Powerful concept but requires deep K8s knowledge. Terraform first, then Crossplane.
 
-5. **CloudFormation deep dive** — AWS-only. If you are in an AWS-only shop that mandates CloudFormation, learn it. Otherwise, Terraform is more transferable.
+4. **Ansible for cloud provisioning** -- Ansible is for server configuration (configuration management). For creating cloud resources -- Terraform. Different tools for different tasks.
 
-6. **Terragrunt from day one** — Terragrunt adds useful features on top of Terraform, but it adds complexity. Learn vanilla Terraform well first. Add Terragrunt when you need what it offers (DRY configs, dependency management across stacks).
+5. **Terraform Enterprise / Terraform Cloud from day one** -- Start with CLI + remote state on S3. Enterprise is for large teams.
 
-> VOICEOVER: I see people jump to Pulumi or CDK because "I already know Python." That is fine, but employers are searching for "Terraform" on your resume. Learn what the market wants first, then explore alternatives.
+### Worst ROI:
+
+| Action | Why Bad ROI | What To Do Instead |
+|--------|-------------|-------------------|
+| Learn 3 IaC tools simultaneously | You will not learn any deeply | Terraform first, deeply |
+| Write everything from scratch ignoring modules | Reinventing the wheel | terraform-aws-modules + your own wrappers |
+| One giant state file | Slow plan, conflict risk | Split by components |
+| Terraform workspaces for environments | Hard to scale | Directory per environment |
 
 ---
 
 ## How Deep to Go
 
-### Beginner (weeks 1-3):
-- Can write a basic Terraform configuration (provider, resources, variables)
-- Can run `terraform init`, `plan`, `apply`, and `destroy`
-- Can explain what state is and why it matters
-- Understands the difference between declarative and imperative IaC
-- Can use Terraform to create basic AWS resources (EC2, S3, VPC)
+### Beginner (2-4 weeks)
 
-### Strong (months 2-5) — THIS IS THE HIRING THRESHOLD:
-- Can structure a multi-environment project with modules
-- Can set up and manage remote state with locking
-- Can write reusable modules with proper input validation
-- Can import existing resources into Terraform
-- Can resolve state conflicts and refactor state
-- Can integrate Checkov/tfsec into CI for security scanning
-- Can review a `terraform plan` output and catch potential issues
-- Can set up a CI/CD pipeline that runs plan on PR and apply on merge
-- Can use ArgoCD or Flux for GitOps deployment to Kubernetes
-- Can explain the Terraform workflow in a team setting (branching, PRs, plan review, apply)
+- [ ] Install Terraform, understand the init/plan/apply/destroy cycle
+- [ ] Create resources in AWS: VPC, EC2, S3, Security Group
+- [ ] Use variables, outputs, local values
+- [ ] Set up remote state (S3 + DynamoDB)
+- [ ] Understand the difference between `resource` and `data`
+- [ ] Use `terraform import` for existing resources
+- [ ] Understand lifecycle: `create_before_destroy`, `prevent_destroy`
 
-### Expert (6+ months):
-- Can write custom Terraform providers
-- Can implement policy-as-code with OPA/Sentinel
-- Can design module architecture for a large organization
-- Can implement multi-account, multi-region Terraform strategies
-- Can write comprehensive Terratest integration tests
-- Can design and implement a platform team's IaC standards
-- Can optimize Terraform performance for large state files
-- Can architect GitOps at scale with ApplicationSets and multi-cluster management
+**Test:** Can you deploy VPC + EC2 + RDS through Terraform and destroy everything with one command? If yes -- move on.
 
-> ON SCREEN: "Strong = you can own a team's Terraform. Expert = you design the IaC strategy for the org."
+### Strong (6-10 weeks)
+
+- [ ] Create and use your own modules
+- [ ] Split infrastructure into components (networking, compute, database)
+- [ ] Use `for_each`, `count`, `dynamic` blocks
+- [ ] Set up CI/CD for Terraform (GitHub Actions: plan on PR, apply on merge)
+- [ ] Use tflint, Checkov for linting and security
+- [ ] Deploy an EKS cluster through Terraform
+- [ ] Understand and use `terraform state mv`, `terraform state rm`
+- [ ] Implement resource tagging as a standard
+
+**Test:** Can you build full infrastructure (VPC + EKS + RDS + monitoring) with modules, remote state, and CI/CD? If yes -- you are strong.
+
+### Expert (3-6 months)
+
+- [ ] Design Terraform architecture for an organization (modules, remote state, workspaces)
+- [ ] Write integration tests with Terratest
+- [ ] Implement GitOps with ArgoCD for K8s resources
+- [ ] Policy-as-Code with OPA or Sentinel
+- [ ] Multi-account / multi-region strategy
+- [ ] Migrate existing infrastructure to Terraform (terraform import at scale)
+- [ ] Drift detection and remediation
+- [ ] Custom Terraform providers (Go)
+
+**Test:** Can you design an IaC strategy for an organization with 10+ teams and 3+ environments? If yes -- you are an expert.
 
 ---
 
-## How AI Changes This Factor
+## How AI Changes This Factor (Practical Examples)
 
-AI is exceptionally good at IaC tasks because infrastructure code is highly structured and well-documented.
+### 1. Generating Terraform Modules
 
-### 1. AI for Generating Terraform Modules
 ```
-Prompt: "Write a Terraform module for an AWS EKS cluster with:
-- Managed node group (m5.xlarge, min 2, max 10)
-- Private subnets only for worker nodes
-- IRSA (IAM Roles for Service Accounts) enabled
-- Cluster logging enabled (api, audit, authenticator)
-- Variables for cluster name, K8s version, VPC ID, subnet IDs
-- Output the cluster endpoint and certificate"
-```
-AI generates a complete module. You review for security issues, naming conventions, and best practices.
-
-### 2. AI for Reviewing HCL
-```
-Prompt: "Review this Terraform configuration for:
-- Security issues (overly permissive rules, missing encryption)
-- Best practice violations (hardcoded values, missing tags)
-- Cost optimization opportunities
-- State management concerns
-[paste HCL code]"
+Prompt:
+"Create a Terraform module for an EKS cluster with the following parameters:
+- K8s version: 1.29
+- 2 node groups: general (t3.medium, 2-5 nodes) and spot (t3.large, 0-10 nodes)
+- OIDC provider for IRSA
+- Addons: CoreDNS, kube-proxy, vpc-cni, ebs-csi-driver
+- Encryption: envelope encryption for secrets
+- Logging: api, audit, authenticator
+- Variables for: cluster_name, vpc_id, subnet_ids, environment
+- Tags on all resources
+Use best practices: remote state, least privilege IAM."
 ```
 
-### 3. AI for State Operations
+### 2. HCL Code Review
+
 ```
-Prompt: "I need to rename my Terraform module from 'web_server' to
-'application_server'. What terraform state commands do I need to run?
-List every state mv command needed for a module that contains:
-aws_instance, aws_security_group, aws_eip."
+Prompt:
+"Do a code review of this Terraform code:
+[paste code]
+Check:
+- Security: excessive privileges, open ports, unencrypted resources
+- Best practices: naming conventions, tagging, modularity
+- Performance: state size, dependencies
+- Reliability: multi-AZ, backup, lifecycle policies
+Suggest specific fixes."
 ```
 
-### 4. AI for Migration from Manual to IaC
+### 3. Converting Manual Infrastructure to Code
+
 ```
-Prompt: "I have these manually created AWS resources:
-- VPC vpc-12345 with CIDR 10.0.0.0/16
-- 2 public subnets, 2 private subnets
-- NAT gateway
-- ALB with target group
-Write the Terraform code and the import commands to bring them
-under Terraform management."
+Prompt:
+"Here is JSON output from aws ec2 describe-instances and aws rds describe-db-instances:
+[paste JSON]
+Create Terraform code that describes this existing infrastructure.
+Include import blocks for Terraform 1.5+."
 ```
 
-### 5. AI for ArgoCD Configuration
+### 4. Troubleshooting
+
 ```
-Prompt: "Write an ArgoCD Application manifest that:
-- Deploys from github.com/myorg/k8s-apps, path: apps/production
-- Auto-syncs with self-heal enabled
-- Prunes resources that are removed from Git
-- Sends Slack notifications on sync failure
-- Uses the 'production' project with restricted namespaces"
+Prompt:
+"Terraform plan shows:
+'Error: Error creating EKS Cluster: ResourceInUseException: Cluster already exists with name: my-cluster'
+But this cluster is not in my state.
+What happened and how do I fix it? Here is my config:
+[paste code]"
 ```
 
-> VOICEOVER: AI turns Terraform from a 2-hour writing session into a 15-minute review session. You describe what you need, AI generates the code, you review it with your engineering judgment. This is the workflow of 2026.
+### 5. Daily Workflow
+
+| Task | Without AI | With AI |
+|------|-----------|---------|
+| Write a Terraform module for a new service | 2-4 hours | 20-30 minutes + review |
+| Set up CI/CD for Terraform | 1-2 hours | 15-20 minutes |
+| Debug state problems | 1-3 hours | 15-30 minutes |
+| Write a Checkov custom policy | 30-60 minutes | 10 minutes |
+| Migrate resources between state files | 1-2 hours | 20-30 minutes |
+
+**Important:** AI generates ~80% correct Terraform code. Your job is to verify the remaining 20%, because that is where critical errors hide: incorrect IAM policies, missing encryption, public resources.
 
 ---
 
 ## Common Mistakes & Traps
 
-### Trap 1: Not Managing State Properly
-**What happens:** You use local state. Two people run `terraform apply` at the same time. State is corrupted. Resources are orphaned. Friday night becomes an incident.
-**Fix:** Set up remote state with locking on day one. S3 + DynamoDB for AWS. GCS + Cloud Storage for GCP. Never local state in a team.
+### Trap 1: Improper State Management
 
-### Trap 2: Monolithic Configuration
-**What happens:** All infrastructure is in one giant `main.tf`. A change to a security group requires a plan that touches 200 resources. It takes 10 minutes to plan and one mistake affects everything.
-**Fix:** Split by concern. Separate state files for networking, compute, databases, and monitoring. Use modules for reusable components. A change to the app's deployment should not require planning the VPC.
+**What it is:** Local state, no locking, one state file for all infrastructure.
 
-### Trap 3: No Testing
-**What happens:** You write Terraform, run `apply`, and it works. Six months later, someone changes a variable and the whole stack breaks. Nobody caught it because there are no tests.
-**Fix:** At minimum: `terraform validate` + `terraform plan` + Checkov in CI. Ideally: Terratest for critical modules. The plan output is your first test — read it carefully on every PR.
+**Why it hurts:**
+- Local state: lost your laptop = lost your infrastructure
+- No locking: two engineers run `apply` simultaneously = destroyed infrastructure
+- One state file: `terraform plan` takes 15 minutes, one error breaks everything
 
-### Trap 4: Hardcoded Values Everywhere
-**What happens:** Region is `us-east-1` in 47 places. AMI IDs are hardcoded. Account IDs are scattered through the code.
-**Fix:** Use variables for everything that might change. Use data sources for AMI lookups. Use locals for computed values. Configuration should be in `terraform.tfvars`, not in resource blocks.
+**Fix:**
+```hcl
+# Remote state with locking -- from DAY ONE
+backend "s3" {
+  bucket         = "company-terraform-state"
+  key            = "production/networking/terraform.tfstate"
+  region         = "us-east-1"
+  dynamodb_table = "terraform-lock"
+  encrypt        = true
+}
+```
+
+Separate your state:
+```
+infrastructure/
+├── networking/      <- separate state
+├── eks-cluster/     <- separate state
+├── databases/       <- separate state
+├── monitoring/      <- separate state
+└── applications/    <- separate state
+```
+
+### Trap 2: Monolithic Configurations
+
+**What it is:** One `main.tf` with 2000 lines containing everything: VPC, EKS, RDS, S3, IAM, CloudWatch.
+
+**Why it hurts:** Impossible to review. Impossible to test separately. A change in networking can break the database.
+
+**Fix:** Modules + separation by component:
+```
+modules/
+├── networking/    <- VPC, subnets, NAT
+├── eks/           <- EKS cluster, node groups
+├── rds/           <- Database instances
+└── monitoring/    <- CloudWatch, alerts
+
+environments/
+├── production/
+│   ├── main.tf    <- uses modules
+│   └── terraform.tfvars
+└── staging/
+    ├── main.tf    <- same modules, different variables
+    └── terraform.tfvars
+```
+
+### Trap 3: No Tests
+
+**What it is:** `terraform apply` without checks = a prayer.
+
+**Why it hurts:** Terraform does not check business logic. Are the CIDRs correct? Are the IAM permissions sufficient? Is the database encrypted?
+
+**Fix:**
+```bash
+# Minimum set of checks in CI:
+terraform fmt -check
+terraform validate
+tflint
+checkov -d .
+terraform plan -out=plan.tfplan
+# Review plan manually or automatically
+```
+
+### Trap 4: Ignoring terraform plan
+
+**What it is:** `terraform apply -auto-approve` without reviewing the plan.
+
+**Why it hurts:** Terraform can delete resources you did not expect. `destroy and recreate` for a database = data loss.
+
+**DANGER: `-auto-approve` in production without reviewing the plan is one of the most dangerous commands in DevOps. A single misconfigured resource can trigger a cascade of destroy-and-recreate operations, leading to data loss and downtime.**
+
+**Fix:**
+- ALWAYS review `terraform plan` before apply
+- In CI/CD: plan on PR (as a comment), apply on merge
+- Use `prevent_destroy` for critical resources
 
 ### Trap 5: Not Using Modules
-**What happens:** Copy-pasted code for every environment. The dev VPC has slightly different settings than prod because someone forgot to update it after a change.
-**Fix:** Write modules. Use them for every environment with different variable values. One source of truth, multiple instantiations.
 
-### Trap 6: Ignoring Drift
-**What happens:** Someone makes a "quick fix" in the AWS Console. Terraform does not know about it. The next `terraform apply` either reverts the fix or fails with a conflict.
-**Fix:** Use GitOps principles. Detect drift (Terraform plan in CI on a schedule). If manual changes happen, import them into state or revert them. Make the pipeline the only way to change infrastructure.
+**What it is:** Copy-pasting identical code for every environment.
+
+**Why it hurts:** A change in one place does not propagate to others. 5 environments = 5 copies that gradually diverge.
+
+**Fix:** Modules with versioning:
+```hcl
+module "vpc" {
+  source  = "git::https://github.com/company/terraform-modules.git//vpc?ref=v1.2.0"
+  # ...
+}
+```
 
 ---
 
-## Mini-Practice (Exercises)
+## Mini-Practice (5 Exercises)
 
-### Exercise 1: Build VPC + EKS with Terraform
-**What you build:** A complete VPC and EKS cluster using Terraform modules.
-**Skills tested:** Modules, variables, state management, AWS networking, EKS.
-**Requirements:**
-- Custom VPC module (public/private subnets, NAT, routing)
-- EKS module (cluster, managed node group, IRSA)
-- Remote state in S3 with DynamoDB locking
-- Separate variable files for dev and prod
-- Tags on every resource
-**Deliverable:** `terraform apply` creates a working K8s cluster you can connect to with `kubectl`.
+### Exercise 1: Full VPC + EKS on Terraform (strong)
 
-### Exercise 2: Implement Remote State with CI/CD
-**What you build:** A GitHub Actions (or GitLab CI) pipeline for Terraform.
-**Skills tested:** Remote state, CI/CD integration, plan review, automated apply.
-**Requirements:**
-- `terraform plan` runs on every PR and posts the output as a comment
-- `terraform apply` runs automatically on merge to main
-- Checkov runs as a quality gate (see [Factor 3](../03-devsecops/))
-- State locking prevents concurrent applies
-**Deliverable:** A working pipeline where infrastructure changes go through code review.
+**Goal:** Build production-ready infrastructure.
 
-### Exercise 3: Write and Test Terraform Modules
-**What you build:** A reusable Terraform module with tests.
-**Skills tested:** Module design, input validation, outputs, testing.
-**Requirements:**
-- Write a module for a common pattern (e.g., "web application" = ALB + ECS + RDS)
-- Input validation (check that CIDR blocks are valid, instance types are allowed)
-- Comprehensive outputs (ARNs, endpoints, security group IDs)
-- Write Terratest or terraform-compliance tests
-**Deliverable:** A module that another team member could use by reading the `variables.tf` and `README.md`.
+```
+Steps:
+1. Create S3 + DynamoDB for remote state (can use CloudFormation bootstrap)
+2. VPC module: 2 public + 2 private subnets, NAT, IGW
+3. EKS module: cluster + managed node group + IRSA
+4. RDS module: PostgreSQL Multi-AZ in private subnets
+5. Security Groups: least privilege
+6. Outputs: cluster endpoint, RDS endpoint, VPC ID
+7. Variables: environment, region, instance types
+8. terraform.tfvars for staging and production
 
-### Exercise 4: Set Up GitOps with ArgoCD
-**What you build:** ArgoCD managing Kubernetes deployments from a Git repository.
-**Skills tested:** ArgoCD installation, Application manifests, sync policies, RBAC.
-**Requirements:**
-- Install ArgoCD on a K8s cluster (from [Factor 2](../02-containers-and-kubernetes/))
-- Create an Application that deploys a multi-service app from Git
-- Configure auto-sync with self-heal
-- Set up ArgoCD RBAC (dev team can view, platform team can sync)
-- Demonstrate drift detection: manually change a deployment, watch ArgoCD revert it
-**Deliverable:** A Git push triggers automatic deployment to the cluster.
+Success criteria: terraform apply from scratch brings up full infrastructure in 15-20 minutes
+```
 
-### Exercise 5: Import Existing Infrastructure
-**What you build:** Terraform code for manually-created resources.
-**Skills tested:** `terraform import`, state management, resource mapping.
-**Scenario:** Create 3-5 resources manually in AWS Console (VPC, subnet, security group, EC2, S3). Then write Terraform code and import them.
-**Deliverable:** `terraform plan` shows no changes after import — proving your code matches reality.
+### Exercise 2: Remote State and State Management (beginner -> strong)
+
+**Goal:** Learn to work with state properly.
+
+```
+Steps:
+1. Set up S3 backend with versioning and encryption
+2. Set up DynamoDB for state locking
+3. Split an existing state into 2 parts (terraform state mv)
+4. Use terraform import for an existing resource
+5. Set up a data source for reading remote state from another component
+6. Simulate a state lock conflict and resolve it
+
+Success criteria: can safely work with state in a team of 3+ engineers
+```
+
+### Exercise 3: CI/CD for Terraform (strong)
+
+**Goal:** Automate the Terraform lifecycle.
+
+```
+Steps (GitHub Actions):
+1. PR opened/updated:
+   - terraform fmt -check
+   - terraform validate
+   - tflint
+   - checkov
+   - terraform plan -> comment in PR
+2. PR merged to main:
+   - terraform apply -auto-approve
+3. Add manual approval for production
+4. Set up Terraform state lock timeout
+5. Add Slack notification on success/failure
+
+Success criteria: infrastructure changes go through PR -> review -> auto-apply
+```
+
+### Exercise 4: Testing Modules with Terratest (strong -> expert)
+
+**Goal:** Learn to test IaC.
+
+```
+Steps:
+1. Create a simple Terraform module (e.g., S3 bucket with encryption)
+2. Write a Terratest test in Go:
+   - Deploy the module to a test account
+   - Verify: bucket exists, encryption is enabled, versioning is enabled
+   - Destroy resources
+3. Integrate tests into CI (run on PR)
+4. Add tests for the VPC module: verify number of subnets, CIDRs
+
+Success criteria: every module has automated tests
+```
+
+### Exercise 5: GitOps with ArgoCD (strong -> expert)
+
+**Goal:** Implement GitOps for K8s deployments.
+
+```
+Steps:
+1. Install ArgoCD in a K8s cluster (via Helm)
+2. Create a Git repository with K8s manifests
+3. Create an ArgoCD Application for staging (auto-sync)
+4. Create an ArgoCD Application for production (manual sync)
+5. Set up ApplicationSet for automatic app creation
+6. Test the workflow:
+   - Change in Git -> auto-deploy to staging
+   - Manual approve -> deploy to production
+7. Test rollback through ArgoCD UI and CLI
+
+Success criteria: all K8s changes go through Git, no manual kubectl apply
+```
 
 ---
 
 ## "Signals" You Are Job-Ready (Checklist)
 
-- [ ] Can structure a Terraform project for a multi-environment deployment
-- [ ] Can set up and manage remote state with locking
-- [ ] Can write reusable Terraform modules with proper inputs/outputs
-- [ ] Can set up a CI/CD pipeline that plans on PR and applies on merge
-- [ ] Can import existing resources into Terraform management
-- [ ] Can debug state issues (conflicts, drift, orphaned resources)
-- [ ] Can review a `terraform plan` and identify potential problems before apply
-- [ ] Can integrate security scanning (Checkov/tfsec) into the IaC pipeline
-- [ ] Can explain GitOps principles and set up ArgoCD or Flux
-- [ ] Can manage multiple environments without code duplication (modules + tfvars)
-- [ ] Can explain the Terraform workflow in a team: branches, PRs, plan review, apply, state
-- [ ] Can recover from a bad apply (rollback, state manipulation, targeted destroy)
+### Required:
 
-> VOICEOVER: In an interview, the question is not "do you know Terraform." The question is "describe how your team manages infrastructure changes." If you can walk through the full workflow — from a PR with a plan output, through review, to automated apply with state locking — you are demonstrating senior-level understanding.
+- [ ] Write a Terraform configuration for VPC + compute + database
+- [ ] Set up remote state with locking
+- [ ] Create and use your own Terraform module
+- [ ] Understand terraform plan output and explain every change
+- [ ] Use variables, outputs, locals correctly
+- [ ] Split infrastructure into components (not one giant file)
+- [ ] Use `for_each` and `count` for dynamic resources
+- [ ] Set up CI/CD for Terraform (plan on PR, apply on merge)
+- [ ] Know the commands: init, plan, apply, destroy, import, state
+
+### Desired:
+
+- [ ] Use Terratest for testing modules
+- [ ] Set up tflint and Checkov in CI
+- [ ] Implement GitOps with ArgoCD or Flux
+- [ ] Know the difference between Terraform and OpenTofu
+- [ ] Use terraform workspaces or directory structure for environments
+- [ ] Know how to work with terraform import at scale
+
+### In an Interview You Can:
+
+- [ ] Explain why remote state and state locking are needed
+- [ ] Describe the structure of a Terraform project for an organization
+- [ ] Explain the difference between `terraform plan` and `terraform apply`
+- [ ] Describe how you handle drift detection
+- [ ] Explain the benefits of modules and how to version them
+- [ ] Describe a CI/CD pipeline for Terraform
 
 ---
 
 ## Links Inside the Repo
 
-- Previous: [03 - DevSecOps](../03-devsecops/) — security scanning for your IaC
-- Next: [05 - AI & MLOps](../05-ai-and-mlops/) — AI for generating and reviewing IaC
-- Related: [01 - Cloud Adoption](../01-cloud-adoption/) — the cloud resources Terraform manages
-- Related: [02 - Containers & Kubernetes](../02-containers-and-kubernetes/) — what ArgoCD deploys to
-- Full path: [90 - Learning Roadmap](../90-roadmap/) — where IaC fits in the bigger picture
-- Avoid traps: [91 - Common Mistakes](../91-mistakes/) — monolithic configs and other traps
+- Previous factor: [DevSecOps](../03-devsecops/)
+- Next factor: [AI & MLOps](../05-ai-and-mlops/)
+- Cloud infrastructure: [Cloud Adoption](../01-cloud-adoption/)
+- IaC for K8s: [Containers & Kubernetes](../02-containers-and-kubernetes/)
+- IaC security: [DevSecOps](../03-devsecops/)
+- Learning roadmap: [Roadmap](../90-roadmap/)
+- Mistakes to avoid: [Common Mistakes](../91-mistakes/)
+- Back to [course overview](../README.md)

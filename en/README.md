@@ -1,6 +1,8 @@
 # DevOps Roadmap 2026 — The 5 Growth Factors
 
-> VOICEOVER: Right now, in 2026, there is a window of opportunity in DevOps that will not stay open forever. Companies are hiring faster than engineers are leveling up. If you move now and move smart, you can land a DevOps role — or jump from junior to senior — in months, not years.
+![DevOps Roadmap 2026 — Intro](Intro.png)
+
+> Right now, in 2026, there is a window of opportunity in DevOps that will not stay open forever. Companies are hiring faster than engineers are leveling up. If you move now and move smart, you can land a DevOps role — or jump from junior to senior — in months, not years.
 
 ---
 
@@ -17,7 +19,7 @@ Here is what changed:
 
 These are the 5 growth factors. Master them in the right order, and you become the engineer companies are fighting to hire.
 
-> ON SCREEN: "5 factors. Right order. That is the entire strategy."
+> "5 factors. Right order. That is the entire strategy."
 
 ---
 
@@ -72,7 +74,7 @@ This is not a "watch and forget" course. It is a system.
 2. Build at least 2 portfolio projects from the [Roadmap](./90-roadmap/)
 3. Pay special attention to [DevSecOps](./03-devsecops/) and [IaC](./04-infrastructure-as-code/) — these are where most candidates fall short
 
-> VOICEOVER: The biggest mistake I see is people spending a year learning in circles. This roadmap is designed to get you from where you are to where you need to be — in a straight line. Let us get into it.
+> The biggest mistake I see is people spending a year learning in circles. This roadmap is designed to get you from where you are to where you need to be — in a straight line. Let us get into it.
 
 ---
 
@@ -90,4 +92,3 @@ This is not a "watch and forget" course. It is a system.
 
 ---
 
-*Built by [MentorYarick](https://github.com/MentorYarick) — DevOps education that gets results.*

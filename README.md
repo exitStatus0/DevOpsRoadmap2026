@@ -1,12 +1,14 @@
 # DevOps Roadmap 2026
 
+![DevOps Roadmap 2026](DevOpsRoadmap.png)
+
 **A practical mini-course for engineers (and career-switchers) who want to break into DevOps, Platform Engineering, or SRE — and do it right.**
 
 > DevOps is in a rare window of opportunity. Demand far outpaces supply. Positions stay open 3x longer than other IT roles. This won't last forever — but right now, the door is wide open.
 
 ---
 
-[English version](en/README.md) | [Русская версия](other/README.md)
+[English version](en/README.md) | [Русская версия](other/README.md) | [Українська версія](ua/README.md)
 
 ---
 
@@ -123,7 +125,16 @@ DevOpsRoadmap2026/
 │   ├── 05-ai-and-mlops/
 │   ├── 90-roadmap/
 │   └── 91-mistakes/
-└── other/                 ← Русская версия
+├── other/                 ← Русская версия
+│   ├── README.md
+│   ├── 01-cloud-adoption/
+│   ├── 02-containers-and-kubernetes/
+│   ├── 03-devsecops/
+│   ├── 04-infrastructure-as-code/
+│   ├── 05-ai-and-mlops/
+│   ├── 90-roadmap/
+│   └── 91-mistakes/
+└── ua/                    ← Українська версія
     ├── README.md
     ├── 01-cloud-adoption/
     ├── 02-containers-and-kubernetes/

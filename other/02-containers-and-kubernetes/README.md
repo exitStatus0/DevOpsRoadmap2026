@@ -1,64 +1,72 @@
 # Фактор 2: Контейнеры и Kubernetes
 
-VOICEOVER: Если облако — это «где», то контейнеры — это «как». В 2026 году Docker — это абсолютный минимум, как знание Git для разработчика. А Kubernetes стал де-факто стандартом оркестрации. Без этих навыков в DevOps делать нечего.
-
-ON SCREEN: Диаграмма — эволюция деплоя: bare metal -> VM -> контейнеры -> K8s
+![Containers & Kubernetes](../../en/02-containers-and-kubernetes/02-containers-and-kubernetes.png)
 
 ---
 
 ## Почему это важно в 2026
 
-1. **Docker — новый baseline.** В 2026 вопрос «умеете ли вы контейнеризировать приложение?» звучит так же, как «умеете ли вы пользоваться Git?» 5 лет назад. Это минимум, а не преимущество.
+Docker -- это входной билет. Kubernetes -- это стандарт. Если вы не знаете контейнеры в 2026 году, вы не конкурентоспособны на рынке DevOps.
 
-2. **Kubernetes выиграл войну оркестраторов.** Docker Swarm, Mesos, Nomad — у каждого есть ниша, но K8s занимает 85%+ рынка оркестрации. Все крупные облачные провайдеры предлагают управляемый K8s (EKS, GKE, AKS).
+96% организаций используют или оценивают Kubernetes. Docker -- в каждой второй вакансии.
 
-3. **Platform Engineering строится на K8s.** Внутренние платформы разработки (IDP) — горячий тренд 2025-2026 — почти всегда построены поверх Kubernetes.
+Контейнеры изменили способ, которым мы пакуем, доставляем и запускаем приложения. Kubernetes стал **де-факто стандартом оркестрации** -- не потому, что он прост (он сложен), а потому, что решает реальные проблемы масштабирования.
 
-4. **Зарплатная премия.** DevOps-инженеры с уверенным знанием K8s получают на 15-25% больше, чем те, кто работает только с VM.
+В 2026 году:
+- **Docker** -- это базовый минимум. Если вы не умеете контейнеризировать приложение -- вам закрыт путь к большинству DevOps-позиций
+- **Kubernetes** -- знание K8s отличает junior от mid-level. Это то, что компании ищут наиболее активно
+- **Container security** -- сканирование образов, подпись образов, runtime security -- становится обязательным (см. [Фактор 3: DevSecOps](../03-devsecops/))
+- **GitOps** -- деплой через Git (ArgoCD, Flux) вместо `kubectl apply` -- стандартная практика
 
 ---
 
 ## Какую проблему это решает в реальных командах
 
-**Проблема: «У меня на локалке работает»**
+«У меня на машине работает» -- это фраза, которую контейнеры уничтожили раз и навсегда.
 
-Разработчик пишет код на macOS с Python 3.11. На сервере стоит Python 3.8 с другими зависимостями. Деплой ломается.
+| Проблема | Без контейнеров | С контейнерами |
+|----------|-----------------|----------------|
+| «У меня работает, на сервере -- нет» | Разные версии библиотек, ОС, зависимостей | Одинаковое окружение везде |
+| Конфликты зависимостей | Python 3.8 для одного сервиса, 3.11 для другого | Изолированные среды |
+| Медленный деплой | Ansible playbook 20 минут | Docker pull + run за секунды |
+| Масштабирование | Ручное добавление серверов | K8s auto-scaling |
+| Rollback | «Откатить изменения? Какие именно?» | `kubectl rollout undo` |
+| Microservices | Сложное управление десятками процессов | Каждый сервис -- отдельный pod |
 
-**Решение:** Docker-образ содержит всё: ОС, runtime, зависимости, приложение. Работает одинаково везде.
-
-**Проблема: «Как откатить деплой?»**
-
-Новая версия приложения падает в production. Откат — ручной процесс на 30 минут.
-
-**Решение:** `kubectl rollout undo deployment/my-app` — откат за 10 секунд.
-
-**Проблема: «Как масштабировать 20 микросервисов?»**
-
-Монолит разбили на микросервисы. Каждый нужно деплоить, масштабировать, мониторить отдельно.
-
-**Решение:** Kubernetes управляет всем: деплой, масштабирование, самовосстановление, service discovery.
+**Реальный пример:** E-commerce команда с 8 микросервисами. До K8s: деплой занимал 2 часа, rollback -- 45 минут, масштабирование -- ручное. После K8s: деплой через CI/CD за 5 минут, rollback за 30 секунд, auto-scaling по метрикам CPU/памяти.
 
 ---
 
 ## Что нужно изучить (ключевые навыки)
 
-### Docker (фундамент)
+### Этап 1: Docker (фундамент)
 
 ```
-Обязательный минимум:
-├── Dockerfile — синтаксис, инструкции, best practices
-├── Multi-stage builds — уменьшение размера образов
-├── Docker Compose — локальная разработка с несколькими сервисами
-├── Работа с реестрами — Docker Hub, ECR, Harbor
-├── Networking — bridge, host, overlay
-├── Volumes — персистентное хранение данных
-└── Security — не запускать от root, минимальные базовые образы
+Docker-навыки (в порядке приоритета):
+├── Dockerfile — написание с нуля
+│   ├── Выбор базового образа (alpine vs slim vs full)
+│   ├── Порядок слоёв для оптимизации кеша
+│   ├── Multi-stage builds (обязательно!)
+│   └── .dockerignore
+├── Docker CLI
+│   ├── build, run, exec, logs, inspect
+│   ├── Сети (bridge, host, none)
+│   ├── Volumes и bind mounts
+│   └── docker compose (для локальной разработки)
+├── Docker Registry
+│   ├── Docker Hub, ECR, GCR, GHCR
+│   ├── Тегирование образов (семантическое версионирование)
+│   └── Оптимизация размера образов
+└── Безопасность образов
+    ├── Не запускать от root
+    ├── Сканирование (Trivy, Snyk)
+    └── Минимальные базовые образы
 ```
 
-**Пример хорошего Dockerfile (multi-stage):**
+**Пример правильного Dockerfile (multi-stage):**
 
 ```dockerfile
-# Этап сборки
+# Stage 1: Build
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
@@ -66,98 +74,131 @@ RUN npm ci --only=production
 COPY . .
 RUN npm run build
 
-# Этап запуска
-FROM node:20-alpine
+# Stage 2: Production
+FROM node:20-alpine AS production
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
 WORKDIR /app
-RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 USER nextjs
 EXPOSE 3000
-CMD ["node", "dist/server.js"]
+HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:3000/health || exit 1
+CMD ["node", "dist/main.js"]
 ```
 
-### Kubernetes (оркестрация)
+### Этап 2: Kubernetes (основные объекты)
 
 ```
-Ключевые объекты K8s (в порядке изучения):
-├── Pod — минимальная единица
-├── Deployment — управление репликами и обновлениями
-├── Service (ClusterIP, NodePort, LoadBalancer) — сеть
-├── ConfigMap и Secret — конфигурация
-├── Namespace — изоляция
-├── Ingress — внешний доступ (nginx-ingress, traefik)
-├── PersistentVolume / PVC — хранение
+K8s-объекты (в порядке изучения):
+├── Pod — минимальная единица деплоя
+├── Deployment — управление replica sets
+├── Service — сетевой доступ к подам
+│   ├── ClusterIP (внутренний)
+│   ├── NodePort (внешний, для тестов)
+│   └── LoadBalancer (внешний, для production)
+├── ConfigMap — конфигурация
+├── Secret — секреты (base64 != шифрование!)
+├── Namespace — изоляция окружений
+├── Ingress — HTTP/HTTPS маршрутизация
+├── PersistentVolume / PVC — хранилища
+├── HPA — горизонтальное автомасштабирование
 ├── RBAC — контроль доступа
-├── HPA (Horizontal Pod Autoscaler) — автомасштабирование
-├── NetworkPolicy — сетевая безопасность
-├── Job / CronJob — разовые и периодические задачи
-└── StatefulSet — stateful-приложения (базы данных)
+└── NetworkPolicy — сетевая безопасность
 ```
 
-### Helm (пакетный менеджер K8s)
+### Этап 3: Helm и шаблонизация
 
-- Понимание чартов, values, шаблонов
-- Установка готовых чартов (nginx-ingress, cert-manager, Prometheus)
-- Создание собственного Helm-чарта для приложения
-- Helm в CI/CD: `helm upgrade --install`
+```
+Helm-навыки:
+├── Установка чартов (helm install/upgrade/rollback)
+├── Работа с values.yaml
+├── Создание собственных чартов
+├── Шаблонизация (templates, helpers)
+├── Управление releases
+└── Helm repositories
+```
 
-### Сеть в K8s (критически важно)
+### Этап 4: Сеть в Kubernetes
 
-- Как поды общаются друг с другом
-- Что такое Service и как работает kube-proxy
-- DNS в кластере (CoreDNS)
-- Ingress Controller — маршрутизация внешнего трафика
-- NetworkPolicy — ограничение трафика между подами
+```
+Сетевые концепции:
+├── Pod-to-Pod коммуникация
+├── Service discovery (DNS)
+├── Ingress controllers (NGINX, Traefik)
+├── Network Policies
+├── Service Mesh (Istio/Linkerd) — для уровня «эксперт»
+└── CoreDNS
+```
 
 ---
 
 ## Что можно пропустить / «худший ROI» для начала
 
-| Ловушка | Почему плохой ROI | Что делать вместо |
-|---------|-------------------|-------------------|
-| Docker Swarm | Мёртвый для новых проектов, K8s — стандарт | Сразу учи Kubernetes |
-| Nomad, OpenShift с первого дня | Нишевые инструменты, малая доля вакансий | Освой vanilla K8s, потом смотри альтернативы |
-| Кастомные операторы K8s | Продвинутая тема, нужна крайне редко | Научись ИСПОЛЬЗОВАТЬ операторы, не писать |
-| Podman/Buildah первыми | Полезно, но Docker — стандарт рынка | Docker первым, Podman — потом как альтернативу |
-| K8s с нуля (kubeadm на bare metal) | Никто не разворачивает K8s вручную в production | Используй minikube/kind локально, EKS/GKE в облаке |
-| Service Mesh (Istio/Linkerd) | Сложная абстракция, нужна только для больших систем | Изучи ПОСЛЕ уверенного владения K8s |
+### НЕ учите первым:
+
+1. **Docker Swarm** -- проиграл Kubernetes. Знать о существовании -- да. Изучать глубоко -- нет.
+
+2. **Nomad** -- хороший инструмент, но нишевый. Kubernetes -- стандарт рынка. Изучайте Nomad, только если ваша компания его использует.
+
+3. **Кастомные операторы K8s с первого дня** -- Operator SDK, controller-runtime -- это для опытных K8s-инженеров. Сначала научитесь использовать существующие операторы.
+
+4. **Service Mesh с первого дня** -- Istio/Linkerd добавляют сложность. Они нужны для больших распределённых систем, не для обучения.
+
+5. **K8s the Hard Way как первый шаг** -- Kelsey Hightower's K8s the Hard Way -- отличный ресурс, но для понимания внутренних механизмов. Сначала научитесь ИСПОЛЬЗОВАТЬ K8s.
+
+### Худший ROI:
+
+| Действие | Почему плохой ROI | Что делать вместо |
+|----------|-------------------|-------------------|
+| Учить Docker Compose вместо K8s | Compose -- для локальной разработки, не для production | Compose для dev, K8s для prod |
+| Настраивать K8s на bare metal для обучения | Недели на инфраструктуру вместо обучения | Minikube / kind / k3s |
+| Писать Helm-чарты до понимания K8s-манифестов | Шаблонизация без понимания = ошибки | Сначала чистые YAML, потом Helm |
+| Изучать все Ingress controllers | Их десятки, все делают похожее | NGINX Ingress -- стандарт для старта |
 
 ---
 
 ## Насколько глубоко погружаться
 
-### Новичок (0-3 месяца)
+### Новичок (2-4 недели)
 
-- Написать Dockerfile для простого приложения (Node.js/Python/Go)
-- Собрать образ, запустить контейнер, опубликовать в реестр
-- Docker Compose для 2-3 сервисов (приложение + БД + кэш)
-- Установить minikube или kind
-- Задеплоить приложение в K8s: Deployment + Service
-- Понять pod lifecycle: Pending -> Running -> Succeeded/Failed
-- **Результат:** Можешь контейнеризировать любое приложение и задеплоить в локальный K8s
+- [ ] Написать Dockerfile для простого приложения (Node.js или Python)
+- [ ] Понять multi-stage builds и зачем они
+- [ ] Запустить Docker Compose с 2-3 сервисами (app + db + redis)
+- [ ] Установить Minikube или kind
+- [ ] Создать Deployment + Service + Ingress
+- [ ] Понять разницу между ClusterIP, NodePort и LoadBalancer
+- [ ] Использовать `kubectl` базовые команды: get, describe, logs, exec
 
-### Уверенный (3-6 месяцев)
+**Тест:** Можете контейнеризировать приложение и задеплоить его в локальный K8s за 1 час? Если да -- идите дальше.
 
-- Multi-stage builds, оптимизация размера образов
-- Kubernetes: Ingress, ConfigMap, Secret, PVC, RBAC
-- Helm: установка чартов, создание собственного чарта
-- HPA: автомасштабирование по CPU/памяти
-- Мониторинг: Prometheus + Grafana в K8s
-- CI/CD: сборка образа -> push в реестр -> деплой в K8s
-- Работа с EKS/GKE (управляемый K8s в облаке)
-- **Результат:** Можешь управлять production K8s-кластером и дебажить проблемы
+### Уверенный (6-10 недель)
 
-### Эксперт (6-12 месяцев)
+- [ ] Писать production-ready Dockerfile (non-root, health checks, multi-stage)
+- [ ] Настроить Helm-чарт для своего приложения
+- [ ] Конфигурировать HPA (Horizontal Pod Autoscaler)
+- [ ] Настроить Ingress с TLS
+- [ ] Понимать и использовать RBAC
+- [ ] Работать с ConfigMaps и Secrets (внешние secret stores)
+- [ ] Настроить Network Policies
+- [ ] Дебажить проблемы: CrashLoopBackOff, ImagePullBackOff, Pending pods
+- [ ] Работать с PersistentVolumes
+- [ ] Понять node affinity, taints и tolerations
 
-- Кастомные контроллеры и операторы
-- Service Mesh (Istio / Linkerd)
-- Multi-cluster стратегии
-- GitOps с ArgoCD/Flux
-- Оптимизация ресурсов (requests/limits, VPA, Goldilocks)
-- Security: PodSecurityStandards, OPA/Kyverno, Falco
-- Миграция приложений из VM в K8s
-- **Результат:** Можешь архитектурить платформу на K8s и менторить команду
+**Тест:** Можете задеплоить микросервисное приложение (3+ сервиса) в K8s с Helm, ingress, HPA и мониторингом? Если да -- вы уверенный.
+
+### Эксперт (3-6 месяцев)
+
+- [ ] Настроить production K8s-кластер (EKS/GKE/AKS)
+- [ ] Внедрить GitOps с ArgoCD или Flux
+- [ ] Настроить Service Mesh (Istio или Linkerd)
+- [ ] Писать кастомные контроллеры или операторы
+- [ ] Оптимизировать ресурсы: requests/limits, VPA, Goldilocks
+- [ ] Настроить multi-cluster стратегию
+- [ ] Внедрить progressive delivery (Canary, Blue-Green) с Argo Rollouts
+- [ ] Понимать K8s internals: API server, etcd, scheduler, kubelet
+
+**Тест:** Можете спроектировать и поддерживать K8s-платформу для команды из 20+ разработчиков? Если да -- вы эксперт.
 
 ---
 
@@ -166,82 +207,109 @@ CMD ["node", "dist/server.js"]
 ### 1. Генерация K8s-манифестов
 
 ```
-Промпт для ИИ:
-"Сгенерируй Kubernetes-манифесты для Python Flask-приложения:
-- Deployment с 3 репликами
-- Service типа ClusterIP
-- Ingress с TLS для домена api.example.com
-- ConfigMap для переменных окружения
-- HPA от 3 до 10 реплик при CPU > 60%
-- Resource requests и limits
-Используй best practices: readiness/liveness probes, security context."
+Промпт:
+"Создай Kubernetes Deployment для Node.js-приложения:
+- 3 реплики
+- Образ: myapp:1.2.3
+- Resource limits: 256Mi RAM, 250m CPU
+- Resource requests: 128Mi RAM, 100m CPU
+- Liveness и readiness probes на /health
+- Environment variables из ConfigMap 'app-config'
+- Secret 'db-credentials' для DATABASE_URL
+Добавь соответствующий Service (ClusterIP) и HPA (min 3, max 10, target CPU 70%)."
 ```
 
 ### 2. Дебаг подов
 
 ```
-Промпт для ИИ:
-"Мой под в статусе CrashLoopBackOff. Вот логи:
-[вставь вывод kubectl logs]
-Вот describe:
-[вставь вывод kubectl describe pod]
-Что не так и как починить?"
+Промпт:
+"Мой pod в статусе CrashLoopBackOff. Вот вывод kubectl describe pod:
+[вставить вывод]
+Вот логи из kubectl logs:
+[вставить логи]
+Что не так и как исправить?"
 ```
 
 ### 3. Оптимизация Dockerfile
 
 ```
-Промпт для ИИ:
-"Вот мой Dockerfile:
-[вставь Dockerfile]
-Оптимизируй его:
-- Уменьши размер образа
-- Используй multi-stage build
-- Убери запуск от root
-- Добавь .dockerignore
-- Объясни каждое изменение."
+Промпт:
+"Проанализируй этот Dockerfile и предложи оптимизации
+для уменьшения размера образа, улучшения безопасности
+и ускорения билдов:
+[вставить Dockerfile]"
 ```
 
-### 4. Написание Helm-чарта
+### 4. Helm-чарты
 
 ```
-Промпт для ИИ:
-"Создай Helm-чарт для микросервиса со следующими параметрами:
-- Конфигурируемое количество реплик
-- Ingress с опциональным TLS
-- Поддержка разных окружений через values (dev, staging, prod)
-- Включи _helpers.tpl с общими шаблонами"
+Промпт:
+"Создай Helm-чарт для микросервиса со следующими values:
+- replicaCount
+- image.repository, image.tag
+- service.type, service.port
+- ingress.enabled, ingress.host
+- resources.requests, resources.limits
+- autoscaling.enabled, autoscaling.minReplicas, autoscaling.maxReplicas
+Включи helpers для формирования имён ресурсов."
 ```
 
-**Правило:** Всегда проверяй сгенерированные манифесты через `kubectl apply --dry-run=client` и `kubeval`/`kubeconform` перед деплоем.
+### 5. Ежедневный workflow
+
+| Задача | Без ИИ | С ИИ |
+|--------|--------|------|
+| Написать K8s-манифесты для нового сервиса | 1-2 часа | 10-15 минут + ревью |
+| Дебаг CrashLoopBackOff | 30-60 минут | 5-10 минут |
+| Создать Helm-чарт | 2-4 часа | 30-45 минут + адаптация |
+| Написать Network Policy | 30-60 минут | 5-10 минут + тестирование |
+| Настроить Ingress с TLS | 30-60 минут | 10 минут + проверка |
 
 ---
 
 ## Типичные ошибки и ловушки
 
-### 1. Игнорирование сети K8s
+### Ловушка 1: Непонимание сети
 
-**Проблема:** Поды не могут общаться друг с другом. Ingress не работает. Ты не понимаешь, как трафик маршрутизируется в кластере.
+**Что это:** «Мой сервис не видит другой сервис» -- и часы дебага.
 
-**Последствие:** Часы дебага того, что решается за 5 минут при понимании сети.
+**Почему вредит:** 70% проблем в K8s -- это сетевые проблемы. Если вы не понимаете Service, DNS, Network Policies -- вы будете тратить часы на простые вещи.
 
-**Исправление:** Посвяти целый день изучению K8s Networking. Нарисуй схему: `User -> LB -> Ingress Controller -> Service -> Pod`. Пойми каждый шаг.
+**Исправление:** Изучите сетевую модель K8s отдельно:
+- Pod-to-Pod: каждый pod имеет свой IP
+- Service: стабильный IP + DNS-имя
+- DNS: `<service>.<namespace>.svc.cluster.local`
+- Network Policies: default deny -> explicit allow
 
-### 2. Пропуск namespaces и RBAC
+### Ловушка 2: Пропуск namespaces и RBAC
 
-**Проблема:** Всё деплоишь в `default` namespace. Не настраиваешь RBAC.
+**Что это:** Всё в namespace `default`, один kubeconfig с cluster-admin для всех.
 
-**Последствие:** В реальной работе у тебя будут ограниченные права в конкретном namespace. И ты не будешь знать, как с этим работать.
+**Почему вредит:** Ноль изоляции. Один ошибочный `kubectl delete` -- и всё снесено. На production это катастрофа.
 
-**Исправление:** Создай минимум 3 namespace (dev, staging, prod). Настрой RBAC: разработчик может читать логи, но не удалять поды в prod.
+**Исправление:**
+- Namespace per environment: `dev`, `staging`, `production`
+- RBAC per team: разработчики видят только свой namespace
+- Никогда не использовать cluster-admin для ежедневной работы
 
-### 3. Отсутствие resource requests/limits
+### Ловушка 3: Запуск от root в контейнере
 
-**Проблема:** Поды без `resources.requests` и `resources.limits`.
+**Что это:** Dockerfile без `USER` инструкции. Контейнер работает от root.
 
-**Последствие:** Один под съедает всю память ноды -> OOMKilled -> другие поды падают.
+**Почему вредит:** Если злоумышленник получит доступ к контейнеру -- у него root-права. Container escape = root на хосте.
 
-**Исправление:** Всегда указывай requests и limits. Начни с:
+**Исправление:**
+```dockerfile
+RUN addgroup -g 1001 -S appgroup && adduser -S appuser -u 1001
+USER appuser
+```
+
+### Ловушка 4: Игнорирование resource requests/limits
+
+**Что это:** Pods без указанных requests и limits.
+
+**Почему вредит:** Один «жадный» pod съедает всю память ноды -> OOMKilled -> каскадное падение других подов.
+
+**Исправление:**
 ```yaml
 resources:
   requests:
@@ -252,128 +320,168 @@ resources:
     memory: 256Mi
 ```
 
-### 4. «Один огромный Docker-образ»
+### Ловушка 5: `latest` тег в production
 
-**Проблема:** Образ весит 2 ГБ, потому что основан на `ubuntu:latest` и содержит build-зависимости.
+**Что это:** `image: myapp:latest` в Deployment.
 
-**Последствие:** Медленные деплои, дорогой storage, большая поверхность атаки.
+**Почему вредит:** Вы не знаете, какая версия работает. Rollback невозможен. Два деплоя с разным кодом имеют одинаковый тег.
 
-**Исправление:** Multi-stage build + alpine-базовые образы. Образ Node.js-приложения должен быть 50-150 МБ, а не 2 ГБ.
+**Исправление:** Семантическое версионирование или SHA: `myapp:1.2.3` или `myapp:abc1234`.
 
-### 5. Нет health checks
+### Ловушка 6: Kubectl apply с локальной машины в production
 
-**Проблема:** Нет `readinessProbe` и `livenessProbe`.
+**Что это:** Изменения в production через `kubectl apply -f` с ноутбука.
 
-**Последствие:** K8s не знает, когда приложение готово принимать трафик. Отправляет запросы на ещё не стартовавший под.
+**Почему вредит:** Нет аудита, нет ревью, нет rollback. «Кто изменил production?» -- никто не знает.
 
-**Исправление:**
-```yaml
-readinessProbe:
-  httpGet:
-    path: /health
-    port: 8080
-  initialDelaySeconds: 5
-  periodSeconds: 10
-livenessProbe:
-  httpGet:
-    path: /health
-    port: 8080
-  initialDelaySeconds: 15
-  periodSeconds: 20
-```
+**Исправление:** GitOps: все изменения через Git -> ArgoCD/Flux -> K8s. Никаких ручных `kubectl apply`.
 
 ---
 
-## Мини-практика (упражнения для портфолио)
+## Мини-практика (5 упражнений)
 
-### Упражнение 1: Контейнеризация многосервисного приложения
+### Упражнение 1: Контейнеризация многосервисного приложения (новичок)
 
-**Уровень:** Новичок
-**Время:** 3-4 часа
+**Цель:** Освоить Docker и Docker Compose.
 
-1. Возьми приложение из 3 сервисов: фронтенд (React/Vue), бэкенд (Node.js/Python), база данных (PostgreSQL)
-2. Напиши Dockerfile для каждого сервиса (multi-stage)
-3. Создай `docker-compose.yml` для локальной разработки
-4. Добавь `.dockerignore` для каждого сервиса
-5. Проверь, что образы весят < 200 МБ каждый
-6. Задокументируй в README: как собрать, как запустить, как остановить
+```
+Шаги:
+1. Создать простое приложение: API (Node.js/Python) + PostgreSQL + Redis
+2. Написать Dockerfile для API (multi-stage build)
+3. Создать docker-compose.yaml для локальной разработки
+4. Настроить health checks для всех сервисов
+5. Оптимизировать размер образа (< 100MB для API)
+6. Добавить .dockerignore
 
-**Что покажет работодателю:** Практическое владение Docker для реальных приложений.
+Критерий успеха: docker compose up — и всё работает с первого раза
+```
 
-### Упражнение 2: Деплой в Kubernetes с Helm
+### Упражнение 2: Деплой в Kubernetes с Helm (уверенный)
 
-**Уровень:** Средний
-**Время:** 4-6 часов
+**Цель:** Освоить основные K8s-объекты и Helm.
 
-1. Установи minikube или kind
-2. Задеплои приложение из упражнения 1 в K8s
-3. Создай Helm-чарт для бэкенда
-4. Настрой Ingress (nginx-ingress controller)
-5. Настрой ConfigMap для переменных окружения
-6. Настрой Secret для подключения к БД
-7. Добавь HPA
-8. Проверь, что всё работает: `curl http://localhost/api/health`
+```
+Шаги:
+1. Установить Minikube или kind
+2. Создать Helm-чарт для вашего приложения
+3. Deployment с 3 репликами, probes, resource limits
+4. Service (ClusterIP) + Ingress с TLS (cert-manager)
+5. ConfigMap для конфигурации, Secret для credentials
+6. HPA: масштабирование от 3 до 10 подов при CPU > 70%
+7. Задеплоить PostgreSQL через Helm-чарт (bitnami/postgresql)
+8. Проверить: kubectl get all -n <namespace>
 
-**Что покажет работодателю:** Полный цикл деплоя в K8s.
+Критерий успеха: приложение доступно через Ingress, масштабируется автоматически
+```
 
-### Упражнение 3: CI/CD с деплоем в K8s
+### Упражнение 3: Настройка Ingress и сетевых политик (уверенный)
 
-**Уровень:** Средний-Продвинутый
-**Время:** 4-5 часов
+**Цель:** Глубоко понять сеть в K8s.
 
-1. Создай GitHub Actions pipeline:
-   - Сборка Docker-образа
-   - Push в Container Registry (GHCR или ECR)
-   - Деплой в K8s через `helm upgrade --install`
-2. Настрой два окружения: `staging` и `production`
-3. Staging деплоится автоматически при push в `main`
-4. Production — только по ручному approve
-5. Добавь smoke-тесты после деплоя
+```
+Шаги:
+1. Установить NGINX Ingress Controller
+2. Настроить Ingress для 3 сервисов (path-based routing)
+3. Добавить TLS через cert-manager (Let's Encrypt или self-signed)
+4. Создать Network Policies:
+   - Default deny all ingress в namespace
+   - Разрешить API -> Database
+   - Разрешить Ingress -> API
+   - Запретить Database -> что-либо внешнее
+5. Протестировать: kubectl exec -it <pod> -- curl <service>
 
-**Что покажет работодателю:** Понимание полного CI/CD цикла с контейнерами.
+Критерий успеха: только разрешённый трафик проходит
+```
 
-### Упражнение 4: Дебаг-сценарии K8s
+### Упражнение 4: CI/CD для Kubernetes (уверенный -> эксперт)
 
-**Уровень:** Средний
-**Время:** 2-3 часа
+**Цель:** Полный пайплайн от коммита до деплоя.
 
-Намеренно сломай кластер и почини:
-1. Pod в `CrashLoopBackOff` — неправильная команда запуска
-2. Pod в `Pending` — не хватает ресурсов
-3. Service не маршрутизирует трафик — неправильные labels
-4. Ingress отдаёт 404 — неверный path
-5. PVC в `Pending` — нет доступного PV
+```
+Шаги:
+1. GitHub Actions (или GitLab CI) пайплайн:
+   - Lint Dockerfile (hadolint)
+   - Build и push образа (с тегом = SHA коммита)
+   - Сканирование образа (Trivy)
+   - Обновить Helm values (image tag)
+   - Deploy в staging через ArgoCD
+2. ArgoCD:
+   - Установить ArgoCD в K8s
+   - Создать Application для staging и production
+   - Настроить auto-sync для staging
+   - Manual sync для production
+3. Протестировать полный цикл: код -> PR -> merge -> auto-deploy
 
-Для каждого: запиши шаги диагностики (`kubectl describe`, `kubectl logs`, `kubectl get events`).
+Критерий успеха: push в main = автоматический деплой в staging за 5 минут
+```
 
-**Что покажет работодателю:** Способность дебажить реальные проблемы.
+### Упражнение 5: Troubleshooting challenge (уверенный)
+
+**Цель:** Научиться дебажить K8s как профи.
+
+```
+Сценарии для дебага (создайте их сами и исправьте):
+1. Pod в CrashLoopBackOff (неправильная команда CMD)
+2. Pod в Pending (недостаточно ресурсов)
+3. Pod в ImagePullBackOff (неправильный тег)
+4. Service не маршрутизирует трафик (неправильные labels)
+5. Ingress возвращает 404 (неправильный path)
+6. Pod не может соединиться с другим сервисом (Network Policy)
+
+Для каждого:
+1. Диагностировать проблему (kubectl describe, logs, events)
+2. Найти причину
+3. Исправить
+4. Задокументировать: симптом -> диагностика -> причина -> решение
+
+Критерий успеха: для каждого сценария написан runbook
+```
 
 ---
 
 ## «Сигналы» готовности к работе (чек-лист)
 
-Ты готов работать с контейнерами и K8s в production, если:
+### Обязательное:
 
-- [ ] Можешь написать multi-stage Dockerfile для любого языка за 15 минут
-- [ ] Понимаешь разницу между `CMD` и `ENTRYPOINT`, `COPY` и `ADD`
-- [ ] Можешь объяснить, как работает overlay network в Docker
-- [ ] Знаешь основные объекты K8s: Pod, Deployment, Service, Ingress, ConfigMap, Secret
-- [ ] Можешь задеплоить приложение в K8s и настроить Ingress с TLS
-- [ ] Понимаешь, как работает DNS в K8s (service-name.namespace.svc.cluster.local)
-- [ ] Настраивал RBAC и namespaces
-- [ ] Использовал Helm для деплоя (и создавал собственный чарт)
-- [ ] Можешь продебажить под в `CrashLoopBackOff` за 5 минут
-- [ ] Указываешь resource requests/limits, probes и security context в манифестах
-- [ ] У тебя есть проект на GitHub с K8s-манифестами или Helm-чартом
+- [ ] Написать production-ready Dockerfile (multi-stage, non-root, health check)
+- [ ] Оптимизировать размер образа до разумного минимума
+- [ ] Объяснить разницу между CMD и ENTRYPOINT
+- [ ] Создать Deployment с probes, resource limits и rolling update strategy
+- [ ] Объяснить разницу между ClusterIP, NodePort и LoadBalancer
+- [ ] Настроить Ingress с path-based routing
+- [ ] Работать с ConfigMaps и Secrets
+- [ ] Использовать kubectl для диагностики: describe, logs, exec, port-forward
+- [ ] Дебажить основные проблемы: CrashLoopBackOff, Pending, ImagePullBackOff
+- [ ] Установить приложение через Helm
+
+### Желательное:
+
+- [ ] Создать собственный Helm-чарт
+- [ ] Настроить HPA и понять VPA
+- [ ] Настроить Network Policies
+- [ ] Использовать RBAC для изоляции
+- [ ] Работать с PersistentVolumes
+- [ ] Знать, как работает ArgoCD или Flux (GitOps)
+- [ ] Сканировать образы на уязвимости (Trivy)
+
+### На собеседовании сможете:
+
+- [ ] Объяснить разницу между Docker и containerd
+- [ ] Описать жизненный цикл пода
+- [ ] Объяснить, как работает Service discovery в K8s
+- [ ] Нарисовать архитектуру K8s-кластера (control plane vs worker nodes)
+- [ ] Описать стратегию деплоя (rolling update vs blue-green vs canary)
+- [ ] Объяснить, почему нужны resource requests и limits
 
 ---
 
 ## Ссылки внутри репозитория
 
-- **Предыдущий фактор:** [Фактор 1 — Облачное внедрение](../01-cloud-adoption/) (K8s работает в облаке)
-- **Следующий фактор:** [Фактор 3 — DevSecOps](../03-devsecops/) (безопасность контейнеров)
-- **Связанный фактор:** [Фактор 4 — IaC](../04-infrastructure-as-code/) (Terraform для K8s, GitOps)
-- **Связанный фактор:** [Фактор 5 — ИИ и MLOps](../05-ai-and-mlops/) (serving моделей на K8s)
-- **Дорожная карта:** [90-roadmap](../90-roadmap/)
-- **Ошибки:** [91-mistakes](../91-mistakes/)
-- **Главная страница курса:** [README](../)
+- Предыдущий фактор: [Облачное внедрение](../01-cloud-adoption/)
+- Следующий фактор: [DevSecOps](../03-devsecops/)
+- IaC для K8s: [Инфраструктура как код](../04-infrastructure-as-code/)
+- Безопасность контейнеров: [DevSecOps](../03-devsecops/)
+- ИИ для K8s: [ИИ и MLOps](../05-ai-and-mlops/)
+- Общая дорожная карта: [Roadmap](../90-roadmap/)
+- Ошибки, которых стоит избегать: [Типичные ошибки](../91-mistakes/)
+- Вернуться на [главную страницу](../)

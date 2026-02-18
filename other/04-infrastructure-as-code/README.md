@@ -1,213 +1,266 @@
 # Фактор 4: Инфраструктура как код (IaC)
 
-VOICEOVER: Ручная настройка серверов — это как строить дом без чертежей. Можно, но результат непредсказуем, невоспроизводим и не масштабируем. В 2026 году Infrastructure as Code — это не «хорошая практика», это обязательное требование. Terraform стал языком, на котором описывается вся инфраструктура.
-
-ON SCREEN: Сравнение — ручная настройка vs. IaC: скорость, надёжность, воспроизводимость
+![Infrastructure as Code](../../en/04-infrastructure-as-code/04-iac.png)
 
 ---
 
 ## Почему это важно в 2026
 
-1. **Ручная настройка = технический долг.** Каждый вручную настроенный сервер — это «снежинка», которую невозможно воспроизвести. Когда этот сервер падает, команда тратит часы (или дни) на восстановление.
+Если ваша инфраструктура не описана в коде -- её не существует. В 2026 году ручная настройка серверов -- это технический долг, который стоит компаниям миллионы.
 
-2. **GitOps — зрелая парадигма.** Инфраструктура описана в Git, изменения применяются через PR, ArgoCD/Flux автоматически синхронизируют кластер с репозиторием. Это стандарт для зрелых команд.
+78% организаций используют IaC. Terraform -- 1 место среди IaC-инструментов.
 
-3. **Terraform доминирует.** По данным вакансий, Terraform упоминается в 70%+ DevOps-позиций. Это язык, который нужно знать.
+Инфраструктура как код -- это подход, где вся инфраструктура описывается в конфигурационных файлах, хранится в Git и разворачивается автоматически. Это означает:
 
-4. **Compliance и аудит.** IaC даёт полную историю изменений инфраструктуры через Git. Кто, когда и что изменил — видно в логе коммитов.
+- **Воспроизводимость** -- любой инженер может поднять идентичное окружение за минуты
+- **Версионирование** -- git log показывает, кто, когда и что изменил в инфраструктуре
+- **Ревью** -- изменения в инфраструктуре проходят PR-ревью, как и код
+- **Автоматизация** -- CI/CD для инфраструктуры, а не ручной `terraform apply`
+- **Тестирование** -- инфраструктуру можно тестировать до деплоя
 
-5. **Мультиоблачность через единый инструмент.** Terraform работает с AWS, GCP, Azure, Kubernetes, GitHub, Datadog и сотнями других провайдеров. Один язык — все платформы.
+В 2026 году IaC -- это **обязательный навык** для DevOps-инженера. Не «желательный» -- обязательный. Без него вы не пройдёте ни одно серьёзное собеседование.
 
 ---
 
 ## Какую проблему это решает в реальных командах
 
-**Проблема: «Кто менял продакшн?»**
+«Кто создал этот security group? Когда? Зачем?» -- если ответа нет в Git, его нет нигде.
 
-В пятницу вечером кто-то изменил security group, и приложение перестало работать. Никто не помнит, что именно изменили.
+| Проблема | Без IaC | С IaC |
+|----------|---------|-------|
+| «Snowflake servers» | Каждый сервер уникален, никто не знает конфигурацию | Идентичные окружения из одного шаблона |
+| Configuration drift | Staging отличается от production | Один код = одинаковая инфраструктура |
+| Disaster recovery | «Восстановить с нуля? Это займёт недели» | `terraform apply` -- и всё поднято |
+| Аудит изменений | «Кто открыл порт 22 для 0.0.0.0/0?» | `git blame` покажет автора и причину |
+| Масштабирование | Копировать ручные шаги для нового региона | Изменить переменную `region` и apply |
+| Onboarding | Новый инженер неделями разбирается | Код = документация инфраструктуры |
 
-**Решение IaC:** Все изменения проходят через Pull Request. `terraform plan` показывает, что именно изменится. `terraform apply` применяет изменения. Git-лог — полная история.
-
-**Проблема: «Разверните такое же окружение для нового клиента»**
-
-Настройка production-окружения вручную заняла 2 недели. Теперь нужно создать аналогичное для другого клиента.
-
-**Решение IaC:** `terraform apply -var="environment=client-b"` — идентичное окружение за 15 минут.
-
-**Проблема: «Drift — инфраструктура отличается от описания»**
-
-Кто-то вручную изменил настройки через консоль. Теперь реальная инфраструктура не соответствует коду.
-
-**Решение IaC:** `terraform plan` обнаружит drift. `terraform apply` вернёт инфраструктуру в описанное состояние.
+**Реальный пример:** Компания с 200+ серверов, всё настроено вручную. Один инженер уволился -- вместе с ним ушло знание о половине инфраструктуры. Восстановление после аварии заняло 3 дня. После внедрения Terraform -- полный DR за 45 минут.
 
 ---
 
 ## Что нужно изучить (ключевые навыки)
 
-### Terraform (основной инструмент)
+### 1. Terraform -- основной инструмент
+
+Terraform от HashiCorp -- де-факто стандарт IaC. OpenTofu -- open-source fork. Концепции идентичны.
 
 ```
-Приоритет изучения:
-├── Уровень 1: Базовый синтаксис HCL
+Terraform-навыки (в порядке приоритета):
+├── Основы HCL
 │   ├── Resources, Data Sources
 │   ├── Variables, Outputs
-│   ├── Providers
-│   └── terraform init / plan / apply / destroy
-│
-├── Уровень 2: Управление состоянием
-│   ├── Remote State (S3 + DynamoDB locking)
-│   ├── State manipulation (import, mv, rm)
-│   ├── Workspaces
-│   └── State isolation (per-environment)
-│
-├── Уровень 3: Модули и структура
-│   ├── Написание переиспользуемых модулей
-│   ├── Модульная структура проекта
-│   ├── Terraform Registry (использование готовых модулей)
-│   └── Версионирование модулей
-│
-├── Уровень 4: Продвинутые концепции
-│   ├── for_each, count, dynamic blocks
-│   ├── Locals и expressions
-│   ├── Provisioners (и почему их избегать)
-│   └── Lifecycle rules (prevent_destroy, ignore_changes)
-│
-└── Уровень 5: Тестирование и CI/CD
-    ├── terraform validate / fmt / plan в CI
-    ├── tflint — линтинг
-    ├── Checkov / tfsec — security-анализ
-    ├── Terratest — интеграционные тесты
-    └── Terraform в GitHub Actions / GitLab CI
+│   ├── Locals
+│   └── Providers
+├── Состояние (State)
+│   ├── Что такое state и зачем он
+│   ├── Remote state (S3 + DynamoDB, Terraform Cloud)
+│   ├── State locking
+│   ├── terraform import
+│   └── terraform state mv / rm
+├── Модули
+│   ├── Создание собственных модулей
+│   ├── Модули из Terraform Registry
+│   ├── Версионирование модулей
+│   └── Композиция модулей
+├── Планирование и деплой
+│   ├── terraform plan (ВСЕГДА перед apply)
+│   ├── terraform apply
+│   ├── terraform destroy
+│   └── Targeted apply (-target)
+├── Рабочие пространства (Workspaces)
+│   └── Или directories per environment (рекомендовано)
+└── Тестирование
+    ├── terraform validate
+    ├── terraform fmt
+    ├── tflint
+    ├── Checkov / tfsec
+    └── Terratest (интеграционные тесты)
 ```
 
-**Пример структуры проекта:**
-
-```
-infrastructure/
-├── modules/
-│   ├── vpc/
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   ├── eks/
-│   └── rds/
-├── environments/
-│   ├── dev/
-│   │   ├── main.tf          # Вызывает модули
-│   │   ├── variables.tf
-│   │   ├── terraform.tfvars  # Значения для dev
-│   │   └── backend.tf        # Remote state для dev
-│   ├── staging/
-│   └── prod/
-├── .github/
-│   └── workflows/
-│       └── terraform.yml     # CI/CD pipeline
-└── README.md
-```
-
-### Управление состоянием (State Management)
-
-Это самая важная и самая опасная часть Terraform.
+**Минимальный пример Terraform:**
 
 ```hcl
-# backend.tf — Remote State
+# providers.tf
 terraform {
+  required_version = ">= 1.5"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+
   backend "s3" {
-    bucket         = "company-terraform-state"
-    key            = "environments/prod/terraform.tfstate"
-    region         = "eu-west-1"
-    dynamodb_table = "terraform-locks"
+    bucket         = "my-terraform-state"
+    key            = "production/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-lock"
     encrypt        = true
   }
 }
+
+provider "aws" {
+  region = var.region
+}
+
+# variables.tf
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "environment" {
+  description = "Environment name"
+  type        = string
+}
+
+# main.tf
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.0.0"
+
+  name = "${var.environment}-vpc"
+  cidr = "10.0.0.0/16"
+
+  azs             = ["${var.region}a", "${var.region}b"]
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+
+  enable_nat_gateway = true
+  single_nat_gateway = var.environment != "production"
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "terraform"
+  }
+}
+
+# outputs.tf
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
 ```
 
-**Правила:**
-- Никогда не храни state локально (кроме экспериментов)
-- Всегда используй state locking (DynamoDB для AWS)
-- Отдельный state для каждого окружения
-- Шифруй state (содержит секреты!)
-- Бэкапь state (S3 versioning)
-
-### GitOps с ArgoCD/Flux
+### 2. Управление состоянием (State Management)
 
 ```
-GitOps = Git как единый источник правды для инфраструктуры
-
-Рабочий процесс:
-1. Разработчик создаёт PR с изменением K8s-манифестов
-2. Ревью + approve
-3. Merge в main
-4. ArgoCD обнаруживает изменения в Git
-5. ArgoCD автоматически применяет изменения к кластеру
-6. ArgoCD показывает статус синхронизации
+Критические правила работы со стейтом:
+├── НИКОГДА не хранить state локально в production
+├── ВСЕГДА использовать remote backend с locking
+├── НИКОГДА не редактировать state вручную (без крайней необходимости)
+├── ВСЕГДА шифровать state (содержит секреты!)
+├── Разделять state по окружениям и компонентам
+└── Backup state (версионирование S3-бакета)
 ```
 
-**ArgoCD — приоритетный инструмент для GitOps:**
-- Веб-интерфейс для визуализации состояния
-- Автоматическая и ручная синхронизация
-- Rollback через Git revert
-- Мульти-кластерная поддержка
-- Поддержка Helm, Kustomize, plain YAML
+### 3. GitOps с ArgoCD или Flux
 
-### Другие IaC-инструменты (для осведомлённости)
+```
+GitOps-принципы:
+├── Git как единый источник правды
+├── Декларативное описание желаемого состояния
+├── Автоматическая синхронизация (reconciliation)
+└── Pull-модель (кластер тянет изменения из Git)
 
-| Инструмент | Когда использовать | Приоритет изучения |
-|------------|-------------------|-------------------|
-| **Terraform** | Облачная инфраструктура, мультиоблачность | Высокий — основной |
-| **OpenTofu** | Open-source форк Terraform | Средний — следить за развитием |
-| **Ansible** | Конфигурация серверов (внутри VM) | Средний — полезно для legacy |
-| **CloudFormation** | AWS-only проекты | Низкий — если работаешь только с AWS |
-| **Pulumi** | IaC на языках программирования (Python, Go, TS) | Низкий — нишевый |
-| **Crossplane** | IaC через K8s API | Низкий — продвинутый |
+ArgoCD-навыки:
+├── Установка и конфигурация
+├── Application и ApplicationSet
+├── Sync policies (auto/manual)
+├── Rollback
+├── Multi-cluster management
+└── Secrets management (Sealed Secrets, External Secrets)
+```
+
+### 4. Тестирование IaC
+
+```
+Уровни тестирования:
+├── Статический анализ
+│   ├── terraform validate — синтаксис
+│   ├── terraform fmt — форматирование
+│   ├── tflint — линтинг
+│   └── Checkov / tfsec — security
+├── Unit-тесты
+│   ├── Terratest (Go)
+│   └── pytest + terraform (Python)
+├── Integration-тесты
+│   ├── Развёртывание в тестовом окружении
+│   ├── Проверка результатов
+│   └── Уничтожение
+└── Policy-as-Code
+    ├── OPA / Rego
+    ├── Sentinel (Terraform Enterprise)
+    └── Checkov custom policies
+```
 
 ---
 
 ## Что можно пропустить / «худший ROI» для начала
 
-| Ловушка | Почему плохой ROI | Что делать вместо |
-|---------|-------------------|-------------------|
-| Pulumi / CDK с первого дня | Нишевые, мало вакансий | Terraform — стандарт, начни с него |
-| Crossplane | Сложная абстракция поверх K8s | Освой Terraform + ArgoCD сначала |
-| Ansible для облака | Terraform лучше для облачной инфраструктуры | Ansible — для конфигурации внутри VM |
-| Terraform Cloud/Enterprise первым | Дорого, не нужно для обучения | Используй open-source Terraform + S3 backend |
-| Написание собственных Terraform-провайдеров | Нужно крайне редко | Используй готовые провайдеры из Registry |
-| Terragrunt с первого дня | Абстракция поверх Terraform, усложняет обучение | Чистый Terraform, потом Terragrunt |
+### НЕ учите первым:
+
+1. **Pulumi** -- IaC на языках программирования (Python, TypeScript, Go). Хороший инструмент, но нишевый. Terraform имеет намного большую экосистему и больше вакансий. Изучайте Pulumi, только если ваша компания его использует.
+
+2. **AWS CDK** -- Похожая ситуация. CDK привязывает к AWS. Terraform -- мульти-облачный. Начните с Terraform.
+
+3. **Crossplane с первого дня** -- Kubernetes-native IaC. Мощная концепция, но требует глубокого знания K8s. Сначала Terraform, потом Crossplane.
+
+4. **Ansible для cloud provisioning** -- Ansible -- для конфигурации серверов (configuration management). Для создания облачных ресурсов -- Terraform. Разные инструменты для разных задач.
+
+5. **Terraform Enterprise / Terraform Cloud с первого дня** -- Начните с CLI + remote state на S3. Enterprise -- для больших команд.
+
+### Худший ROI:
+
+| Действие | Почему плохой ROI | Что делать вместо |
+|----------|-------------------|-------------------|
+| Учить 3 IaC-инструмента одновременно | Ни один не изучите глубоко | Terraform первым, глубоко |
+| Писать всё с нуля, игнорируя модули | Изобретать велосипед | terraform-aws-modules + собственные обёртки |
+| Один гигантский state file | Медленный plan, риск конфликтов | Разделить по компонентам |
+| Terraform workspaces для environments | Сложно масштабируется | Directory per environment |
 
 ---
 
 ## Насколько глубоко погружаться
 
-### Новичок (0-3 месяца)
+### Новичок (2-4 недели)
 
-- Установить Terraform, создать первый ресурс (S3 bucket)
-- Понять цикл `init -> plan -> apply -> destroy`
-- Использовать переменные и outputs
-- Создать VPC + EC2 через Terraform
-- Настроить Remote State (S3 + DynamoDB)
-- Использовать один готовый модуль из Terraform Registry
-- **Результат:** Можешь описать простую инфраструктуру в Terraform и управлять ею
+- [ ] Установить Terraform, понять init/plan/apply/destroy цикл
+- [ ] Создать ресурсы в AWS: VPC, EC2, S3, Security Group
+- [ ] Использовать переменные, выводы, локальные значения
+- [ ] Настроить remote state (S3 + DynamoDB)
+- [ ] Понять разницу между `resource` и `data`
+- [ ] Использовать `terraform import` для существующих ресурсов
+- [ ] Понять lifecycle: `create_before_destroy`, `prevent_destroy`
 
-### Уверенный (3-6 месяцев)
+**Тест:** Можете развернуть VPC + EC2 + RDS через Terraform и уничтожить всё одной командой? Если да -- идите дальше.
 
-- Написать собственный переиспользуемый модуль (VPC, EKS, RDS)
-- Структурировать проект по окружениям (dev/staging/prod)
-- Настроить Terraform в CI/CD (plan на PR, apply на merge)
-- Использовать `for_each`, `count`, `dynamic` блоки
-- Настроить ArgoCD для GitOps-деплоя K8s-манифестов
-- Добавить tflint + Checkov в pipeline
-- State management: import существующих ресурсов, moved blocks
-- **Результат:** Можешь управлять production-инфраструктурой через IaC
+### Уверенный (6-10 недель)
 
-### Эксперт (6-12 месяцев)
+- [ ] Создавать и использовать собственные модули
+- [ ] Разделять инфраструктуру на компоненты (networking, compute, database)
+- [ ] Использовать `for_each`, `count`, `dynamic` blocks
+- [ ] Настроить CI/CD для Terraform (GitHub Actions: plan на PR, apply на merge)
+- [ ] Использовать tflint, Checkov для линтинга и security
+- [ ] Развернуть EKS-кластер через Terraform
+- [ ] Понять и использовать `terraform state mv`, `terraform state rm`
+- [ ] Внедрить тегирование ресурсов как стандарт
 
-- Полная Landing Zone через Terraform (мульти-аккаунт AWS)
-- Terratest: автоматизированные тесты для модулей
-- Terraform + Atlantis для автоматического plan/apply через PR
-- Drift Detection и автоматическое исправление
-- Миграция существующей ручной инфраструктуры в IaC
-- Composable infrastructure: Terraform для облака + ArgoCD для K8s + Vault для секретов
-- **Результат:** Можешь спроектировать IaC-стратегию для организации
+**Тест:** Можете построить полную инфраструктуру (VPC + EKS + RDS + monitoring) с модулями, remote state и CI/CD? Если да -- вы уверенный.
+
+### Эксперт (3-6 месяцев)
+
+- [ ] Проектировать Terraform-архитектуру для организации (модули, remote state, workspaces)
+- [ ] Писать интеграционные тесты с Terratest
+- [ ] Внедрить GitOps с ArgoCD для K8s-ресурсов
+- [ ] Policy-as-Code с OPA или Sentinel
+- [ ] Multi-account / multi-region стратегия
+- [ ] Миграция существующей инфраструктуры в Terraform (terraform import at scale)
+- [ ] Drift detection и remediation
+- [ ] Custom Terraform providers (Go)
+
+**Тест:** Можете спроектировать IaC-стратегию для организации с 10+ команд и 3+ окружений? Если да -- вы эксперт.
 
 ---
 
@@ -216,254 +269,304 @@ GitOps = Git как единый источник правды для инфра
 ### 1. Генерация Terraform-модулей
 
 ```
-Промпт для ИИ:
-"Создай Terraform-модуль для EKS-кластера в AWS:
-- VPC с 3 приватными и 3 публичными подсетями
-- EKS с managed node group (2-10 нод, t3.medium)
-- IRSA для CoreDNS и AWS Load Balancer Controller
-- Все параметры через variables с дефолтами
-- Outputs: cluster_endpoint, cluster_name, kubeconfig
-Структура: main.tf, variables.tf, outputs.tf, versions.tf"
+Промпт:
+"Создай Terraform-модуль для EKS-кластера с параметрами:
+- Версия K8s: 1.29
+- 2 node groups: general (t3.medium, 2-5 нод) и spot (t3.large, 0-10 нод)
+- OIDC provider для IRSA
+- Addons: CoreDNS, kube-proxy, vpc-cni, ebs-csi-driver
+- Encryption: envelope encryption для secrets
+- Logging: api, audit, authenticator
+- Variables для: cluster_name, vpc_id, subnet_ids, environment
+- Tags на всех ресурсах
+Используй best practices: remote state, least privilege IAM."
 ```
 
 ### 2. Ревью HCL-кода
 
 ```
-Промпт для ИИ:
-"Проведи code review этого Terraform-кода:
-[вставь код]
+Промпт:
+"Сделай code review этого Terraform-кода:
+[вставить код]
 Проверь:
-1. Безопасность (открытые security groups, отсутствие шифрования)
-2. Best practices (именование, теги, структура)
-3. Потенциальные проблемы со state
-4. Оптимизация стоимости
-Для каждой проблемы — уровень критичности и исправление."
+- Security: чрезмерные привилегии, открытые порты, незашифрованные ресурсы
+- Best practices: naming conventions, тегирование, модульность
+- Performance: размер state, зависимости
+- Reliability: multi-AZ, backup, lifecycle policies
+Предложи конкретные исправления."
 ```
 
-### 3. Конвертация ручной инфраструктуры в IaC
+### 3. Конвертация ручной инфраструктуры в код
 
 ```
-Промпт для ИИ:
-"У меня есть EC2-инстанс, настроенный вручную. Вот его описание из AWS CLI:
-[вставь вывод aws ec2 describe-instances]
-Сгенерируй Terraform-код, который воспроизведёт этот инстанс.
-Включи terraform import команду."
+Промпт:
+"Вот JSON-вывод из aws ec2 describe-instances и aws rds describe-db-instances:
+[вставить JSON]
+Создай Terraform-код, который описывает эту существующую инфраструктуру.
+Включи import blocks для Terraform 1.5+."
 ```
 
-### 4. Написание Terratest-тестов
+### 4. Troubleshooting
 
 ```
-Промпт для ИИ:
-"Напиши Terratest-тест на Go для моего Terraform-модуля VPC:
-- Проверь, что VPC создан
-- Проверь количество подсетей
-- Проверь, что NAT Gateway работает
-- После теста — автоматический destroy
-Модуль находится в ./modules/vpc"
+Промпт:
+"Terraform plan показывает:
+'Error: Error creating EKS Cluster: ResourceInUseException: Cluster already exists with name: my-cluster'
+Но этот кластер не в моём state.
+Что произошло и как решить? Вот мой конфиг:
+[вставить код]"
 ```
 
-**Правило:** ИИ отлично генерирует boilerplate Terraform, но проверяй:
-- Не открыты ли security groups на 0.0.0.0/0
-- Включено ли шифрование
-- Правильно ли указаны теги
-- Не захардкожены ли значения, которые должны быть переменными
+### 5. Ежедневный workflow
+
+| Задача | Без ИИ | С ИИ |
+|--------|--------|------|
+| Написать Terraform-модуль для нового сервиса | 2-4 часа | 20-30 минут + ревью |
+| Настроить CI/CD для Terraform | 1-2 часа | 15-20 минут |
+| Дебаг state-проблем | 1-3 часа | 15-30 минут |
+| Написать Checkov custom policy | 30-60 минут | 10 минут |
+| Мигрировать ресурсы между state files | 1-2 часа | 20-30 минут |
+
+**Важно:** ИИ генерирует ~80% правильного Terraform-кода. Ваша задача -- проверить последние 20%, потому что именно там критические ошибки: неправильные IAM-политики, отсутствие шифрования, публичные ресурсы.
 
 ---
 
 ## Типичные ошибки и ловушки
 
-### 1. Неправильное управление стейтом
+### Ловушка 1: Неправильное управление стейтом
 
-**Проблема:** State хранится локально. Два человека делают `terraform apply` одновременно. Ресурсы в конфликте.
+**Что это:** Локальный state, отсутствие locking, один state file для всей инфраструктуры.
 
-**Последствие:** Потеря ресурсов, дублирование, невозможность восстановить состояние.
+**Почему вредит:**
+- Локальный state: потеряли ноутбук = потеряли инфраструктуру
+- Без locking: два инженера делают `apply` одновременно = разрушенная инфраструктура
+- Один state file: `terraform plan` занимает 15 минут, одна ошибка ломает всё
 
 **Исправление:**
 ```hcl
-# С ПЕРВОГО дня — remote state с locking
-terraform {
-  backend "s3" {
-    bucket         = "my-terraform-state"
-    key            = "prod/terraform.tfstate"
-    region         = "eu-west-1"
-    dynamodb_table = "terraform-locks"
-    encrypt        = true
-  }
+# Remote state с locking — с ПЕРВОГО ДНЯ
+backend "s3" {
+  bucket         = "company-terraform-state"
+  key            = "production/networking/terraform.tfstate"
+  region         = "us-east-1"
+  dynamodb_table = "terraform-lock"
+  encrypt        = true
 }
 ```
 
-### 2. Монолитная конфигурация
-
-**Проблема:** Один файл `main.tf` на 3000 строк, описывающий всю инфраструктуру компании.
-
-**Последствие:** `terraform plan` занимает 10 минут. Одно изменение в VPC рискует сломать базу данных. Невозможно работать нескольким людям.
-
-**Исправление:** Разделяй по слоям:
+Разделяйте state:
 ```
-Layer 1: Networking (VPC, подсети, NAT)    — отдельный state
-Layer 2: Compute (EKS, EC2)               — отдельный state
-Layer 3: Data (RDS, ElastiCache)           — отдельный state
-Layer 4: Applications (Helm releases)      — ArgoCD / отдельный state
-```
-Используй `terraform_remote_state` или SSM Parameter Store для передачи данных между слоями.
-
-### 3. Отсутствие тестов и линтинга
-
-**Проблема:** Terraform-код не проходит ни через линтер, ни через security-анализ. Ошибки обнаруживаются в production.
-
-**Исправление:** Минимальный pipeline:
-```yaml
-# В CI на каждый PR:
-- terraform fmt -check    # Форматирование
-- terraform validate      # Синтаксис
-- tflint                  # Линтинг
-- checkov -d .            # Безопасность
-- terraform plan          # Предпросмотр изменений
+infrastructure/
+├── networking/      <- отдельный state
+├── eks-cluster/     <- отдельный state
+├── databases/       <- отдельный state
+├── monitoring/      <- отдельный state
+└── applications/    <- отдельный state
 ```
 
-### 4. Ручные изменения поверх Terraform
+### Ловушка 2: Монолитные конфигурации
 
-**Проблема:** Кто-то изменил security group через AWS Console. Terraform не знает об этом.
+**Что это:** Один `main.tf` на 2000 строк со всем: VPC, EKS, RDS, S3, IAM, CloudWatch.
 
-**Последствие:** При следующем `terraform apply` — конфликт или откат ручного изменения.
+**Почему вредит:** Невозможно ревьюить. Невозможно тестировать отдельно. Изменение в сети может сломать базу данных.
+
+**Исправление:** Модули + разделение по компонентам:
+```
+modules/
+├── networking/    <- VPC, subnets, NAT
+├── eks/           <- EKS cluster, node groups
+├── rds/           <- Database instances
+└── monitoring/    <- CloudWatch, alerts
+
+environments/
+├── production/
+│   ├── main.tf    <- использует модули
+│   └── terraform.tfvars
+└── staging/
+    ├── main.tf    <- те же модули, другие переменные
+    └── terraform.tfvars
+```
+
+### Ловушка 3: Отсутствие тестов
+
+**Что это:** `terraform apply` без проверок = молитва.
+
+**Почему вредит:** Terraform не проверяет бизнес-логику. Правильные ли CIDR? Достаточно ли прав IAM? Шифруется ли база данных?
 
 **Исправление:**
-- Политика: ВСЕ изменения только через Terraform
-- Периодический `terraform plan` для обнаружения drift
-- AWS Config Rule для детектирования ручных изменений
-- IAM-политики: ограничь write-доступ к консоли
-
-### 5. Захардкоженные значения
-
-**Проблема:**
-```hcl
-# ПЛОХО:
-resource "aws_instance" "web" {
-  ami           = "ami-0123456789abcdef0"
-  instance_type = "t3.medium"
-  subnet_id     = "subnet-abc123"
-}
+```bash
+# Минимальный набор проверок в CI:
+terraform fmt -check
+terraform validate
+tflint
+checkov -d .
+terraform plan -out=plan.tfplan
+# Ревью plan вручную или автоматически
 ```
 
-**Исправление:**
-```hcl
-# ХОРОШО:
-resource "aws_instance" "web" {
-  ami           = data.aws_ami.amazon_linux.id
-  instance_type = var.instance_type
-  subnet_id     = module.vpc.private_subnets[0]
+### Ловушка 4: Игнорирование terraform plan
 
-  tags = merge(var.common_tags, {
-    Name = "${var.project}-web-${var.environment}"
-  })
+**Что это:** `terraform apply -auto-approve` без просмотра plan.
+
+**Почему вредит:** Terraform может удалить ресурсы, которые вы не ожидали. `destroy and recreate` для базы данных = потеря данных.
+
+**Исправление:**
+- ВСЕГДА просматривать `terraform plan` перед apply
+- В CI/CD: plan на PR (как комментарий), apply на merge
+- Использовать `prevent_destroy` для критических ресурсов
+
+### Ловушка 5: Не использовать модули
+
+**Что это:** Copy-paste одинакового кода для каждого окружения.
+
+**Почему вредит:** Изменение в одном месте не пропагируется в другие. 5 окружений = 5 копий, которые постепенно расходятся.
+
+**Исправление:** Модули с версионированием:
+```hcl
+module "vpc" {
+  source  = "git::https://github.com/company/terraform-modules.git//vpc?ref=v1.2.0"
+  # ...
 }
 ```
 
 ---
 
-## Мини-практика (упражнения для портфолио)
+## Мини-практика (5 упражнений)
 
-### Упражнение 1: Полная VPC + EKS через Terraform
+### Упражнение 1: Полная VPC + EKS на Terraform (уверенный)
 
-**Уровень:** Средний
-**Время:** 6-8 часов
+**Цель:** Построить production-ready инфраструктуру.
 
-1. Создай Terraform-модуль для VPC:
-   - 3 публичные + 3 приватные подсети
-   - NAT Gateway, Internet Gateway
-   - Правильные теги для EKS
-2. Создай модуль для EKS:
-   - Managed Node Group (2-5 нод)
-   - IRSA для CoreDNS
-   - Security Groups
-3. Настрой Remote State (S3 + DynamoDB)
-4. Задеплои простое приложение в EKS
-5. Задокументируй всё в README
+```
+Шаги:
+1. Создать S3 + DynamoDB для remote state (можно через CloudFormation bootstrap)
+2. Модуль VPC: 2 public + 2 private подсети, NAT, IGW
+3. Модуль EKS: кластер + managed node group + IRSA
+4. Модуль RDS: PostgreSQL Multi-AZ в private подсетях
+5. Security Groups: минимальные привилегии
+6. Outputs: cluster endpoint, RDS endpoint, VPC ID
+7. Variables: environment, region, instance types
+8. terraform.tfvars для staging и production
 
-**Что покажет работодателю:** Полный цикл IaC для production-ready инфраструктуры.
+Критерий успеха: terraform apply с нуля поднимает полную инфраструктуру за 15-20 минут
+```
 
-### Упражнение 2: Terraform CI/CD Pipeline
+### Упражнение 2: Remote State и State Management (новичок -> уверенный)
 
-**Уровень:** Средний
-**Время:** 3-4 часа
+**Цель:** Научиться правильно работать со стейтом.
 
-1. Создай GitHub Actions workflow для Terraform:
-   - На PR: `fmt check` -> `validate` -> `tflint` -> `checkov` -> `plan`
-   - План публикуется как комментарий к PR
-   - На merge в main: `apply` (с ручным approve)
-2. Настрой отдельные workflows для dev и prod
-3. Добавь уведомления в Slack при apply
+```
+Шаги:
+1. Настроить S3 backend с versioning и encryption
+2. Настроить DynamoDB для state locking
+3. Разделить существующий state на 2 части (terraform state mv)
+4. Использовать terraform import для существующего ресурса
+5. Настроить data source для чтения remote state другого компонента
+6. Симулировать state lock conflict и решить его
 
-**Что покажет работодателю:** Зрелый подход к IaC в команде.
+Критерий успеха: можете безопасно работать со стейтом в команде из 3+ инженеров
+```
 
-### Упражнение 3: GitOps с ArgoCD
+### Упражнение 3: CI/CD для Terraform (уверенный)
 
-**Уровень:** Средний-Продвинутый
-**Время:** 4-5 часов
+**Цель:** Автоматизировать lifecycle Terraform.
 
-1. Установи ArgoCD в K8s-кластер (через Helm)
-2. Создай Git-репозиторий с K8s-манифестами (3 окружения)
-3. Настрой ArgoCD Application для каждого окружения
-4. Сделай изменение через PR -> merge -> наблюдай автоматический деплой
-5. Попробуй ручное изменение через `kubectl` — наблюдай, как ArgoCD обнаруживает drift и исправляет
-6. Настрой Sync Waves (порядок деплоя)
+```
+Шаги (GitHub Actions):
+1. PR opened/updated:
+   - terraform fmt -check
+   - terraform validate
+   - tflint
+   - checkov
+   - terraform plan -> комментарий в PR
+2. PR merged to main:
+   - terraform apply -auto-approve
+3. Добавить manual approval для production
+4. Настроить Terraform state lock timeout
+5. Добавить Slack notification при успехе/ошибке
 
-**Что покажет работодателю:** Понимание GitOps-паттерна.
+Критерий успеха: изменения в инфраструктуре проходят через PR -> review -> auto-apply
+```
 
-### Упражнение 4: Тестирование Terraform-модулей
+### Упражнение 4: Тестирование модулей с Terratest (уверенный -> эксперт)
 
-**Уровень:** Продвинутый
-**Время:** 4-6 часов
+**Цель:** Научиться тестировать IaC.
 
-1. Возьми модуль VPC из упражнения 1
-2. Напиши тесты с Terratest (Go):
-   - Проверь, что VPC создан с правильным CIDR
-   - Проверь количество подсетей
-   - Проверь, что инстанс в приватной подсети может выйти в интернет через NAT
-3. Запусти тесты в CI (отдельный AWS-аккаунт для тестов)
-4. Автоматический cleanup после тестов
+```
+Шаги:
+1. Создать простой Terraform-модуль (например, S3 bucket с encryption)
+2. Написать Terratest тест на Go:
+   - Deploy модуль в тестовый аккаунт
+   - Проверить: bucket существует, encryption включён, versioning включён
+   - Уничтожить ресурсы
+3. Интегрировать тесты в CI (запуск на PR)
+4. Добавить тесты для VPC-модуля: проверить количество подсетей, CIDR
 
-**Что покажет работодателю:** Культура тестирования даже для инфраструктуры.
+Критерий успеха: каждый модуль имеет автоматические тесты
+```
 
-### Упражнение 5: Миграция ручной инфраструктуры в Terraform
+### Упражнение 5: GitOps с ArgoCD (уверенный -> эксперт)
 
-**Уровень:** Продвинутый
-**Время:** 3-4 часа
+**Цель:** Внедрить GitOps для K8s-деплоев.
 
-1. Создай 3-5 ресурсов вручную через AWS Console (VPC, EC2, S3, RDS)
-2. Напиши Terraform-код, описывающий эти ресурсы
-3. Используй `terraform import` для каждого ресурса
-4. Запусти `terraform plan` — должно показать 0 изменений
-5. Задокументируй процесс миграции
+```
+Шаги:
+1. Установить ArgoCD в K8s-кластер (через Helm)
+2. Создать Git-репозиторий с K8s-манифестами
+3. Создать ArgoCD Application для staging (auto-sync)
+4. Создать ArgoCD Application для production (manual sync)
+5. Настроить ApplicationSet для автоматического создания apps
+6. Протестировать workflow:
+   - Изменение в Git -> auto-deploy в staging
+   - Manual approve -> deploy в production
+7. Протестировать rollback через ArgoCD UI и CLI
 
-**Что покажет работодателю:** Умение работать с legacy-инфраструктурой.
+Критерий успеха: все изменения в K8s проходят через Git, никаких ручных kubectl apply
+```
 
 ---
 
 ## «Сигналы» готовности к работе (чек-лист)
 
-Ты готов управлять инфраструктурой через код, если:
+### Обязательное:
 
-- [ ] Можешь написать Terraform-конфигурацию для VPC + EC2 + RDS по памяти
-- [ ] Настроил Remote State с locking (и можешь объяснить, зачем)
-- [ ] Написал минимум один переиспользуемый модуль с variables и outputs
-- [ ] Структурировал проект по окружениям (dev/staging/prod)
-- [ ] Настроил Terraform в CI/CD (plan на PR, apply на merge)
-- [ ] Используешь tflint и Checkov для проверки кода
-- [ ] Можешь объяснить разницу между `count` и `for_each`
-- [ ] Умеешь делать `terraform import` и работать с drift
-- [ ] Знаешь, что такое GitOps и можешь настроить ArgoCD
-- [ ] У тебя есть Terraform-проект на GitHub с модульной структурой и CI/CD
-- [ ] Можешь ответить на вопрос: «Как бы вы организовали Terraform для 3 окружений и 5 микросервисов?»
+- [ ] Написать Terraform-конфигурацию для VPC + compute + database
+- [ ] Настроить remote state с locking
+- [ ] Создать и использовать собственный Terraform-модуль
+- [ ] Понять terraform plan output и объяснить каждое изменение
+- [ ] Использовать переменные, outputs, locals правильно
+- [ ] Разделять инфраструктуру на компоненты (а не один большой файл)
+- [ ] Использовать `for_each` и `count` для динамических ресурсов
+- [ ] Настроить CI/CD для Terraform (plan на PR, apply на merge)
+- [ ] Знать команды: init, plan, apply, destroy, import, state
+
+### Желательное:
+
+- [ ] Использовать Terratest для тестирования модулей
+- [ ] Настроить tflint и Checkov в CI
+- [ ] Внедрить GitOps с ArgoCD или Flux
+- [ ] Знать разницу между Terraform и OpenTofu
+- [ ] Использовать terraform workspaces или directory structure для environments
+- [ ] Знать, как работать с terraform import at scale
+
+### На собеседовании сможете:
+
+- [ ] Объяснить, зачем нужен remote state и state locking
+- [ ] Описать структуру Terraform-проекта для организации
+- [ ] Объяснить разницу между `terraform plan` и `terraform apply`
+- [ ] Описать, как вы обрабатываете drift detection
+- [ ] Объяснить преимущества модулей и как их версионировать
+- [ ] Описать CI/CD pipeline для Terraform
 
 ---
 
 ## Ссылки внутри репозитория
 
-- **Предыдущий фактор:** [Фактор 3 — DevSecOps](../03-devsecops/) (безопасность IaC)
-- **Следующий фактор:** [Фактор 5 — ИИ и MLOps](../05-ai-and-mlops/) (ИИ для IaC)
-- **Связанный фактор:** [Фактор 1 — Облачное внедрение](../01-cloud-adoption/) (Terraform для облака)
-- **Связанный фактор:** [Фактор 2 — Контейнеры и Kubernetes](../02-containers-and-kubernetes/) (IaC для K8s)
-- **Дорожная карта:** [90-roadmap](../90-roadmap/)
-- **Ошибки:** [91-mistakes](../91-mistakes/)
-- **Главная страница курса:** [README](../)
+- Предыдущий фактор: [DevSecOps](../03-devsecops/)
+- Следующий фактор: [ИИ и MLOps](../05-ai-and-mlops/)
+- Облачная инфраструктура: [Облачное внедрение](../01-cloud-adoption/)
+- IaC для K8s: [Контейнеры и Kubernetes](../02-containers-and-kubernetes/)
+- Безопасность IaC: [DevSecOps](../03-devsecops/)
+- Общая дорожная карта: [Roadmap](../90-roadmap/)
+- Ошибки, которых стоит избегать: [Типичные ошибки](../91-mistakes/)
+- Вернуться на [главную страницу](../)

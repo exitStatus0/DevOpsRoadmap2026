@@ -1,6 +1,8 @@
 # Factor 3: DevSecOps
 
-> VOICEOVER: Here is the reality of 2026 — security is not someone else's job anymore. Every DevOps engineer is expected to own security basics. Not penetration testing. Not compliance auditing. But the practical security that stops your infrastructure from being the reason your company makes the news. Let me break down exactly what you need to know.
+![DevSecOps](03-devsecops.png)
+
+> Here is the reality of 2026 — security is not someone else's job anymore. Every DevOps engineer is expected to own security basics. Not penetration testing. Not compliance auditing. But the practical security that stops your infrastructure from being the reason your company makes the news. Let me break down exactly what you need to know.
 
 ---
 
@@ -17,7 +19,7 @@ All of these are preventable by the DevOps engineer who builds and maintains the
 
 The industry responded by moving security "left" — earlier in the development pipeline. This is not a trend; it is now the standard. Job postings for "DevOps Engineer" increasingly list security skills as requirements, not nice-to-haves.
 
-> ON SCREEN: "$4.5M average breach cost. Most breaches are preventable misconfigurations."
+> "$4.5M average breach cost. Most breaches are preventable misconfigurations."
 
 **What this means for your career:**
 - Engineers with security skills earn 15-25% more than those without
@@ -165,7 +167,7 @@ Ensuring everything in your pipeline — from source code to deployed images —
 
 5. **Detailed cryptography** — Understand TLS, encryption at rest, key rotation at a practical level. You do not need to implement AES or understand elliptic curve math.
 
-> VOICEOVER: You are not becoming a security engineer. You are becoming a DevOps engineer who does not leave the door open. Focus on the 20% of security knowledge that prevents 80% of breaches.
+> You are not becoming a security engineer. You are becoming a DevOps engineer who does not leave the door open. Focus on the 20% of security knowledge that prevents 80% of breaches.
 
 ---
 
@@ -197,7 +199,7 @@ Ensuring everything in your pipeline — from source code to deployed images —
 - Can design and implement secrets management at organizational scale
 - Can create custom OPA policies for complex business rules
 
-> ON SCREEN: "Strong level means you do not ship vulnerabilities. Expert means you design the security architecture."
+> "Strong level means you do not ship vulnerabilities. Expert means you design the security architecture."
 
 ---
 
@@ -245,7 +247,7 @@ The image is node:18-alpine. What is the vulnerability, what is the
 impact, and what is the fastest remediation path?"
 ```
 
-> VOICEOVER: AI accelerates security work dramatically. Policy writing, vulnerability triage, Dockerfile review — these used to take hours. Now they take minutes. But you still need to understand what the policies do and whether the AI got them right.
+> AI accelerates security work dramatically. Policy writing, vulnerability triage, Dockerfile review — these used to take hours. Now they take minutes. But you still need to understand what the policies do and whether the AI got them right.
 
 ---
 
@@ -335,7 +337,7 @@ impact, and what is the fastest remediation path?"
 - [ ] Can describe a security incident response process for containerized applications
 - [ ] Can review a Dockerfile and identify at least 5 security improvements
 
-> VOICEOVER: When an interviewer asks "how do you handle security in your pipeline?" — you should be able to describe a complete picture, from pre-commit hooks to runtime monitoring. That is what separates candidates who "know about security" from candidates who practice it.
+> When an interviewer asks "how do you handle security in your pipeline?" — you should be able to describe a complete picture, from pre-commit hooks to runtime monitoring. That is what separates candidates who "know about security" from candidates who practice it.
 
 ---
 

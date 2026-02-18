@@ -1,6 +1,8 @@
 # Factor 2: Containers & Kubernetes
 
-> VOICEOVER: If cloud is where things run, containers are how things are packaged. And Kubernetes is how you orchestrate them at scale. In 2026, Docker is not a skill on your resume — it is expected. Kubernetes is what separates junior from mid-level. Let me show you exactly what to learn and what to skip.
+![Containers & Kubernetes](02-containers-and-kubernetes.png)
+
+> If cloud is where things run, containers are how things are packaged. And Kubernetes is how you orchestrate them at scale. In 2026, Docker is not a skill on your resume — it is expected. Kubernetes is what separates junior from mid-level. Let me show you exactly what to learn and what to skip.
 
 ---
 
@@ -16,7 +18,7 @@ The numbers:
 
 If you are pursuing DevOps in 2026 and you do not know containers and Kubernetes, you are missing the single most in-demand skill set in the field.
 
-> ON SCREEN: "Docker = table stakes. Kubernetes = career accelerator."
+> "Docker = table stakes. Kubernetes = career accelerator."
 
 ---
 
@@ -138,7 +140,7 @@ kubectl get events --sort-by='.lastTimestamp'  # recent cluster events
 
 6. **Kubernetes the Hard Way as your first K8s experience** — Kelsey Hightower's guide is legendary, but it is for understanding internals. Start with a managed cluster (EKS, minikube, kind), deploy real apps, then do "the hard way" for deeper understanding.
 
-> VOICEOVER: I see people waste months learning Docker Swarm or trying to set up Kubernetes from scratch on bare metal as their first experience. That is backwards. Use a managed cluster, deploy real applications, and understand the internals later.
+> I see people waste months learning Docker Swarm or trying to set up Kubernetes from scratch on bare metal as their first experience. That is backwards. Use a managed cluster, deploy real applications, and understand the internals later.
 
 ---
 
@@ -172,7 +174,7 @@ kubectl get events --sort-by='.lastTimestamp'  # recent cluster events
 - Can implement service mesh for advanced traffic management
 - Can troubleshoot CNI and kube-proxy issues
 
-> ON SCREEN: "Can you debug a CrashLoopBackOff in under 5 minutes? That is strong level."
+> "Can you debug a CrashLoopBackOff in under 5 minutes? That is strong level."
 
 ---
 
@@ -224,7 +226,7 @@ Prompt: "Write Kubernetes NetworkPolicies for this setup:
 - nothing else is allowed"
 ```
 
-> VOICEOVER: AI does not replace your need to understand Kubernetes. But it eliminates the time you spend looking up YAML syntax. Use AI to generate, use your brain to review and debug.
+> AI does not replace your need to understand Kubernetes. But it eliminates the time you spend looking up YAML syntax. Use AI to generate, use your brain to review and debug.
 
 ---
 
@@ -312,7 +314,7 @@ Prompt: "Write Kubernetes NetworkPolicies for this setup:
 - [ ] Can perform a rolling update and rollback
 - [ ] Can explain what happens when you run `kubectl apply -f deployment.yaml` (the full chain: API server, etcd, scheduler, kubelet)
 
-> VOICEOVER: If someone hands you a broken Kubernetes deployment and you can diagnose and fix it in 15 minutes — you are ready. That is the real interview test, and that comes from practice, not from reading docs.
+> If someone hands you a broken Kubernetes deployment and you can diagnose and fix it in 15 minutes — you are ready. That is the real interview test, and that comes from practice, not from reading docs.
 
 ---
 

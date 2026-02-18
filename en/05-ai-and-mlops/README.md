@@ -1,356 +1,545 @@
 # Factor 5: AI & MLOps
 
-> VOICEOVER: This factor is different from the other four. AI is not just a skill you learn — it is a multiplier on everything else you do. Every Terraform module, every Dockerfile, every Kubernetes manifest, every CI pipeline — AI makes you faster at all of it. And then there is MLOps, which is 80% DevOps engineering. Let me break down both sides.
+![AI & MLOps](05-ai-and-mlops.png)
 
 ---
 
 ## Why It Matters in 2026
 
-Two things happened simultaneously:
-1. **AI tools became usable for daily DevOps work.** GitHub Copilot, Claude, ChatGPT, and domain-specific tools can generate, review, and debug infrastructure code. Engineers who use these tools are measurably faster.
-2. **Every company wants to deploy ML models.** And they discovered that building a model is 10% of the work — the other 90% is infrastructure, pipelines, monitoring, and reliability. That is DevOps.
+AI changes DevOps in two ways. First, AI becomes your daily assistant. Second, MLOps is a new field that specifically needs DevOps skills.
 
-**What this means for you:**
-- **AI as copilot:** You are not competing against AI. You are competing against engineers who use AI. The productivity gap is real — 2-3x for routine tasks.
-- **MLOps as career path:** Companies are desperate for people who can deploy and operate ML models. They do not need more data scientists. They need DevOps engineers who understand the ML lifecycle.
-- **GPU infrastructure:** As AI workloads grow, expertise in GPU scheduling, VRAM management, and inference optimization is becoming highly compensated.
+85% of companies invest in AI. MLOps engineer is one of the fastest-growing roles in 2026.
 
-> ON SCREEN: "AI is not your replacement. It is your competitive advantage — if you learn to use it."
+Two dimensions of AI for a DevOps engineer:
+
+**Dimension 1: AI as a DevOps Engineer's Assistant**
+- Generating Terraform/K8s/Docker configurations
+- Debugging and troubleshooting
+- Writing CI/CD pipelines
+- Log and incident analysis
+- Code review of infrastructure code
+
+**Dimension 2: MLOps -- DevOps for ML**
+- ML pipelines (training, evaluation, deployment)
+- Model serving (inference endpoints)
+- GPU infrastructure
+- Model versioning and registry
+- Model monitoring (drift detection)
+
+Why this is critical:
+- **Every other company** is implementing ML/AI -- and they need infrastructure
+- **MLOps is 80% DevOps**: CI/CD, containers, K8s, monitoring, IaC
+- **GPU infrastructure** -- a new scarce skill: few people know how to do it properly
+- **AI assistants** increase a DevOps engineer's productivity by 2-5x
 
 ---
 
 ## What Problem It Solves in Real Teams
 
-### AI as Copilot — Problem Solved:
-- **Slow context switching:** Looking up Terraform syntax, K8s manifest structure, Helm chart templating. AI provides instant answers in context.
-- **Boilerplate fatigue:** Writing the same VPC module, Dockerfile, or CI pipeline from scratch every time. AI generates the 80% that is standard, you customize the 20% that is specific.
-- **Debugging bottlenecks:** Staring at a CrashLoopBackOff or a Terraform state error for hours. AI processes the error context and suggests fixes in seconds.
-- **Knowledge gaps:** You know Docker but not K8s networking. AI bridges gaps while you learn, so you are productive before you are an expert.
+### AI as Assistant
 
-### MLOps — Problem Solved:
-- **Model rot:** Models degrade over time as data changes. Without monitoring and retraining pipelines, predictions get worse silently.
-- **Deployment chaos:** Data scientists build models in Jupyter notebooks. Someone needs to turn that into a production service. That someone is you.
-- **Resource waste:** GPU instances cost $1-30/hour. Without proper scheduling and scaling, companies burn money on idle GPUs.
-- **No reproducibility:** "It worked in my notebook" is the ML equivalent of "it worked on my machine." MLOps solves this with versioned data, code, and models.
+| Problem | Without AI | With AI |
+|---------|-----------|---------|
+| Write a K8s manifest for a new service | 1-2 hours | 10-15 minutes + review |
+| Debug a complex problem | Hours reading logs | Ask AI with context -> hint in minutes |
+| Learn a new tool | Days of documentation | Interactive learning through dialogue |
+| Write a runbook for an incident | 2-3 hours of documentation | 30 minutes with AI assistance |
+| Review Terraform code | 30-60 minutes | 10 minutes with AI hints |
+
+### MLOps
+
+| Problem | Without MLOps Engineer | With MLOps Engineer |
+|---------|----------------------|---------------------|
+| ML engineer deploys a model | "I ran Jupyter on EC2..." | Automated serving pipeline |
+| Model versioning | "Model in folder models_v3_final_FINAL" | ML Registry (MLflow, Weights & Biases) |
+| GPU resources | Constantly running GPU instances = $$$$ | Auto-scaling GPU on K8s |
+| Model monitoring | "Why did accuracy drop?" -- nobody knows | Drift detection + automatic alerts |
+| Reproducibility | "It worked in my Jupyter" | Containerized training pipelines |
+
+**Real example:** A Data Science team with 5 ML engineers. Without MLOps: deploying a model took 2 weeks (manual DevOps + ML work), GPU instances ran 24/7 (bill $15,000/month), reproducing training was impossible. After implementing MLOps: deployment in 30 minutes via CI/CD, GPUs auto-scale ($4,000/month), every training run is versioned and reproducible.
 
 ---
 
 ## What You Must Learn (Core Skills)
 
-### Part 1: AI as a Daily Tool (Start Immediately)
+### 1. Prompt Engineering for Infrastructure
 
-**Prompt engineering for infrastructure work:**
-This is not about learning "AI" as a technology. It is about learning to communicate with AI tools effectively for your specific work.
+This is not about "using ChatGPT." This is about **systematic use of AI** in daily DevOps work:
 
-**Effective prompt patterns for DevOps:**
-
-1. **Specify the context:**
 ```
-Bad: "Write a Terraform module for EKS"
-Good: "Write a Terraform module for AWS EKS in us-east-1.
-Requirements: K8s 1.29, managed node group with m5.xlarge (min 2, max 8),
-private subnets only, IRSA enabled, cluster logging for api+audit.
-Use variables for all configurable values. Follow Terraform best practices."
+An effective DevOps prompt must have:
+├── Context: "I am using AWS EKS 1.29 with Terraform"
+├── Task: "Create a Deployment for a Python API"
+├── Constraints: "Non-root, resource limits, health probes"
+├── Format: "Terraform HCL / K8s YAML / Bash script"
+└── Verification: "Explain why each parameter was chosen"
 ```
 
-2. **Ask for review, not just generation:**
-```
-"Review this Terraform module for:
-1. Security issues
-2. Cost optimization opportunities
-3. Missing best practices
-4. Potential failure modes
-[paste code]"
-```
+**Examples of effective prompts:**
 
-3. **Chain prompts for complex tasks:**
 ```
-Step 1: "Design the architecture for a multi-AZ Kubernetes deployment
-with auto-scaling and zero-downtime deployments."
-Step 2: "Now write the Terraform for the infrastructure part."
-Step 3: "Now write the Helm chart for the application deployment."
-Step 4: "Now write the GitHub Actions pipeline that ties it all together."
-```
+Prompt 1 (Terraform):
+"Create a Terraform module for AWS EKS with the following specification:
+- K8s version: 1.29
+- Node groups: general (t3.medium, 2-5), gpu (g4dn.xlarge, 0-3, spot)
+- IRSA enabled
+- Addons: CoreDNS, vpc-cni, ebs-csi, gpu-device-plugin
+- Encryption at rest for secrets
+- Logging: api, audit
+Explain each decision."
 
-4. **Use AI for learning, not just doing:**
-```
-"Explain what this Terraform code does, step by step.
-Then explain what would happen if I changed the lifecycle block.
-[paste code]"
-```
+Prompt 2 (Troubleshooting):
+"Pod 'ml-api-7d8f9c6b4-xk2mn' is in CrashLoopBackOff.
+Logs: 'RuntimeError: CUDA out of memory. Tried to allocate 2.00 GiB'
+Resources: requests gpu 1, limits gpu 1
+Node has NVIDIA T4 (16GB VRAM).
+Other pods on this node: ml-worker (using 12GB VRAM).
+What is wrong and how to fix it?"
 
-**Tools to integrate into your workflow:**
-- **GitHub Copilot** — code completion in your editor
-- **Claude / ChatGPT** — complex reasoning, architecture review, debugging
-- **Amazon Q Developer** — AWS-specific code generation and troubleshooting
-- **K8sGPT** — Kubernetes-specific AI diagnostics
-- **Infracost + AI** — cost analysis for Terraform changes
-
-### Part 2: MLOps (The 80% That Is DevOps)
-
-**The ML lifecycle from a DevOps perspective:**
-```
-Data Pipeline → Training → Evaluation → Packaging → Deployment → Monitoring → Retraining
-     |              |           |            |            |            |            |
-  (DevOps)     (Data Sci)  (Data Sci)   (DevOps)     (DevOps)     (DevOps)     (DevOps)
+Prompt 3 (CI/CD):
+"Create a GitHub Actions workflow for an ML project:
+- On PR: lint, unit tests, build Docker image
+- On merge to main: train model (GPU runner), evaluate, register in MLflow
+- On tag: deploy model to staging (Kubernetes serving)
+- Manual approval for production
+Project: Python, PyTorch, FastAPI for serving."
 ```
 
-You own 5 of the 7 stages. Data scientists own the model logic. You own everything else.
+### 2. MLOps Pipelines
 
-**Core MLOps skills:**
+```
+MLOps Pipeline:
+├── Data Pipeline
+│   ├── Data collection and validation
+│   ├── Feature store (Feast)
+│   └── Data versioning (DVC)
+├── Training Pipeline
+│   ├── Containerized training
+│   ├── Hyperparameter tuning
+│   ├── Experiment tracking (MLflow, W&B)
+│   └── GPU scheduling (K8s + NVIDIA device plugin)
+├── Evaluation Pipeline
+│   ├── Quality metrics
+│   ├── A/B testing
+│   └── Shadow deployment
+├── Deployment Pipeline
+│   ├── Model registry (MLflow)
+│   ├── Serving (TorchServe, Triton, KServe, vLLM)
+│   ├── Canary deployment
+│   └── Rollback
+└── Monitoring Pipeline
+    ├── Model performance metrics
+    ├── Data drift detection
+    ├── Latency and throughput
+    └── Cost monitoring (GPU utilization)
+```
 
-1. **ML Pipeline Orchestration**
-   - **Kubeflow Pipelines** — Kubernetes-native ML workflows
-   - **MLflow** — experiment tracking, model registry, deployment
-   - **Airflow** — general-purpose workflow orchestration (used heavily in ML)
-   - **Argo Workflows** — K8s-native workflow engine (different from ArgoCD)
+**Key MLOps Tools:**
 
-2. **Model Serving**
-   - **TensorFlow Serving / TorchServe** — framework-specific model servers
-   - **Triton Inference Server** — NVIDIA's multi-framework inference server
-   - **Seldon Core / KServe** — Kubernetes-native model serving
-   - **BentoML** — package models as production-ready services
+| Category | Tool | Purpose |
+|----------|------|---------|
+| Experiment tracking | MLflow, W&B | Track experiments, parameters, metrics |
+| Model registry | MLflow, Vertex AI | Model versioning and storage |
+| Pipeline orchestration | Kubeflow, Airflow, Argo Workflows | ML pipeline orchestration |
+| Serving | KServe, Triton, vLLM, TGI | Deploy models for inference |
+| Feature store | Feast | Feature storage and serving |
+| Data versioning | DVC | Dataset versioning |
+| GPU management | NVIDIA GPU Operator, MIG | GPU resource management |
 
-3. **GPU Infrastructure**
-   - Scheduling GPU workloads on Kubernetes (resource requests for `nvidia.com/gpu`)
-   - NVIDIA device plugin for K8s
-   - GPU node pools with auto-scaling
-   - Cost optimization (spot GPU instances, time-sharing)
-   - Understanding VRAM management and multi-GPU configurations
+### 3. GPU Infrastructure
 
-4. **Feature Stores and Data Versioning**
-   - **Feast** — open-source feature store
-   - **DVC** — data version control (Git for data)
-   - Understanding data pipelines at a high level
+```
+GPU skills for DevOps:
+├── GPU Basics
+│   ├── Difference between CPU and GPU workloads
+│   ├── VRAM vs RAM
+│   ├── CUDA and NVIDIA drivers
+│   └── GPU types (T4, A10, A100, H100, L40S)
+├── GPU on K8s
+│   ├── NVIDIA Device Plugin
+│   ├── GPU Operator
+│   ├── Resource requests/limits for GPU
+│   ├── Node selectors and tolerations for GPU nodes
+│   ├── MIG (Multi-Instance GPU) for H100/A100
+│   └── Time-slicing for smaller GPUs
+├── GPU in the Cloud
+│   ├── AWS: p4d, p5, g5, g4dn instances
+│   ├── GCP: a2, g2 instances
+│   ├── Spot/Preemptible GPU (60-90% savings)
+│   └── Reserved GPU instances
+└── Cost Optimization
+    ├── Auto-scaling GPU nodes (Karpenter, Cluster Autoscaler)
+    ├── Batch processing instead of real-time
+    ├── Model quantization (reducing GPU requirements)
+    └── Monitoring GPU utilization (DCGM Exporter + Prometheus)
+```
 
-5. **Model Monitoring**
-   - Data drift detection
-   - Model performance monitoring
-   - A/B testing infrastructure for models
-   - Automated retraining triggers
+### 4. Model Serving
+
+```
+Serving strategies:
+├── Real-time inference
+│   ├── REST API (FastAPI + model)
+│   ├── gRPC (for high-throughput)
+│   └── Managed: SageMaker, Vertex AI
+├── Batch inference
+│   ├── Spark / Dask
+│   ├── Kubernetes Jobs
+│   └── Scheduled pipelines
+├── LLM Serving (especially relevant in 2026)
+│   ├── vLLM -- open-source serving for LLMs
+│   ├── TGI (Text Generation Inference) -- Hugging Face
+│   ├── Triton Inference Server -- NVIDIA
+│   └── KServe -- K8s-native
+└── Scaling
+    ├── HPA based on custom metrics (request queue, GPU util)
+    ├── KEDA for event-driven scaling
+    └── Scale-to-zero for cost optimization
+```
 
 ---
 
 ## What Is Optional / "Worst ROI" to Learn First
 
-1. **Building ML models** — You are a DevOps engineer, not a data scientist. You need to understand the ML lifecycle and what models need. You do not need to build neural networks.
+### Do NOT learn first:
 
-2. **Deep learning theory** — Understanding backpropagation and gradient descent is not required for deploying models. Know what a model is (input, inference, output), not how it is trained.
+1. **Building ML models** -- You are a DevOps/MLOps engineer, not an ML engineer. You do not need to understand how a transformer or CNN works. It is enough to know: what a model is, how it is trained, how it is deployed.
 
-3. **Prompt engineering certifications** — The field is moving too fast for certifications to be meaningful. Practice daily instead.
+2. **Deep learning theory** -- Backpropagation, gradient descent, loss functions -- these are for Data Scientists. Your job is infrastructure for training and deployment.
 
-4. **Building your own AI tools** — Use existing tools (Copilot, Claude, K8sGPT). Building custom AI tools is for AI engineering teams.
+3. **Specific ML frameworks in detail** -- You do not need to know the PyTorch API. It is enough to know: "this is a TensorFlow model, it needs a GPU with 16GB VRAM, it is deployed through TorchServe."
 
-5. **Every ML framework (TensorFlow, PyTorch, JAX, etc.)** — Data scientists choose the framework. You need to know how to containerize, serve, and scale whatever they give you. You do not need to write training code in each framework.
+4. **Building a feature store from scratch** -- Use Feast or managed services. Building your own is for large ML platform teams.
 
-> VOICEOVER: The biggest mistake I see is DevOps engineers trying to become data scientists. You do not need to build models. You need to deploy, scale, and monitor them. That is the skill gap companies are paying to fill.
+5. **Fine-tuning LLMs** -- This is the ML engineer's job. Your job is to provide GPU infrastructure and CI/CD for the fine-tuning pipeline.
 
 ---
 
 ## How Deep to Go
 
-### Beginner (weeks 1-3):
-- Uses AI tools daily for Terraform, Docker, K8s work
-- Can write effective prompts that give useful results
-- Can explain what MLOps is and why DevOps engineers are critical to it
-- Understands the ML lifecycle and which parts are DevOps responsibility
-- Can explain GPU vs. CPU workloads at a high level
+### Beginner (2-3 weeks)
 
-### Strong (months 2-4) — THIS IS THE HIRING THRESHOLD:
-- AI tools are integrated into every aspect of daily work (not occasional use)
-- Can review AI-generated code critically (catch errors, security issues, antipatterns)
-- Can set up MLflow for experiment tracking and model registry
-- Can deploy a model serving endpoint on Kubernetes (KServe or Seldon Core)
-- Can configure GPU workloads on K8s (resource requests, node selectors, tolerations)
-- Can build a CI/CD pipeline for ML models (train, test, package, deploy)
-- Can set up basic model monitoring (latency, error rates, data drift)
-- Can containerize ML models with proper GPU support
+- [ ] Use AI daily for DevOps tasks (Terraform, Docker, K8s, CI/CD)
+- [ ] Understand the difference between training and inference
+- [ ] Understand what a model is, model version, model registry
+- [ ] Containerize a simple ML service (FastAPI + scikit-learn)
+- [ ] Understand why GPU is needed and which tasks are impossible without it
+- [ ] Know basic terms: epoch, batch, inference latency, throughput
 
-### Expert (6+ months):
-- Can design end-to-end MLOps platforms
-- Can implement Kubeflow Pipelines for complex ML workflows
-- Can optimize GPU utilization across a cluster (MIG, time-sharing, scheduling)
-- Can implement A/B testing and canary deployments for models
-- Can design multi-model serving with Triton
-- Can set up automated retraining pipelines triggered by drift detection
-- Can architect feature stores for real-time and batch serving
+**Test:** Can you explain to a non-technical person how MLOps differs from DevOps? If yes -- move on.
 
-> ON SCREEN: "Strong = you can deploy and serve models reliably. Expert = you design the MLOps platform."
+### Strong (4-8 weeks)
+
+- [ ] Deploy MLflow for experiment tracking
+- [ ] Create a CI/CD pipeline for an ML project (train -> evaluate -> register -> deploy)
+- [ ] Set up GPU nodes in K8s (NVIDIA Device Plugin)
+- [ ] Deploy a model through KServe or TorchServe
+- [ ] Set up auto-scaling for inference endpoints
+- [ ] Monitor GPU utilization (DCGM Exporter + Prometheus + Grafana)
+- [ ] Understand model drift and how to detect it
+- [ ] Use Spot GPU instances for training
+
+**Test:** Can you build a full pipeline from model training to serving with monitoring? If yes -- you are strong.
+
+### Expert (3-6 months)
+
+- [ ] Design an ML platform for an organization
+- [ ] Implement Kubeflow or Argo Workflows for ML pipelines
+- [ ] Set up multi-GPU training (distributed training)
+- [ ] Optimize GPU costs: MIG, time-slicing, spot instances
+- [ ] Implement A/B testing for models
+- [ ] Set up LLM serving (vLLM on K8s)
+- [ ] Feature store with Feast
+- [ ] Compliance and governance for ML (model cards, audit trail)
+
+**Test:** Can you design and implement an ML platform that serves 5+ ML teams? If yes -- you are an expert.
 
 ---
 
-## How AI Changes This Factor (Meta: AI for AI/MLOps Work)
+## How AI Changes This Factor (Practical Examples)
 
-This section is recursive — using AI to build AI infrastructure.
+This factor is about AI, so the focus here is not "how AI helps" but "how to use AI every day."
 
-### 1. AI for Building MLOps Pipelines
+### Daily AI Workflow of a DevOps Engineer
+
+**Morning: Planning**
 ```
-Prompt: "Design a Kubeflow Pipeline that:
-1. Pulls training data from S3
-2. Preprocesses data (normalize, split train/test)
-3. Trains a model using a GPU node
-4. Evaluates the model against a baseline
-5. If performance improves, registers in MLflow and deploys to KServe
-Write the pipeline YAML and explain each step."
+Prompt: "I need to migrate 3 microservices from Docker Compose
+to Kubernetes. Services: API (Node.js), Worker (Python), Redis.
+Create a migration plan with specific steps and Helm charts for each."
 ```
 
-### 2. AI for GPU Workload Configuration
+**Day: Development**
 ```
-Prompt: "Write a Kubernetes deployment for a model inference service that:
-- Uses nvidia.com/gpu: 1
-- Has a node selector for GPU nodes (instance-type: p3.2xlarge)
-- Tolerates the GPU node taint
-- Resource limits: 8Gi memory, 4 CPU, 1 GPU
-- Autoscales based on GPU utilization
-- Uses Triton Inference Server as the serving engine"
-```
-
-### 3. AI for Generating CI/CD for ML
-```
-Prompt: "Write a GitHub Actions pipeline for an ML project that:
-1. On PR: run unit tests, lint code, validate model config
-2. On merge to main: train model on GPU runner, evaluate, register in MLflow
-3. On tag: deploy model to staging KServe endpoint, run integration tests
-4. On manual approval: promote to production
-Include proper caching for pip dependencies and model artifacts."
+Prompt: "Create a GitHub Actions workflow:
+1. On push to feature branch: lint + test + build image
+2. On PR to main: terraform plan + security scan
+3. On merge to main: terraform apply + deploy to staging
+4. On tag: deploy to production (manual approval)
+Use OIDC for AWS credentials, not static keys."
 ```
 
-### 4. AI for Troubleshooting ML Infrastructure
+**Incident: Troubleshooting**
 ```
-Prompt: "My KServe InferenceService is stuck in 'Unknown' state.
-Here is the kubectl describe output:
-[paste output]
-Here are the knative-serving controller logs:
-[paste logs]
-What is wrong?"
+Prompt: "Alertmanager fired: 'HighMemoryUsage' on pod 'api-server'.
+Here is the output of kubectl top pods, kubectl describe pod, and the last 50 lines of logs:
+[paste data]
+What could be the cause and how to fix it?"
 ```
 
-### 5. AI for Cost Optimization
+**Evening: Documentation**
 ```
-Prompt: "I am running 5 p3.2xlarge GPU instances 24/7 for model training
-that only runs 4 hours per day. Training jobs take 2-3 hours each.
-What is the most cost-effective approach? Consider: spot instances,
-Karpenter auto-scaling, scheduled scaling, and AWS Savings Plans."
+Prompt: "Based on this Terraform code [paste], create:
+1. Architecture Decision Record (ADR) -- why this architecture was chosen
+2. Runbook for disaster recovery
+3. Architecture diagram in Mermaid format"
 ```
+
+### Building MLOps Pipelines with AI
+
+```
+Prompt: "Create an Argo Workflows template for an ML pipeline:
+1. Step 1: Download data from S3
+2. Step 2: Preprocessing (Python container)
+3. Step 3: Training (GPU container, PyTorch)
+4. Step 4: Evaluation (compare with previous model)
+5. Step 5: If accuracy > threshold -> register in MLflow
+6. Step 6: Deploy via KServe (canary 10% -> 50% -> 100%)
+Each step is a separate container with specific resource requests."
+```
+
+### AI Tools for DevOps in 2026
+
+| Tool | Category | How To Use |
+|------|----------|------------|
+| Claude Code / GitHub Copilot | Coding | Generate Terraform, K8s, CI/CD |
+| ChatGPT / Claude | Troubleshooting | Debugging, explanations, planning |
+| K8sGPT | K8s-specific | Automatic analysis of cluster problems |
+| AWS Application Composer | AWS | Visual architecture design |
+| Kubecost + AI | FinOps | K8s cost optimization |
 
 ---
 
 ## Common Mistakes & Traps
 
-### Trap 1: Fearing AI Replacement
-**What happens:** You avoid learning AI tools because "AI will replace DevOps engineers." Meanwhile, engineers who embrace AI become 2-3x more productive and get promoted.
-**Fix:** AI replaces tasks, not engineers. The engineers who get replaced are the ones who refuse to use AI. Adopt it aggressively.
+### Trap 1: "AI Will Replace Me"
 
-### Trap 2: Blindly Trusting AI Output
-**What happens:** You copy-paste AI-generated Terraform without reviewing it. It deploys resources in the wrong region, with public access, and no encryption.
-**Fix:** AI generates, you review. Every line. Every permission. Every network rule. AI is a junior engineer that works instantly — it still needs code review.
+**What it is:** Fear that AI will make DevOps engineers unnecessary.
+
+**Why it hurts:** Paradox: those who fear AI and ignore it will truly become uncompetitive. Not because of AI, but because of those who use it.
+
+**Fix:** AI is a tool, like Terraform or Docker. It amplifies your skills, it does not replace them. A DevOps engineer with AI does in a day what used to take a week. But AI needs a human who knows what to verify.
+
+### Trap 2: Ignoring AI Tools
+
+**What it is:** "I do everything manually, I do not need AI."
+
+**Why it hurts:** You are 2-5x slower than a colleague who uses AI. It is like refusing an IDE in favor of Notepad.
+
+**Fix:** Start simple:
+1. Use AI for generating boilerplate (Terraform modules, K8s manifests)
+2. Use AI for troubleshooting (paste logs -> get a solution)
+3. Use AI for learning (explain a concept -> ask questions)
 
 ### Trap 3: Trying to Become an ML Engineer
-**What happens:** You spend 6 months learning PyTorch, neural network architecture, and training techniques. You are now a mediocre data scientist and have fallen behind on DevOps skills.
-**Fix:** Stay in your lane. Learn to deploy, scale, and monitor models. Let data scientists build them. The intersection — MLOps — is where you add value.
 
-### Trap 4: Ignoring AI Tools Entirely
-**What happens:** You write everything from scratch "because I know how." You spend 45 minutes writing a Terraform module that AI could have generated in 30 seconds. Your colleague who uses AI ships 3 features while you ship 1.
-**Fix:** Integrate AI into your daily workflow today. Use it for code generation, debugging, documentation, architecture review. Measure the time saved.
+**What it is:** A DevOps engineer studies PyTorch, TensorFlow, deep learning math.
 
-### Trap 5: Using AI Without Understanding
-**What happens:** You generate K8s manifests with AI but do not understand what a PodDisruptionBudget does. When something breaks, you cannot debug it because you never learned the underlying concepts.
-**Fix:** Use AI as an accelerator, not a crutch. When AI generates something you do not understand, ask it to explain. Then verify the explanation. Build understanding alongside productivity.
+**Why it hurts:** You spend months on skills that are not needed for your role. ML engineers have PhDs and years of experience. You will not become an ML engineer in 3 months.
 
-### Trap 6: Over-Investing in MLOps Before Core DevOps
-**What happens:** You jump into Kubeflow and KServe before you are solid in Docker, K8s, and Terraform. You cannot debug basic pod issues, let alone ML-specific ones.
-**Fix:** MLOps is an advanced specialization. Get strong in the first 4 factors before going deep on MLOps. The fundamentals (containers, orchestration, IaC, security) are prerequisites.
+**Fix:** Your zone is **infrastructure for ML**:
+- CI/CD for ML projects
+- GPU scheduling on K8s
+- Model serving and scaling
+- Monitoring and observability
+- Cost optimization for GPU
+
+### Trap 4: Blind Trust in AI
+
+**What it is:** Copying AI-generated code without verification.
+
+**Why it hurts:** AI generates code that looks correct but may have critical errors: open Security Groups, excessive IAM privileges, missing encryption.
+
+**Fix:** The "trust but verify" rule:
+1. AI generates -> you review
+2. Run linting (tflint, checkov) on generated code
+3. Test in staging before production
+4. Understand every line of code you deploy
+
+### Trap 5: GPU Costs Without Control
+
+**What it is:** GPU instances running 24/7, even when inference traffic = 0.
+
+**Why it hurts:** One g5.xlarge = ~$1/hour. 24/7 = $730/month. 10 of those = $7,300/month. And that is without any load.
+
+**Fix:**
+- Scale-to-zero for inference (KEDA + KServe)
+- Spot instances for training (60-90% savings)
+- Monitor GPU utilization (alert when < 30%)
+- Batch processing instead of real-time where possible
+- Model quantization (smaller model = smaller GPU)
 
 ---
 
-## Mini-Practice (Exercises)
+## Mini-Practice (5 Exercises)
 
-### Exercise 1: AI-Powered Infrastructure Review
-**What you do:** Take an existing Terraform project (yours or open-source) and use AI to perform a comprehensive review.
-**Skills tested:** Prompt engineering, critical evaluation of AI output, infrastructure knowledge.
-**Requirements:**
-- Use AI to review for security issues, cost optimization, and best practices
-- Evaluate each AI suggestion — is it correct? Is it relevant? Is it a real risk?
-- Implement the valid suggestions
-- Document cases where AI was wrong or gave bad advice
-**Deliverable:** A before/after comparison with a document explaining each change.
+### Exercise 1: Daily AI Use for DevOps (beginner)
 
-### Exercise 2: Build a Complete CI/CD Pipeline with AI
-**What you do:** Use AI to generate a complete CI/CD pipeline, then review, fix, and improve it.
-**Skills tested:** AI workflow, CI/CD design, code review.
-**Requirements:**
-- Describe your project to AI (language, test framework, deployment target)
-- Generate the pipeline with AI
-- Review every step critically — fix errors, add missing steps, improve security
-- Add steps AI missed (secret scanning, IaC validation, image signing)
-- Run the pipeline and fix any issues
-**Deliverable:** A working pipeline that you could not have built as fast without AI, but that you understand completely.
+**Goal:** Integrate AI into your daily workflow.
 
-### Exercise 3: Deploy a Model Serving Pipeline
-**What you build:** An end-to-end model deployment on Kubernetes.
-**Skills tested:** Model serving, K8s GPU workloads, monitoring.
-**Requirements:**
-- Use a pre-trained model (HuggingFace has thousands — pick a simple text classifier)
-- Containerize the model with a serving framework (BentoML or FastAPI wrapper)
-- Deploy to Kubernetes with proper resource limits
-- Set up health checks and autoscaling
-- Add monitoring (request latency, error rate, model response distribution)
-- Bonus: Add A/B testing between two model versions
-**Deliverable:** A REST API endpoint that serves model predictions, running on K8s, with monitoring.
+```
+Week challenge:
+Monday: Generate a Terraform module for S3 + CloudFront using AI
+Tuesday: Ask AI to do a security review of your Dockerfile
+Wednesday: Create K8s manifests for a new service through AI
+Thursday: Debug a real problem with AI assistance (paste logs + describe context)
+Friday: Generate a CI/CD pipeline and runbook through AI
 
-### Exercise 4: GPU Workload on Kubernetes
-**What you build:** A GPU-scheduled workload on a K8s cluster.
-**Skills tested:** GPU scheduling, node affinity, resource management.
-**Requirements:**
-- Set up a K8s cluster with GPU nodes (EKS with p3 instances, or use a local setup with GPU passthrough)
-- Deploy a GPU workload with proper resource requests (`nvidia.com/gpu: 1`)
-- Configure node affinity and tolerations for GPU nodes
-- Set up monitoring for GPU utilization
-- Implement auto-scaling based on queue length or GPU utilization
-**Note:** If GPU instances are too expensive, simulate with CPU and document what would change for real GPU deployment.
+For each day:
+1. Write down the prompt
+2. Write down the result
+3. What you had to fix
+4. How much time was saved
 
-### Exercise 5: Daily AI Integration Challenge (1 Week)
-**What you do:** For 5 working days, use AI for every infrastructure task and log the results.
-**Skills tested:** AI integration into daily workflow, prompt quality, critical evaluation.
-**Daily log format:**
-- Task description
-- Prompt used
-- AI output quality (1-5)
-- Time saved vs. manual approach
-- Errors or issues in AI output
-- What you learned about effective prompting
-**Deliverable:** A week-long log with patterns on when AI helps most and when it fails.
+Success criteria: AI is used at least 5 times per day for DevOps tasks
+```
+
+### Exercise 2: CI/CD for an ML Project (strong)
+
+**Goal:** Build a complete pipeline for ML.
+
+```
+Steps:
+1. Create a simple ML project: FastAPI + scikit-learn model
+2. Dockerfile: multi-stage, non-root, health check
+3. GitHub Actions pipeline:
+   - Lint + test
+   - Train model (with fixed seed for reproducibility)
+   - Evaluate (compare with baseline)
+   - Build and push Docker image
+   - Register model in MLflow
+   - Deploy to K8s (Deployment + Service + Ingress)
+4. MLflow:
+   - Set up MLflow server
+   - Log experiment parameters, metrics, artifacts
+   - Model registry: staging -> production
+5. Monitoring: latency, throughput, error rate
+
+Success criteria: push to main -> automatic training -> evaluation -> deploy
+```
+
+### Exercise 3: GPU Workloads on K8s (strong -> expert)
+
+**Goal:** Learn to work with GPU on Kubernetes.
+
+```
+Steps:
+1. Set up a K8s cluster with GPU nodes
+   (EKS with g4dn.xlarge or kind + NVIDIA GPU)
+2. Install NVIDIA GPU Operator
+3. Create a Pod with GPU:
+   - requests: nvidia.com/gpu: 1
+   - limits: nvidia.com/gpu: 1
+4. Run an inference service (FastAPI + PyTorch model)
+5. Set up HPA on custom metrics (request queue length)
+6. Monitoring: DCGM Exporter -> Prometheus -> Grafana
+   - GPU utilization
+   - GPU memory usage
+   - Temperature
+7. Optimization: scale-to-zero when there is no traffic
+
+Success criteria: GPU workload runs on K8s with auto-scaling and monitoring
+```
+
+### Exercise 4: Model Serving Pipeline (strong -> expert)
+
+**Goal:** Deploy an ML model in a production-ready way.
+
+```
+Steps:
+1. Choose a serving framework: KServe or vLLM
+2. Containerize the model
+3. Create K8s resources for serving:
+   - InferenceService (KServe) or Deployment
+   - Auto-scaling (min 0, max 5)
+   - Resource requests/limits
+4. Canary deployment: 10% -> 50% -> 100%
+5. A/B testing: old model vs new
+6. Monitoring:
+   - Latency (p50, p95, p99)
+   - Throughput (requests/sec)
+   - Error rate
+   - Model-specific metrics (accuracy, drift)
+7. Rollback procedure: automatic when error rate > 5%
+
+Success criteria: model deploys through GitOps with canary and automatic rollback
+```
+
+### Exercise 5: LLM Serving on K8s (expert)
+
+**Goal:** Deploy an LLM for inference.
+
+```
+Steps:
+1. Choose an open-source model (Llama 3, Mistral)
+2. Install vLLM on K8s:
+   - GPU node with sufficient VRAM
+   - Model weights from Hugging Face Hub or S3
+   - vLLM Deployment with OpenAI-compatible API
+3. Optimization:
+   - Quantization (AWQ or GPTQ) to reduce VRAM
+   - Continuous batching (vLLM does this automatically)
+   - Tensor parallelism for multi-GPU
+4. Ingress + rate limiting
+5. Monitoring:
+   - Tokens/second
+   - Time-to-first-token (TTFT)
+   - GPU utilization and VRAM usage
+6. Cost analysis: compare with OpenAI API pricing
+
+Success criteria: LLM runs on K8s, accessible via API, with monitoring and auto-scaling
+```
 
 ---
 
 ## "Signals" You Are Job-Ready (Checklist)
 
-### AI Copilot Readiness:
-- [ ] Uses AI tools daily for infrastructure work (not occasionally)
-- [ ] Can write prompts that generate production-quality Terraform, Docker, and K8s code
-- [ ] Can critically review AI output — catches errors, security issues, and antipatterns
-- [ ] Can explain the difference between good and bad AI-generated infrastructure code
-- [ ] Can use AI to debug complex infrastructure issues faster than manual approaches
-- [ ] Has a workflow for: AI generates, human reviews, human applies
+### Required:
 
-### MLOps Readiness:
-- [ ] Can explain the ML lifecycle and identify which parts are DevOps responsibility
-- [ ] Can containerize an ML model and deploy it as a REST API
-- [ ] Can set up model serving on Kubernetes (KServe, Seldon, or BentoML)
-- [ ] Can configure GPU workloads on K8s (resource requests, scheduling, tolerations)
-- [ ] Can set up experiment tracking with MLflow
-- [ ] Can build a CI/CD pipeline for model training and deployment
-- [ ] Can monitor model performance (latency, errors, data drift)
+- [ ] Use AI daily for DevOps tasks and know its limitations
+- [ ] Write effective prompts for generating Terraform/K8s/CI code
+- [ ] Explain the difference between training and inference
+- [ ] Containerize an ML service (FastAPI + model)
+- [ ] Understand why GPU is needed and what types of GPU instances exist
+- [ ] Know the main MLOps tools: MLflow, KServe, vLLM
 
-> VOICEOVER: Here is the bottom line. In 2026, there are two types of DevOps engineers: those who use AI every day and those who are falling behind. And if you combine AI fluency with MLOps skills? You are in the top 5% of candidates. That is not a guess — that is what hiring managers are telling me.
+### Desired:
+
+- [ ] Build a CI/CD pipeline for an ML project
+- [ ] Set up GPU nodes in K8s with NVIDIA Device Plugin
+- [ ] Deploy a model through KServe or vLLM
+- [ ] Set up model monitoring (drift detection)
+- [ ] Optimize GPU costs (spot instances, scale-to-zero)
+- [ ] Understand MLflow model registry
+
+### In an Interview You Can:
+
+- [ ] Explain how AI changes the work of a DevOps engineer (with specific examples)
+- [ ] Describe an MLOps pipeline from training to serving
+- [ ] Explain the difference between DevOps and MLOps
+- [ ] Describe how to scale an inference endpoint
+- [ ] Explain a GPU cost optimization strategy
+- [ ] Describe how to monitor an ML model in production
 
 ---
 
 ## Links Inside the Repo
 
-- Previous: [04 - Infrastructure as Code](../04-infrastructure-as-code/) — what AI helps you write faster
-- Related: [01 - Cloud Adoption](../01-cloud-adoption/) — cloud platform for GPU workloads
-- Related: [02 - Containers & Kubernetes](../02-containers-and-kubernetes/) — where models run
-- Related: [03 - DevSecOps](../03-devsecops/) — security for ML pipelines
-- Full path: [90 - Learning Roadmap](../90-roadmap/) — where AI/MLOps fits in the bigger picture
-- Avoid traps: [91 - Common Mistakes](../91-mistakes/) — the "fear of AI" trap and others
+- Previous factor: [Infrastructure as Code](../04-infrastructure-as-code/)
+- Containers for ML: [Containers & Kubernetes](../02-containers-and-kubernetes/)
+- Cloud GPU infrastructure: [Cloud Adoption](../01-cloud-adoption/)
+- ML pipeline security: [DevSecOps](../03-devsecops/)
+- IaC for ML infrastructure: [Infrastructure as Code](../04-infrastructure-as-code/)
+- Learning roadmap: [Roadmap](../90-roadmap/)
+- Mistakes to avoid: [Common Mistakes](../91-mistakes/)
+- Back to [course overview](../README.md)
