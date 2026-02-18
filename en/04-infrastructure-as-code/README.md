@@ -12,7 +12,9 @@
 
 If your infrastructure is not described in code, it does not exist. In 2026, manual server configuration is technical debt that costs companies millions.
 
-Most organizations with mature DevOps practices use IaC, and Terraform has become the de facto standard.
+Most organizations with mature DevOps practices use IaC. For years, Terraform was the unchallenged standard. In August 2023, HashiCorp changed Terraform's license from open-source (MPL 2.0) to the Business Source License (BSL), which restricts commercial use in competing products. The CNCF community responded by forking the last open-source version into **OpenTofu** — now a CNCF sandbox project.
+
+This is a real decision that engineering teams are making right now: stay on Terraform (BSL), migrate to OpenTofu (open source), or evaluate alternatives. You need to understand both.
 
 Infrastructure as Code is an approach where all infrastructure is described in configuration files, stored in Git, and deployed automatically. This means:
 
@@ -45,12 +47,31 @@ In 2026, IaC is a **mandatory skill** for a DevOps engineer. Not "nice to have" 
 
 ## What You Must Learn (Core Skills)
 
-### 1. Terraform -- The Primary Tool
+### 1. Terraform / OpenTofu — The Primary Tool
 
-Terraform by HashiCorp is the de facto standard for IaC. OpenTofu is the open-source fork. The concepts are identical.
+Terraform by HashiCorp and OpenTofu (the CNCF open-source fork) are the de facto standards for IaC. **The HCL syntax, provider ecosystem, and state format are identical** between them up to Terraform ~1.5. Everything you learn in one applies directly to the other.
+
+#### Terraform vs OpenTofu — What to Choose
+
+| | Terraform | OpenTofu |
+|--|-----------|----------|
+| License | BSL (restricts competing products) | MPL 2.0 (fully open source) |
+| Governance | HashiCorp / IBM | CNCF community |
+| HCL compatibility | Canonical | API-compatible through ~1.5 |
+| Provider registry | registry.terraform.io | Both registries work |
+| State format | Same | Same |
+| Enterprise features | Terraform Cloud/Enterprise | Community alternatives |
+
+**Decision framework:**
+- **Greenfield project, no license constraints:** either works — pick based on team preference
+- **Existing Terraform codebase:** evaluate BSL implications for your use case; migration to OpenTofu is straightforward
+- **Open-source requirement or competing-product concern:** OpenTofu
+- **Need commercial support + enterprise UI:** Terraform Cloud/Enterprise
+
+In job postings you will see both. In interviews, demonstrate you understand the split and can work with either.
 
 ```
-Terraform skills (in priority order):
+Terraform / OpenTofu skills (in priority order):
 ├── HCL Basics
 │   ├── Resources, Data Sources
 │   ├── Variables, Outputs
@@ -551,7 +572,9 @@ Success criteria: all K8s changes go through Git, no manual kubectl apply
 - [ ] Use Terratest for testing modules
 - [ ] Set up tflint and Checkov in CI
 - [ ] Implement GitOps with ArgoCD or Flux
-- [ ] Know the difference between Terraform and OpenTofu
+- [ ] Explain the HashiCorp BSL license change and why OpenTofu was forked
+- [ ] Know when to choose Terraform vs OpenTofu for a new project
+- [ ] Understand that HCL syntax and state format are compatible between the two
 - [ ] Use terraform workspaces or directory structure for environments
 - [ ] Know how to work with terraform import at scale
 
@@ -573,6 +596,7 @@ Success criteria: all K8s changes go through Git, no manual kubectl apply
 - Cloud infrastructure: [Cloud Adoption](../01-cloud-adoption/)
 - IaC for K8s: [Containers & Kubernetes](../02-containers-and-kubernetes/)
 - IaC security: [DevSecOps](../03-devsecops/)
+- Monitoring infrastructure: [Observability & SRE](../06-observability-and-sre/)
 - Learning roadmap: [Roadmap](../90-roadmap/)
 - Mistakes to avoid: [Common Mistakes](../91-mistakes/)
 - Back to [course overview](../README.md)
