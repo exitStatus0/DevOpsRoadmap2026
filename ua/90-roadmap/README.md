@@ -10,6 +10,20 @@
 
 ---
 
+## Безпека хмарних лабораторій: витрати та очищення
+
+Перед початком хмарних вправ захистіть себе від несподіваних рахунків:
+
+- **Спочатку налаштуйте billing alert.** AWS: Billing → Budgets → створіть alert на $10. Зробіть це до запуску будь-яких ресурсів.
+- **Знищуйте ресурси після кожної сесії.** Запускайте `terraform destroy` або перевіряйте `aws resourcegroupstaggingapi get-resources`, щоб переконатися, що нічого не залишилося.
+- **Використовуйте free tier розумно.** Більшість вправ вміщуються в AWS Free Tier (12 місяців). Перевіряйте ліміти перед стартом.
+- **Тегуйте кожен ресурс.** Додавайте `Environment=learning` до всього — це спрощує масове очищення.
+- **Ніколи не використовуйте root-акаунт.** Створіть IAM-користувача з обмеженими правами для практики.
+
+> Забутий RDS-інстанс або NAT Gateway може коштувати $50–$200/міс. П'ять хвилин налаштування на початку — і цього не станеться.
+
+---
+
 ## Фаза 0 → 1: Основи (2-4 тижні)
 
 **Мета:** Закласти фундамент, без якого все інше буде на піску.
@@ -421,7 +435,44 @@ Linux/Мережі (фундамент)
 
 ---
 
-## Портфоліо-проєкти
+## Канонічні проєкти портфоліо
+
+Три проєкти, що охоплюють усі п'ять факторів. Кожен модуль посилається сюди — використовуйте їх як цілі для практики.
+
+### Проєкт А: Full-Stack DevOps Platform
+
+*Розгорніть 3-сервісний застосунок від нуля до production на Kubernetes.*
+
+- [ ] VPC + EKS + RDS розгорнуто через Terraform (remote state, багаторазові модулі)
+- [ ] 3 мікросервіси задеплоєно через Helm-чарти з health checks та resource limits
+- [ ] CI/CD: збірка → Trivy/Checkov-сканування → деплой у staging → просування в production
+- [ ] ArgoCD для GitOps; RBAC + NetworkPolicies + Vault для секретів
+- [ ] Prometheus + Grafana-дашборди з алертами на основі SLO
+- [ ] Публічний GitHub-репозиторій із README та архітектурною діаграмою
+
+### Проєкт B: IaC Module Library
+
+*Побудуйте бібліотеку Terraform-модулів з автоматизованими тестами.*
+
+- [ ] 3+ модулів: VPC, EKS, RDS — кожен із змінними, виводами та inline-документацією
+- [ ] Remote state (S3 + DynamoDB); state розділений по компонентах
+- [ ] Terratest integration-тести, що запускаються на кожному PR
+- [ ] CI-пайплайн: fmt → validate → tflint → checkov → test
+- [ ] Semantic versioning через GitHub Releases
+
+### Проєкт C: Security Pipeline
+
+*Додайте повноцінний security layer до існуючого застосунку.*
+
+- [ ] Pre-commit hooks: gitleaks (секрети) + hadolint (Dockerfile)
+- [ ] CI-сканування: Trivy (образи), Checkov (IaC), Semgrep (SAST)
+- [ ] Kyverno admission policies: заборона root, заборона тегу `latest`, обов'язкові resource limits
+- [ ] Vault + External Secrets Operator для секретів застосунку
+- [ ] Falco runtime anomaly detection з Slack-алертами
+
+---
+
+## Портфоліо-проєкти — повний опис
 
 ### Проєкт 1: «Full-Stack DevOps Platform» (4-6 тижнів)
 
