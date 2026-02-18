@@ -16,22 +16,24 @@ Here is what changed:
 - **Security is no longer a separate team's job.** DevSecOps is now expected from every engineer who touches infrastructure.
 - **Infrastructure as Code is non-negotiable.** If you are clicking through consoles, you are already behind.
 - **AI rewrote the daily workflow.** Engineers who use AI tools effectively are measurably more productive. Those who do not are falling behind.
+- **Observability became a distinct discipline.** SLOs, error budgets, and distributed tracing are no longer advanced topics — they are baseline expectations for any production system.
 
-These are the 5 growth factors. Master them in the right order, and you become the engineer companies are fighting to hire.
+These are the 6 growth factors. Master them in the right order, and you become the engineer companies are fighting to hire.
 
-> "5 factors. Right order. That is the entire strategy."
+> "6 factors. Right order. That is the entire strategy."
 
 ---
 
-## The 5 Growth Factors
+## The 6 Growth Factors
 
 | # | Factor | What It Means For You | Module |
 |---|--------|----------------------|--------|
 | 1 | **Cloud Adoption** | Companies need engineers who can build, manage, and optimize cloud infrastructure — not just click buttons in a console | [01-cloud-adoption](./01-cloud-adoption/) |
 | 2 | **Containers & Kubernetes** | Docker is table stakes. Kubernetes is the orchestration standard. You must know both. | [02-containers-and-kubernetes](./02-containers-and-kubernetes/) |
 | 3 | **DevSecOps** | Security shifted left. If you cannot scan images, manage secrets, and write network policies, you have a gap on your resume. | [03-devsecops](./03-devsecops/) |
-| 4 | **Infrastructure as Code** | Manual configuration is dead. Terraform, GitOps, and automated testing of infrastructure are the baseline. | [04-infrastructure-as-code](./04-infrastructure-as-code/) |
+| 4 | **Infrastructure as Code** | Manual configuration is dead. Terraform / OpenTofu, GitOps, and automated testing of infrastructure are the baseline. | [04-infrastructure-as-code](./04-infrastructure-as-code/) |
 | 5 | **AI & MLOps** | AI is your copilot for every DevOps task. MLOps is 80% DevOps. Both are career multipliers. | [05-ai-and-mlops](./05-ai-and-mlops/) |
+| 6 | **Observability & SRE** | You cannot fix what you cannot see. SLOs, error budgets, and distributed tracing are now baseline expectations. | [06-observability-and-sre](./06-observability-and-sre/) |
 
 ---
 
@@ -83,10 +85,11 @@ This is not a "watch and forget" course. It is a system.
 | Section | Description |
 |---------|------------|
 | [Factor 1: Cloud Adoption](./01-cloud-adoption/) | Cloud infrastructure, providers, core services |
-| [Factor 2: Containers & Kubernetes](./02-containers-and-kubernetes/) | Docker, K8s, orchestration, Helm |
+| [Factor 2: Containers & Kubernetes](./02-containers-and-kubernetes/) | Docker, K8s, orchestration, Helm, Gateway API, Karpenter |
 | [Factor 3: DevSecOps](./03-devsecops/) | Security in the pipeline, secrets, scanning, policies |
-| [Factor 4: Infrastructure as Code](./04-infrastructure-as-code/) | Terraform, GitOps, state management, testing |
+| [Factor 4: Infrastructure as Code](./04-infrastructure-as-code/) | Terraform / OpenTofu, GitOps, state management, testing |
 | [Factor 5: AI & MLOps](./05-ai-and-mlops/) | AI copilot workflows, MLOps pipelines, GPU infra |
+| [Factor 6: Observability & SRE](./06-observability-and-sre/) | Prometheus, OpenTelemetry, SLOs, error budgets, tracing |
 | [Learning Roadmap](./90-roadmap/) | Phases, timelines, skill dependencies, portfolio |
 | [Top Mistakes](./91-mistakes/) | 10 traps that keep people stuck — and how to avoid them |
 

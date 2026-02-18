@@ -255,27 +255,33 @@ Weeks 3-4: Advanced
 └── State management (mv, rm, import)
 ```
 
-#### Monitoring and Observability (2-3 weeks)
+#### Observability & SRE (2-3 weeks) -> [Factor 6](../06-observability-and-sre/)
 ```
 Observability plan:
 ├── Three pillars: Metrics, Logs, Traces
 ├── Prometheus + Grafana
-│   ├── Installation (Helm)
-│   ├── Service monitors
-│   ├── PromQL basics
-│   └── Dashboards and alerts
-├── ELK or Loki for logs
-│   ├── Collecting logs from K8s
-│   ├── Filtering and searching
-│   └── Log-based alerts
+│   ├── Installation (Helm: kube-prometheus-stack)
+│   ├── Service monitors, PromQL basics
+│   ├── RED method dashboards
+│   └── SLO-based alerting (burn rate)
+├── Loki for logs
+│   ├── Collecting logs from K8s (Promtail)
+│   ├── Filtering and searching in Grafana
+│   └── Log-metric correlation
+├── OpenTelemetry
+│   ├── SDK instrumentation (any language)
+│   ├── Collector deployment (DaemonSet)
+│   └── Traces to Grafana Tempo
 ├── Alertmanager
-│   ├── Routing rules
-│   ├── Integration with Slack/PagerDuty
-│   └── Silence and inhibit
-└── SLI/SLO/SLA
-    ├── What they are and why
-    ├── Defining SLOs for a service
-    └── Error budget
+│   ├── Routing rules (P1 → PagerDuty, P2/P3 → Slack)
+│   ├── Silences and inhibitions
+│   └── On-call integration
+└── SLI/SLO/Error Budget
+    ├── Define SLIs and SLOs for a service
+    ├── Error budget policy
+    └── Pyrra or Sloth for SLO management
+
+Kubernetes → Prometheus → OpenTelemetry → SLOs
 ```
 
 #### Security Basics (2-3 weeks) -> [Factor 3](../03-devsecops/)
@@ -338,10 +344,17 @@ Linux/Networking (foundation)
     │                 │
     │                 └── CI/CD for IaC
     │
-    └── Monitoring
-          ├── Prometheus + Grafana
-          ├── Logging (Loki/ELK)
-          └── Alerting
+    └── Kubernetes ─── Prometheus + Grafana
+                            │
+                            ├── OpenTelemetry (traces)
+                            │         │
+                            │         └── Grafana Tempo
+                            │
+                            └── SLOs + Error Budgets
+                                      │
+                                      └── Alertmanager → PagerDuty/Slack
+
+→ Full observability module: [Factor 6](../06-observability-and-sre/)
 ```
 
 **Rule:** Do not move to the next level until the previous one is stable. Docker before K8s. K8s before Helm. Cloud before Terraform.
@@ -443,11 +456,13 @@ Three projects that cover all five factors. Every factor module links back here 
 
 *Deploy a 3-service application from zero to production on Kubernetes.*
 
-- [ ] VPC + EKS + RDS provisioned with Terraform (remote state, reusable modules)
+- [ ] VPC + EKS + RDS provisioned with Terraform / OpenTofu (remote state, reusable modules)
 - [ ] 3 microservices deployed via Helm charts with health checks and resource limits
 - [ ] CI/CD: build → Trivy/Checkov scan → staging deploy → production promote
 - [ ] ArgoCD for GitOps; RBAC + NetworkPolicies + Vault for secrets
-- [ ] Prometheus + Grafana dashboards with SLO-based alerts
+- [ ] Prometheus + Grafana dashboards with SLO-based alerts ([Factor 6](../06-observability-and-sre/))
+- [ ] OpenTelemetry instrumentation: traces to Grafana Tempo, logs correlated in Grafana
+- [ ] At least one SLO defined with error budget policy and burn-rate alerting
 - [ ] Public GitHub repo with README and architecture diagram
 
 ### Project B: IaC Module Library
@@ -614,5 +629,6 @@ You have the map. Start walking.
 - Factor 3: [DevSecOps](../03-devsecops/)
 - Factor 4: [Infrastructure as Code](../04-infrastructure-as-code/)
 - Factor 5: [AI & MLOps](../05-ai-and-mlops/)
+- Factor 6: [Observability & SRE](../06-observability-and-sre/)
 - Common Mistakes: [91-mistakes](../91-mistakes/)
 - Back to [course overview](../README.md)

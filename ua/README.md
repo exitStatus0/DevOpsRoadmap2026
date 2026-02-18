@@ -16,15 +16,16 @@
 
 ---
 
-## 5 факторів зростання DevOps-інженера
+## 6 факторів зростання DevOps-інженера
 
 | # | Фактор | Чому це критично | Модуль |
 |---|--------|-------------------|--------|
 | 1 | **Хмарне впровадження** (Cloud Adoption) | Більшість компаній використовують хмару; дефіцит cloud-інженерів зростає | [01-cloud-adoption](./01-cloud-adoption/) |
 | 2 | **Контейнери та Kubernetes** | Kubernetes — стандарт оркестрації; Docker — мінімальний вхідний квиток | [02-containers-and-kubernetes](./02-containers-and-kubernetes/) |
 | 3 | **DevSecOps** (Безпека) | Shift-left security — не опція, а вимога; витоки даних коштують мільйони | [03-devsecops](./03-devsecops/) |
-| 4 | **Інфраструктура як код** (IaC) | Ручне налаштування — це технічний борг; Terraform — мова інфраструктури | [04-infrastructure-as-code](./04-infrastructure-as-code/) |
+| 4 | **Інфраструктура як код** (IaC) | Ручне налаштування — це технічний борг; Terraform / OpenTofu — мова інфраструктури | [04-infrastructure-as-code](./04-infrastructure-as-code/) |
 | 5 | **ШІ та MLOps** | ШІ змінює щоденну роботу DevOps; MLOps — це на 80% DevOps-навички | [05-ai-and-mlops](./05-ai-and-mlops/) |
+| 6 | **Спостережуваність та SRE** | Ви не можете полагодити те, чого не бачите. SLO, error budgets та distributed tracing — базові очікування | [06-observability-and-sre](./06-observability-and-sre/) |
 
 ---
 
@@ -123,6 +124,7 @@ DevOpsRoadmap2026/ua/
 ├── 03-devsecops/                     ← Фактор 3: DevSecOps
 ├── 04-infrastructure-as-code/        ← Фактор 4: IaC
 ├── 05-ai-and-mlops/                  ← Фактор 5: ШІ та MLOps
+├── 06-observability-and-sre/         ← Фактор 6: Спостережуваність та SRE
 ├── 90-roadmap/                       ← Дорожня карта навчання
 └── 91-mistakes/                      ← Типові помилки
 ```

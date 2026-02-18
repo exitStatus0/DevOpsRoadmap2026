@@ -253,27 +253,33 @@ Terraform-план:
 └── State management (mv, rm, import)
 ```
 
-#### Мониторинг и Observability (2-3 недели)
+#### Наблюдаемость и SRE (2-3 недели) -> [Фактор 6](../06-observability-and-sre/)
 ```
 Observability-план:
 ├── Три столпа: Metrics, Logs, Traces
 ├── Prometheus + Grafana
-│   ├── Установка (Helm)
-│   ├── Service monitors
-│   ├── PromQL базово
-│   └── Dashboards и alerts
-├── ELK или Loki для логов
-│   ├── Сбор логов из K8s
-│   ├── Фильтрация и поиск
-│   └── Log-based алерты
+│   ├── Установка (Helm: kube-prometheus-stack)
+│   ├── Service monitors, PromQL базово
+│   ├── RED-method дашборды
+│   └── SLO-based alerting (burn rate)
+├── Loki для логов
+│   ├── Сбор логов из K8s (Promtail)
+│   ├── Фильтрация и поиск в Grafana
+│   └── Корреляция лог-метрика
+├── OpenTelemetry
+│   ├── SDK инструментирование (любой язык)
+│   ├── Развёртывание Collector (DaemonSet)
+│   └── Трейсы в Grafana Tempo
 ├── Alertmanager
-│   ├── Routing правила
-│   ├── Интеграция со Slack/PagerDuty
-│   └── Silence и inhibit
-└── SLI/SLO/SLA
-    ├── Что это и зачем
-    ├── Определение SLO для сервиса
-    └── Error budget
+│   ├── Routing правила (P1 -> PagerDuty, P2/P3 -> Slack)
+│   ├── Silence и inhibit
+│   └── Интеграция с дежурными
+└── SLI/SLO/Error Budget
+    ├── Определение SLI и SLO для сервиса
+    ├── Error budget policy
+    └── Pyrra или Sloth для управления SLO
+
+Kubernetes -> Prometheus -> OpenTelemetry -> SLO
 ```
 
 #### Основы безопасности (2-3 недели) -> [Фактор 3](../03-devsecops/)
@@ -336,10 +342,17 @@ Linux/Сети (фундамент)
     │                 │
     │                 └── CI/CD for IaC
     │
-    └── Monitoring
-          ├── Prometheus + Grafana
-          ├── Logging (Loki/ELK)
-          └── Alerting
+    └── Kubernetes ─── Prometheus + Grafana
+                            │
+                            ├── OpenTelemetry (трейсы)
+                            │         │
+                            │         └── Grafana Tempo
+                            │
+                            └── SLO + Error Budgets
+                                      │
+                                      └── Alertmanager -> PagerDuty/Slack
+
+-> Полный модуль наблюдаемости: [Фактор 6](../06-observability-and-sre/)
 ```
 
 **Правило:** Не переходите к следующему уровню, пока предыдущий не стабилен. Docker до K8s. K8s до Helm. Облако до Terraform.
@@ -441,11 +454,13 @@ Linux/Сети (фундамент)
 
 *Разверните приложение из 3 сервисов с нуля до production на Kubernetes.*
 
-- [ ] VPC + EKS + RDS, настроенные через Terraform (remote state, переиспользуемые модули)
+- [ ] VPC + EKS + RDS, настроенные через Terraform / OpenTofu (remote state, переиспользуемые модули)
 - [ ] 3 микросервиса, развёрнутые через Helm-чарты с health checks и resource limits
 - [ ] CI/CD: сборка → сканирование Trivy/Checkov → деплой в staging → продвижение в production
 - [ ] ArgoCD для GitOps; RBAC + NetworkPolicies + Vault для секретов
-- [ ] Prometheus + Grafana-дашборды с SLO-алертами
+- [ ] Prometheus + Grafana-дашборды с SLO-алертами ([Фактор 6](../06-observability-and-sre/))
+- [ ] OpenTelemetry инструментирование: трейсы в Grafana Tempo, логи скоррелированы в Grafana
+- [ ] Определён хотя бы один SLO с error budget policy и burn-rate alerting
 - [ ] Публичный GitHub-репозиторий с README и архитектурной диаграммой
 
 ### Проект B: IaC-библиотека
@@ -578,5 +593,6 @@ Linux/Сети (фундамент)
 - Фактор 3: [DevSecOps](../03-devsecops/)
 - Фактор 4: [Инфраструктура как код](../04-infrastructure-as-code/)
 - Фактор 5: [ИИ и MLOps](../05-ai-and-mlops/)
+- Фактор 6: [Наблюдаемость и SRE](../06-observability-and-sre/)
 - Типичные ошибки: [91-mistakes](../91-mistakes/)
 - Вернуться на [главную страницу](../)
