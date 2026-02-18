@@ -135,6 +135,45 @@ Helm-навыки:
 └── CoreDNS
 ```
 
+### Этап 5: Gateway API
+
+Kubernetes-нативная замена Ingress. Gateway API достиг стабильного статуса в K8s 1.28 и является направлением, в котором движется экосистема.
+
+**Почему это важно:**
+- Ingress был спроектирован для единственного сценария. Gateway API — для реальных мультиарендных кластеров.
+- Разделяет маршрутизацию трафика на три ресурса: `GatewayClass` (уровень кластера), `Gateway` (уровень namespace), `HTTPRoute` (уровень приложения).
+- Нативный traffic splitting, header matching, кросс-namespace маршрутизация — без хаков через аннотации.
+
+**Ключевые ресурсы:**
+```
+Gateway API:
+├── GatewayClass   -- определяет контроллер (как IngressClass)
+├── Gateway        -- listener (порт 80/443 с TLS)
+└── HTTPRoute      -- правила маршрутизации (path, header, weight)
+```
+
+**Реализации:** Envoy Gateway, Nginx Gateway Fabric, Istio, Traefik, Cilium.
+
+### Этап 6: Автомасштабирование нод с Karpenter
+
+Karpenter -- AWS-нативный автоскейлер нод, который заменил Cluster Autoscaler как рекомендованный подход для EKS. Он выделяет именно те ноды, которые нужны вашим нагрузкам.
+
+**Почему Karpenter, а не Cluster Autoscaler:**
+- Cluster Autoscaler масштабирует node groups -- вы заранее определяете типы инстансов.
+- Karpenter выбирает оптимальный тип инстанса для каждой нагрузки во время выполнения.
+- Консолидация: Karpenter может заменить полупустую ноду на меньшую автоматически.
+- Обработка Spot: Karpenter перебалансирует нагрузки при прерывании spot-инстансов.
+
+**Ключевые ресурсы:**
+```
+Karpenter:
+├── NodePool       -- ограничения на ноды, которые Karpenter может выделять
+│   ├── категории инстансов, размеры, семейства
+│   ├── тип ёмкости (on-demand vs spot)
+│   └── срок действия и бюджет прерываний
+└── EC2NodeClass   -- AWS-специфичная конфигурация (AMI, subnet, security groups)
+```
+
 ---
 
 ## Что можно пропустить / «худший ROI» для начала
@@ -188,6 +227,7 @@ Helm-навыки:
 - [ ] Дебажить проблемы: CrashLoopBackOff, ImagePullBackOff, Pending pods
 - [ ] Работать с PersistentVolumes
 - [ ] Понять node affinity, taints и tolerations
+- [ ] Понимать, когда использовать Gateway API вместо Ingress
 
 **Тест:** Можете задеплоить микросервисное приложение (3+ сервиса) в K8s с Helm, ingress, HPA и мониторингом? Если да -- вы уверенный.
 
@@ -201,6 +241,8 @@ Helm-навыки:
 - [ ] Настроить multi-cluster стратегию
 - [ ] Внедрить progressive delivery (Canary, Blue-Green) с Argo Rollouts
 - [ ] Понимать K8s internals: API server, etcd, scheduler, kubelet
+- [ ] Настроить Karpenter NodePools и EC2NodeClasses для оптимального выделения нод
+- [ ] Использовать консолидацию Karpenter для автоматического rightsizing нод кластера
 
 **Тест:** Можете спроектировать и поддерживать K8s-платформу для команды из 20+ разработчиков? Если да -- вы эксперт.
 
@@ -486,6 +528,7 @@ resources:
 - IaC для K8s: [Инфраструктура как код](../04-infrastructure-as-code/)
 - Безопасность контейнеров: [DevSecOps](../03-devsecops/)
 - ИИ для K8s: [ИИ и MLOps](../05-ai-and-mlops/)
+- Мониторинг K8s: [Наблюдаемость и SRE](../06-observability-and-sre/)
 - Общая дорожная карта: [Roadmap](../90-roadmap/)
 - Ошибки, которых стоит избегать: [Типичные ошибки](../91-mistakes/)
 - Вернуться на [главную страницу](../)

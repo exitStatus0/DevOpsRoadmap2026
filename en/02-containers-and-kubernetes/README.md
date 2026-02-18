@@ -168,6 +168,7 @@ kubectl get events --sort-by='.lastTimestamp'  # recent cluster events
 - Can implement health checks (liveness, readiness, startup probes)
 - Can set resource requests and limits appropriately
 - Can write and apply NetworkPolicies
+- Understand when to use Gateway API vs Ingress
 
 ### Expert (6+ months):
 - Can design multi-cluster strategies
@@ -177,6 +178,8 @@ kubectl get events --sort-by='.lastTimestamp'  # recent cluster events
 - Can manage stateful workloads (databases, message queues) on K8s
 - Can implement service mesh for advanced traffic management
 - Can troubleshoot CNI and kube-proxy issues
+- Can configure Karpenter NodePools and EC2NodeClasses for cost-optimized node provisioning
+- Can use Karpenter consolidation to right-size cluster nodes automatically
 
 > "Can you debug a CrashLoopBackOff in under 5 minutes? That is strong level."
 
@@ -330,6 +333,56 @@ Prompt: "Write Kubernetes NetworkPolicies for this setup:
 
 > If someone hands you a broken Kubernetes deployment and you can diagnose and fix it in 15 minutes — you are ready. That is the real interview test, and that comes from practice, not from reading docs.
 
+### Stage 5: Gateway API
+
+The Kubernetes-native replacement for Ingress. Gateway API reached stable status in Kubernetes 1.28 and is the direction the ecosystem is moving.
+
+**Why it matters:**
+- Ingress was designed for a single use case. Gateway API is designed for real multi-tenant clusters.
+- Splits traffic routing into three resources: `GatewayClass` (cluster-level, owned by infra team), `Gateway` (namespace-level, owned by platform team), `HTTPRoute` (owned by app team).
+- Native traffic splitting, header matching, and cross-namespace routing — without annotations hacks.
+- Every major ingress controller now has a Gateway API conformant implementation.
+
+**Key resources:**
+```
+Gateway API:
+├── GatewayClass   — defines the controller (like IngressClass)
+├── Gateway        — a listener (port 80/443 with TLS config)
+└── HTTPRoute      — route rules (path, header, weight-based splits)
+```
+
+**Conformant implementations:** Envoy Gateway, Nginx Gateway Fabric, Istio, Traefik, Cilium.
+
+**When to use Gateway API vs Ingress:**
+- New clusters: start with Gateway API
+- Existing clusters: migrate when you need traffic splitting, multi-tenancy, or cross-namespace routing
+- Simple single-team setups: Ingress still works fine
+
+### Stage 6: Node Autoscaling with Karpenter
+
+Karpenter is the AWS-native node autoscaler that replaced Cluster Autoscaler as the recommended approach for EKS. It provisions exactly the right nodes for your workloads — faster and more efficiently than Cluster Autoscaler.
+
+**Why Karpenter over Cluster Autoscaler:**
+- Cluster Autoscaler scales node groups — you define the instance types in advance.
+- Karpenter picks the optimal instance type for each workload at runtime.
+- Consolidation: Karpenter can replace a half-empty node with a smaller one automatically.
+- Spot handling: Karpenter rebalances workloads on spot interruption gracefully.
+
+**Key resources:**
+```
+Karpenter:
+├── NodePool       — constraints on what nodes Karpenter can provision
+│   ├── instance categories, sizes, families
+│   ├── capacity type (on-demand vs spot)
+│   └── expiry and disruption budget
+└── EC2NodeClass   — AWS-specific config (AMI, subnet, security groups)
+```
+
+**Core concepts:**
+- Karpenter watches for unschedulable pods, then provisions a node that fits them — in under 60 seconds.
+- Consolidation runs continuously: if nodes are underutilized, Karpenter moves pods and deletes the node.
+- Works alongside HPA/VPA (pod-level scaling) — Karpenter handles the node layer.
+
 ---
 
 ## Links Inside the Repo
@@ -338,6 +391,7 @@ Prompt: "Write Kubernetes NetworkPolicies for this setup:
 - Next: [03 - DevSecOps](../03-devsecops/) — securing your containers and clusters
 - Related: [04 - Infrastructure as Code](../04-infrastructure-as-code/) — managing K8s infrastructure with Terraform and GitOps
 - Related: [05 - AI & MLOps](../05-ai-and-mlops/) — GPU workloads and model serving on K8s
+- Related: [06 - Observability & SRE](../06-observability-and-sre/) — monitoring your K8s workloads with Prometheus and SLOs
 - Full path: [90 - Learning Roadmap](../90-roadmap/) — where containers/K8s fits in the bigger picture
 - Avoid traps: [91 - Common Mistakes](../91-mistakes/) — tool hopping and other career killers
 
