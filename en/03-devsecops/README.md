@@ -4,11 +4,15 @@
 
 > Here is the reality of 2026 — security is not someone else's job anymore. Every DevOps engineer is expected to own security basics. Not penetration testing. Not compliance auditing. But the practical security that stops your infrastructure from being the reason your company makes the news. Let me break down exactly what you need to know.
 
+> **Quick start**
+> - **7 days:** Run Trivy against a container image → add a gitleaks pre-commit hook → read "What Not to Learn First."
+> - **30 days:** Complete the Beginner checklist → Exercise 2 (security scanning in CI) → Exercise 3 (NetworkPolicies).
+
 ---
 
 ## Why It Matters in 2026
 
-Security breaches cost companies an average of $4.5 million per incident. The vast majority of breaches are caused by:
+Security breaches cost companies millions per incident on average. The vast majority of breaches are caused by:
 - Misconfigured cloud resources (public S3 buckets, open security groups)
 - Hardcoded secrets in code repositories
 - Unpatched container images with known vulnerabilities
@@ -22,7 +26,7 @@ The industry responded by moving security "left" — earlier in the development 
 > "$4.5M average breach cost. Most breaches are preventable misconfigurations."
 
 **What this means for your career:**
-- Engineers with security skills earn 15-25% more than those without
+- Engineers with security skills typically earn more than those without
 - "DevSecOps" is the fastest-growing specialization within DevOps
 - Companies that have been breached are willing to pay a premium for engineers who can prevent the next one
 - Every cloud and K8s skill you learn in [Factor 1](../01-cloud-adoption/) and [Factor 2](../02-containers-and-kubernetes/) becomes more valuable when you can secure it
@@ -324,18 +328,28 @@ impact, and what is the fastest remediation path?"
 
 ## "Signals" You Are Job-Ready (Checklist)
 
-- [ ] Can explain the DevSecOps shift-left concept and why it matters
-- [ ] Can set up pre-commit hooks that prevent secret leaks
+### Required:
+
 - [ ] Can integrate Trivy into a CI pipeline and configure failure thresholds
-- [ ] Can scan Terraform code with Checkov/tfsec before apply
 - [ ] Can write Kubernetes RBAC roles for different team access levels
 - [ ] Can write NetworkPolicies that enforce micro-segmentation
 - [ ] Can set up HashiCorp Vault or AWS Secrets Manager for application secrets
+- [ ] Can scan Terraform code with Checkov/tfsec before apply
+
+### Desired:
+
+- [ ] Can explain the DevSecOps shift-left concept and why it matters
+- [ ] Can set up pre-commit hooks that prevent secret leaks
 - [ ] Can choose secure base images and explain the tradeoffs
 - [ ] Can write OPA or Kyverno policies for admission control
 - [ ] Can explain the software supply chain and how to secure it (SBOM, image signing)
-- [ ] Can describe a security incident response process for containerized applications
 - [ ] Can review a Dockerfile and identify at least 5 security improvements
+
+### In an Interview You Can:
+
+- [ ] Describe your complete security pipeline, from pre-commit hooks to runtime monitoring
+- [ ] Explain how you would respond to a critical CVE discovered in a production container image
+- [ ] Walk through how you would set up secrets management for a new microservice
 
 > When an interviewer asks "how do you handle security in your pipeline?" — you should be able to describe a complete picture, from pre-commit hooks to runtime monitoring. That is what separates candidates who "know about security" from candidates who practice it.
 
@@ -349,3 +363,5 @@ impact, and what is the fastest remediation path?"
 - Related: [05 - AI & MLOps](../05-ai-and-mlops/) — AI-assisted security workflows
 - Full path: [90 - Learning Roadmap](../90-roadmap/) — where security fits in the bigger picture
 - Avoid traps: [91 - Common Mistakes](../91-mistakes/) — ignoring fundamentals and other career killers
+
+**Apply this factor:** [Project C — Security Pipeline](../90-roadmap/#canonical-portfolio-projects)

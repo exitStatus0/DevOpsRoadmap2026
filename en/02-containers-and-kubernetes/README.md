@@ -4,6 +4,10 @@
 
 > If cloud is where things run, containers are how things are packaged. And Kubernetes is how you orchestrate them at scale. In 2026, Docker is not a skill on your resume — it is expected. Kubernetes is what separates junior from mid-level. Let me show you exactly what to learn and what to skip.
 
+> **Quick start**
+> - **7 days:** Write a Dockerfile → run a multi-container app with Docker Compose. Read "What to Skip."
+> - **30 days:** Complete Docker basics → deploy to a local K8s cluster (kind or minikube) → debug your first CrashLoopBackOff (Exercise 4).
+
 ---
 
 ## Why It Matters in 2026
@@ -11,10 +15,10 @@
 Containers solved the "works on my machine" problem. Kubernetes solved the "how do we run 500 of these reliably" problem. Together, they are the foundation of modern infrastructure.
 
 The numbers:
-- **96% of organizations** are either using or evaluating Kubernetes.
+- **The vast majority of organizations** are using or evaluating Kubernetes.
 - **Container adoption** is standard in every company with more than 50 engineers.
 - **Every major cloud provider** has a managed Kubernetes service (EKS, GKE, AKS).
-- **Job postings** mentioning Kubernetes have grown 3x in the last three years and show no sign of slowing.
+- **Job postings** mentioning Kubernetes have grown substantially and show no sign of slowing.
 
 If you are pursuing DevOps in 2026 and you do not know containers and Kubernetes, you are missing the single most in-demand skill set in the field.
 
@@ -301,18 +305,28 @@ Prompt: "Write Kubernetes NetworkPolicies for this setup:
 
 ## "Signals" You Are Job-Ready (Checklist)
 
+### Required:
+
 - [ ] Can write a multi-stage Dockerfile from scratch without looking at references
-- [ ] Can explain the difference between CMD and ENTRYPOINT, ADD and COPY
 - [ ] Can deploy a multi-service application to Kubernetes
 - [ ] Can write Helm charts with environment-specific values
 - [ ] Can explain how Kubernetes networking works (pod IPs, Services, DNS, Ingress)
-- [ ] Can set up RBAC for different team roles
 - [ ] Can debug CrashLoopBackOff, ImagePullBackOff, OOMKilled, and Pending pods in under 10 minutes
+
+### Desired:
+
+- [ ] Can explain the difference between CMD and ENTRYPOINT, ADD and COPY
+- [ ] Can set up RBAC for different team roles
 - [ ] Can write and apply NetworkPolicies
 - [ ] Can implement proper health checks (liveness, readiness, startup)
 - [ ] Can set appropriate resource requests and limits based on observed usage
 - [ ] Can perform a rolling update and rollback
-- [ ] Can explain what happens when you run `kubectl apply -f deployment.yaml` (the full chain: API server, etcd, scheduler, kubelet)
+
+### In an Interview You Can:
+
+- [ ] Explain what happens when you run `kubectl apply -f deployment.yaml` (the full chain: API server, etcd, scheduler, kubelet)
+- [ ] Diagnose and fix a broken Kubernetes deployment live in under 15 minutes
+- [ ] Describe the Kubernetes networking model from Pod IP to Ingress
 
 > If someone hands you a broken Kubernetes deployment and you can diagnose and fix it in 15 minutes — you are ready. That is the real interview test, and that comes from practice, not from reading docs.
 
@@ -326,3 +340,5 @@ Prompt: "Write Kubernetes NetworkPolicies for this setup:
 - Related: [05 - AI & MLOps](../05-ai-and-mlops/) — GPU workloads and model serving on K8s
 - Full path: [90 - Learning Roadmap](../90-roadmap/) — where containers/K8s fits in the bigger picture
 - Avoid traps: [91 - Common Mistakes](../91-mistakes/) — tool hopping and other career killers
+
+**Apply this factor:** [Project A — Full-Stack DevOps Platform](../90-roadmap/#canonical-portfolio-projects)

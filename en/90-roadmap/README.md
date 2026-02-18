@@ -10,6 +10,20 @@ Phase 0 -> 1 -> 2 -> 3. From foundations to a production-ready DevOps engineer.
 
 ---
 
+## Cloud Lab Safety: Cost & Cleanup
+
+Before starting cloud exercises, protect yourself from surprise bills:
+
+- **Set a billing alert first.** AWS: Billing → Budgets → create a $10 alert. Do this before launching anything.
+- **Destroy after every session.** Run `terraform destroy` or check `aws resourcegroupstaggingapi get-resources` to verify nothing is left running.
+- **Use the free tier wisely.** Most exercises fit within the AWS Free Tier (12 months). Check limits before starting.
+- **Tag every resource.** Add `Environment=learning` to everything — makes mass cleanup trivial.
+- **Never use your root account.** Create an IAM user with limited permissions for practice.
+
+> A forgotten RDS instance or NAT Gateway can cost $50–$200/month. Five minutes of setup upfront prevents it.
+
+---
+
 ## Phase 0 -> 1: Foundations (2-4 weeks)
 
 **Goal:** Build the foundation without which everything else will be built on sand.
@@ -421,7 +435,44 @@ Salary premium: +20-35% above base DevOps
 
 ---
 
-## Portfolio Projects
+## Canonical Portfolio Projects
+
+Three projects that cover all five factors. Every factor module links back here — use these as your build targets.
+
+### Project A: Full-Stack DevOps Platform
+
+*Deploy a 3-service application from zero to production on Kubernetes.*
+
+- [ ] VPC + EKS + RDS provisioned with Terraform (remote state, reusable modules)
+- [ ] 3 microservices deployed via Helm charts with health checks and resource limits
+- [ ] CI/CD: build → Trivy/Checkov scan → staging deploy → production promote
+- [ ] ArgoCD for GitOps; RBAC + NetworkPolicies + Vault for secrets
+- [ ] Prometheus + Grafana dashboards with SLO-based alerts
+- [ ] Public GitHub repo with README and architecture diagram
+
+### Project B: IaC Module Library
+
+*Build a reusable Terraform module library with automated tests.*
+
+- [ ] 3+ modules: VPC, EKS, RDS — each with variables, outputs, and inline docs
+- [ ] Remote state (S3 + DynamoDB); state split by component
+- [ ] Terratest integration tests that run on every PR
+- [ ] CI pipeline: fmt → validate → tflint → checkov → test
+- [ ] Semantic versioning via GitHub Releases
+
+### Project C: Security Pipeline
+
+*Add a full security layer to an existing application pipeline.*
+
+- [ ] Pre-commit hooks: gitleaks (secrets) + hadolint (Dockerfiles)
+- [ ] CI scanning: Trivy (images), Checkov (IaC), Semgrep (SAST)
+- [ ] Kyverno admission policies: no root, no `latest` tag, required resource limits
+- [ ] Vault + External Secrets Operator for application secrets
+- [ ] Falco runtime anomaly detection with Slack alerts
+
+---
+
+## Portfolio Projects — Full Detail
 
 ### Project 1: "Full-Stack DevOps Platform" (4-6 weeks)
 

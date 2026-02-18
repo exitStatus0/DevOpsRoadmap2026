@@ -4,7 +4,7 @@
 
 **A practical mini-course for engineers (and career-switchers) who want to break into DevOps, Platform Engineering, or SRE — and do it right.**
 
-> DevOps is in a rare window of opportunity. Demand far outpaces supply. Positions stay open 3x longer than other IT roles. This won't last forever — but right now, the door is wide open.
+> DevOps is in a rare window of opportunity. Demand far outpaces supply. Positions often stay open far longer than other IT roles. This won't last forever — but right now, the door is wide open.
 
 ---
 

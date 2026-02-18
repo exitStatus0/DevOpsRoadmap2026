@@ -2,13 +2,17 @@
 
 ![Infrastructure as Code](04-iac.png)
 
+> **Quick start**
+> - **7 days:** Install Terraform → deploy a VPC + EC2 instance on AWS → set up remote state (S3 + DynamoDB). Run `terraform destroy` when done.
+> - **30 days:** Complete the Beginner checklist → write a reusable module → set up CI/CD for Terraform (plan on PR, apply on merge).
+
 ---
 
 ## Why It Matters in 2026
 
 If your infrastructure is not described in code, it does not exist. In 2026, manual server configuration is technical debt that costs companies millions.
 
-78% of organizations use IaC. Terraform is the number one IaC tool.
+Most organizations with mature DevOps practices use IaC, and Terraform has become the de facto standard.
 
 Infrastructure as Code is an approach where all infrastructure is described in configuration files, stored in Git, and deployed automatically. This means:
 
@@ -572,3 +576,5 @@ Success criteria: all K8s changes go through Git, no manual kubectl apply
 - Learning roadmap: [Roadmap](../90-roadmap/)
 - Mistakes to avoid: [Common Mistakes](../91-mistakes/)
 - Back to [course overview](../README.md)
+
+**Apply this factor:** [Project A — Full-Stack DevOps Platform](../90-roadmap/#canonical-portfolio-projects) · [Project B — IaC Library](../90-roadmap/#canonical-portfolio-projects)

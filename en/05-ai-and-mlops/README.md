@@ -2,13 +2,17 @@
 
 ![AI & MLOps](05-ai-and-mlops.png)
 
+> **Quick start**
+> - **7 days:** Use an AI tool (Claude or Copilot) for 5 DevOps tasks → containerize a simple ML model (FastAPI + scikit-learn). Read "What Not to Learn First."
+> - **30 days:** Complete the Beginner checklist → Exercise 2 (CI/CD for an ML project) → deploy MLflow locally.
+
 ---
 
 ## Why It Matters in 2026
 
 AI changes DevOps in two ways. First, AI becomes your daily assistant. Second, MLOps is a new field that specifically needs DevOps skills.
 
-85% of companies invest in AI. MLOps engineer is one of the fastest-growing roles in 2026.
+Most companies are investing in AI, and MLOps has become one of the fastest-growing specializations in the industry.
 
 Two dimensions of AI for a DevOps engineer:
 
@@ -30,7 +34,7 @@ Why this is critical:
 - **Every other company** is implementing ML/AI -- and they need infrastructure
 - **MLOps is 80% DevOps**: CI/CD, containers, K8s, monitoring, IaC
 - **GPU infrastructure** -- a new scarce skill: few people know how to do it properly
-- **AI assistants** increase a DevOps engineer's productivity by 2-5x
+- **AI assistants** can significantly increase a DevOps engineer's productivity
 
 ---
 
@@ -334,7 +338,7 @@ Each step is a separate container with specific resource requests."
 
 **What it is:** "I do everything manually, I do not need AI."
 
-**Why it hurts:** You are 2-5x slower than a colleague who uses AI. It is like refusing an IDE in favor of Notepad.
+**Why it hurts:** You are measurably slower than a colleague who uses AI. It is like refusing an IDE in favor of Notepad.
 
 **Fix:** Start simple:
 1. Use AI for generating boilerplate (Terraform modules, K8s manifests)
@@ -543,3 +547,5 @@ Success criteria: LLM runs on K8s, accessible via API, with monitoring and auto-
 - Learning roadmap: [Roadmap](../90-roadmap/)
 - Mistakes to avoid: [Common Mistakes](../91-mistakes/)
 - Back to [course overview](../README.md)
+
+**Apply this factor:** [Project A — Full-Stack DevOps Platform](../90-roadmap/#canonical-portfolio-projects) (MLOps track)

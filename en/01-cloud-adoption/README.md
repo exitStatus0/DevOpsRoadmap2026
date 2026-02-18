@@ -2,20 +2,22 @@
 
 ![Cloud Adoption](01-cloud-adoption.png)
 
+> **Quick start**
+> - **7 days:** Create an AWS free-tier account → set a billing alert → launch EC2, S3, and a VPC via CLI. Read "What Not to Learn First."
+> - **30 days:** Complete the Beginner checklist → finish Exercises 1–3 → build a 3-tier architecture (Exercise 4).
+
 ---
 
 ## Why It Matters in 2026
 
-94% of enterprises use cloud services. But there is a critical shortage of engineers who know how to work with them properly.
-
-94% of companies are in the cloud. Global cloud engineer deficit: 4 million specialists.
+The vast majority of enterprises now use cloud services, yet qualified engineers who can work with them properly remain in short supply.
 
 Cloud migration is not a trend -- it is the **new normal**. In 2026 the question is no longer "should we move to the cloud" but "how effectively are we using the cloud." Companies that migrated 3-5 years ago are now optimizing costs, implementing multi-cloud strategies, and automating everything.
 
 What this means for you:
 
 - **Demand is growing** -- even junior positions require understanding of at least one cloud provider
-- **Salaries are higher** -- cloud skills add 20-40% to the market rate
+- **Salaries are higher** -- cloud skills can significantly increase your market rate
 - **The entry barrier is lower than it seems** -- AWS/GCP/Azure free tiers allow you to learn for free
 - **Window of opportunity** -- the talent shortage means companies are willing to train if you have the right foundation
 
@@ -414,3 +416,5 @@ You are ready to apply for junior/mid cloud positions if you can:
 - Learning roadmap: [Roadmap](../90-roadmap/)
 - Mistakes to avoid: [Common Mistakes](../91-mistakes/)
 - Back to [course overview](../README.md)
+
+**Apply this factor:** [Project A — Full-Stack DevOps Platform](../90-roadmap/#canonical-portfolio-projects) · [Project B — IaC Library](../90-roadmap/#canonical-portfolio-projects)

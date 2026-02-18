@@ -11,11 +11,11 @@
 The DevOps market is not slowing down. It is accelerating — and shifting.
 
 Here is what changed:
-- **Cloud spending crossed $800B globally.** Every company needs people who can manage infrastructure at scale.
+- **Cloud spending continues to grow rapidly.** Every company needs people who can manage infrastructure at scale.
 - **Kubernetes became the default.** Not "one of the options." The default.
 - **Security is no longer a separate team's job.** DevSecOps is now expected from every engineer who touches infrastructure.
 - **Infrastructure as Code is non-negotiable.** If you are clicking through consoles, you are already behind.
-- **AI rewrote the daily workflow.** Engineers who use AI tools effectively are 2-3x more productive. Those who do not are falling behind.
+- **AI rewrote the daily workflow.** Engineers who use AI tools effectively are measurably more productive. Those who do not are falling behind.
 
 These are the 5 growth factors. Master them in the right order, and you become the engineer companies are fighting to hire.
 
