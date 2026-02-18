@@ -8,7 +8,7 @@
 
 ---
 
-[English version](en/README.md) | [Русская версия](other/README.md) | [Українська версія](ua/README.md)
+[English version](en/README.md) | [Other version](other/README.md) | [Українська версія](ua/README.md)
 
 ---
 
@@ -24,9 +24,9 @@ Three things are happening at once:
 
 This creates a gap. A massive one. And this course helps you close it.
 
-## What this course covers: The 5 Growth Factors
+## What this course covers: The 6 Growth Factors
 
-We break the DevOps landscape into **5 factors** that are driving demand and shaping what you need to learn:
+We break the DevOps landscape into **6 factors** that are driving demand and shaping what you need to learn:
 
 | # | Factor | What it means for you |
 |---|--------|----------------------|
@@ -35,6 +35,7 @@ We break the DevOps landscape into **5 factors** that are driving demand and sha
 | 3 | [DevSecOps](en/03-devsecops/) | Security is shifting left — it's now part of your job, not "someone else's problem" |
 | 4 | [Infrastructure as Code](en/04-infrastructure-as-code/) | Manual configuration is dead — everything is code, versioned, reviewed, tested |
 | 5 | [AI & MLOps](en/05-ai-and-mlops/) | AI changes how you work AND creates new infrastructure demands (MLOps is 80% DevOps) |
+| 6 | [Observability & SRE](en/06-observability-and-sre/) | You cannot fix what you cannot see — SLOs, error budgets, and distributed tracing are now baseline expectations |
 
 Each factor includes: core skills, what to skip, how deep to go, practical AI workflows, common traps, mini-exercises, and a "job-ready" checklist.
 
@@ -123,15 +124,17 @@ DevOpsRoadmap2026/
 │   ├── 03-devsecops/
 │   ├── 04-infrastructure-as-code/
 │   ├── 05-ai-and-mlops/
+│   ├── 06-observability-and-sre/
 │   ├── 90-roadmap/
 │   └── 91-mistakes/
-├── other/                 ← Русская версия
+├── other/                 ← Other version (CIS)
 │   ├── README.md
 │   ├── 01-cloud-adoption/
 │   ├── 02-containers-and-kubernetes/
 │   ├── 03-devsecops/
 │   ├── 04-infrastructure-as-code/
 │   ├── 05-ai-and-mlops/
+│   ├── 06-observability-and-sre/
 │   ├── 90-roadmap/
 │   └── 91-mistakes/
 └── ua/                    ← Українська версія
@@ -141,6 +144,7 @@ DevOpsRoadmap2026/
     ├── 03-devsecops/
     ├── 04-infrastructure-as-code/
     ├── 05-ai-and-mlops/
+    ├── 06-observability-and-sre/
     ├── 90-roadmap/
     └── 91-mistakes/
 ```
