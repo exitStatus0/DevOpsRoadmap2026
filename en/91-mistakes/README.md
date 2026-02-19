@@ -461,4 +461,5 @@ Go through this list once a month:
 - Factor 3: [DevSecOps](../03-devsecops/)
 - Factor 4: [Infrastructure as Code](../04-infrastructure-as-code/)
 - Factor 5: [AI & MLOps](../05-ai-and-mlops/)
+- Factor 6: [Observability & SRE](../06-observability-and-sre/)
 - Back to start: [Course Overview](../README.md)

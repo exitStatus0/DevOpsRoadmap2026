@@ -450,7 +450,7 @@ Salary premium: +20-35% above base DevOps
 
 ## Canonical Portfolio Projects
 
-Three projects that cover all five factors. Every factor module links back here — use these as your build targets.
+Three projects that cover all six factors. Every factor module links back here — use these as your build targets.
 
 ### Project A: Full-Stack DevOps Platform
 
@@ -504,7 +504,7 @@ Components:
 ├── Security: Trivy, RBAC, Network Policies, Vault
 └── Documentation: Architecture Decision Records
 
-Demonstrates: All 5 factors. This is your "flagship" project.
+Demonstrates: All 6 factors. This is your "flagship" project.
 ```
 
 ### Project 2: "IaC Library" (2-3 weeks)

@@ -1,4 +1,4 @@
-# DevOps Roadmap 2026 — The 5 Growth Factors
+# DevOps Roadmap 2026 — The 6 Growth Factors
 
 ![DevOps Roadmap 2026 — Intro](Intro.png)
 
