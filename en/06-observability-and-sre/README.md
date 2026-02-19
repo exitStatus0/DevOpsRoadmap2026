@@ -1,6 +1,6 @@
 # Factor 6: Observability & SRE
 
-![Observability & SRE](06-observability-and-sre.png)
+![Observability & SRE](observability-and-sre.png)
 
 > You cannot fix what you cannot see. Every team says they have monitoring until an outage happens and they realize they have dashboards without understanding. Observability is the difference between "something is broken" and "the payments service has 12% error rate on the /checkout endpoint since the last deploy." SRE is the discipline that turns that signal into reliable systems.
 
