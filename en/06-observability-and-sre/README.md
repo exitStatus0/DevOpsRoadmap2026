@@ -10,17 +10,25 @@
 
 ---
 
+## Start Here
+
+- **Minimum path:** Start with metrics, logs, one dashboard, one actionable alert, and one SLO for a service you control.
+- **Hiring threshold:** Reach the **Strong** level where you can correlate metrics, logs, and traces and write a useful post-mortem after an incident.
+- **Leave for later:** Tail sampling at scale, long-term storage design, formal chaos programs, and multi-team observability architecture.
+
+---
+
 ## Why This Matters in 2026
 
 The SRE job title is one of the fastest-growing in infrastructure. Companies are not just hiring DevOps engineers to deploy things — they are hiring engineers who can measure reliability and make systems provably better over time.
 
 The numbers:
-- **Site Reliability Engineer** roles consistently command 15–30% higher compensation than general DevOps roles.
-- **OpenTelemetry** became the CNCF second most active project (after Kubernetes). Every vendor now supports it.
-- **SLO-based alerting** replaced threshold-based alerting as the standard in mature organizations.
-- **Distributed tracing** is required in any microservice architecture with more than 3 services.
+- **Site Reliability Engineer** roles can command higher compensation in some markets, but the exact delta varies a lot by company and region.
+- **OpenTelemetry** is one of the CNCF's most active projects and is widely supported across observability vendors.
+- **SLO-based alerting** is a strong practice in mature organizations, even though many teams still rely partly on threshold alerts.
+- **Distributed tracing** becomes much more valuable as architectures get more distributed.
 
-If you work with Kubernetes (Factor 2) and do not know how to observe what runs on it, you are half an engineer. Observability is what makes everything else trustworthy.
+If you work with Kubernetes (Factor 2) and do not know how to observe what runs on it, you are leaving a major operating gap in your skill set. Observability is what makes everything else trustworthy.
 
 > "Monitoring tells you whether the system is working. Observability tells you why it is not."
 
@@ -96,7 +104,7 @@ Start with RED for your services. Add USE for infrastructure. These two methods 
 
 ### 2. OpenTelemetry — The Universal Standard
 
-OpenTelemetry (OTel) is the CNCF standard for instrumentation. It replaces vendor-specific agents and SDKs.
+OpenTelemetry (OTel) is the CNCF standard for instrumentation. It gives teams a vendor-neutral path and reduces dependence on vendor-specific agents and SDKs.
 
 ```
 OpenTelemetry components:

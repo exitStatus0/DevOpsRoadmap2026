@@ -4,7 +4,7 @@
 
 **A practical mini-course for engineers (and career-switchers) who want to break into DevOps, Platform Engineering, or SRE — and do it right.**
 
-> DevOps is in a rare window of opportunity. Demand far outpaces supply. Positions often stay open far longer than other IT roles. This won't last forever — but right now, the door is wide open.
+> DevOps, platform engineering, and SRE remain strong paths for engineers who can combine foundations with automation, security, and reliability. The field is evolving quickly, and this guide is designed to help you learn it in a practical order.
 
 ---
 
@@ -18,11 +18,11 @@ Every company that ships software needs someone who can build, deploy, secure, a
 
 Three things are happening at once:
 
-- **Cloud migration is accelerating.** Legacy systems are moving to AWS, Azure, and GCP faster than companies can hire people who understand cloud-native infrastructure.
-- **Complexity is growing.** Kubernetes, service meshes, IaC, CI/CD, observability stacks — the toolchain keeps expanding and someone has to own it.
-- **AI is raising the bar, not lowering it.** AI can generate boilerplate code, but it cannot design a resilient architecture, debug a production outage at 3 AM, or decide how to structure a deployment pipeline for 50 microservices.
+- **Cloud platforms remain central.** Legacy systems continue moving to AWS, Azure, and GCP, and teams still need engineers who understand cloud infrastructure well.
+- **Complexity is growing.** Kubernetes, IaC, CI/CD, security, and observability create a wider operating surface that someone has to own.
+- **AI is changing the workflow, not removing the need for judgment.** AI can generate boilerplate and accelerate research, but it still needs review and real understanding.
 
-This creates a gap. A massive one. And this course helps you close it.
+This creates a learning challenge for students and a hiring challenge for teams. This course is designed to help close that gap.
 
 ## What this course covers: The 6 Growth Factors
 
@@ -31,11 +31,11 @@ We break the DevOps landscape into **6 factors** that are driving demand and sha
 | # | Factor | What it means for you |
 |---|--------|----------------------|
 | 1 | [Cloud Adoption](en/01-cloud-adoption/) | Companies are moving to the cloud — you need to know how cloud works, not just which buttons to click |
-| 2 | [Containers & Kubernetes](en/02-containers-and-kubernetes/) | Docker and K8s are table stakes — you must go beyond "hello world" deployments |
+| 2 | [Containers & Kubernetes](en/02-containers-and-kubernetes/) | Docker is table stakes — and Kubernetes is a common next step once you move beyond simple deployments |
 | 3 | [DevSecOps](en/03-devsecops/) | Security is shifting left — it's now part of your job, not "someone else's problem" |
 | 4 | [Infrastructure as Code](en/04-infrastructure-as-code/) | Manual configuration is dead — everything is code, versioned, reviewed, tested |
-| 5 | [AI & MLOps](en/05-ai-and-mlops/) | AI changes how you work AND creates new infrastructure demands (MLOps is 80% DevOps) |
-| 6 | [Observability & SRE](en/06-observability-and-sre/) | You cannot fix what you cannot see — SLOs, error budgets, and distributed tracing are now baseline expectations |
+| 5 | [AI & MLOps](en/05-ai-and-mlops/) | AI changes how you work, and MLOps is an advanced specialization built on DevOps foundations |
+| 6 | [Observability & SRE](en/06-observability-and-sre/) | You cannot fix what you cannot see — metrics, logs, traces, and SLO thinking matter more as systems grow |
 
 Each factor includes: core skills, what to skip, how deep to go, practical AI workflows, common traps, mini-exercises, and a "job-ready" checklist.
 
@@ -45,16 +45,16 @@ Forget the hype. Here's what AI means for DevOps in practice:
 
 - **AI as your copilot:** GitHub Copilot, Claude, ChatGPT can write Terraform modules, Dockerfiles, CI pipelines, and Bash scripts faster than you can type them. You still need to review, understand, and debug them.
 - **AI cannot replace architects:** Deciding *what* to build, *how* to structure it, and *why* one approach beats another — that's human judgment. AI accelerates the "how to code it" part, not the "what should we build" part.
-- **MLOps = new DevOps demand:** Every ML model needs infrastructure to train, deploy, monitor, and retrain. That infrastructure is DevOps. This is a massive growth vector.
+- **MLOps = adjacent DevOps demand:** ML systems need infrastructure to train, deploy, monitor, and retrain. That work overlaps heavily with DevOps, but it is best treated as a specialization track.
 - **Your competitive edge:** Engineers who can use AI tools effectively while maintaining deep infrastructure knowledge will outperform both "pure manual" engineers and "AI-only" prompt engineers.
 
 ## Why hiring is hard (and why that's your opportunity)
 
 Companies struggle to hire DevOps engineers because:
 
-- The role requires **breadth AND depth** — Linux, networking, cloud, containers, CI/CD, IaC, security, observability. Few people have all of these.
+- The role requires **breadth and depth** — Linux, networking, cloud, containers, CI/CD, IaC, security, observability. Few people have all of these.
 - Most candidates learn tools in isolation ("I completed a Docker course") but can't build an **end-to-end pipeline** from scratch.
-- Senior engineers are expensive and rarely on the market. Companies need mid-level engineers who can grow — that's the sweet spot for career-switchers.
+- Senior engineers are expensive and rarely on the market. Companies also need junior and mid-level engineers who can grow — that's the sweet spot for many career-switchers.
 
 ## The roadmap (how to actually learn this)
 

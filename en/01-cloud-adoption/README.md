@@ -3,8 +3,16 @@
 ![Cloud Adoption](01-cloud-adoption.png)
 
 > **Quick start**
-> - **7 days:** Create an AWS free-tier account → set a billing alert → launch EC2, S3, and a VPC via CLI. Read "What Not to Learn First."
+> - **7 days:** Create an AWS account → choose the current Free Tier option that fits your practice plan → set a billing alert → launch EC2, S3, and a VPC via CLI. Read "What Not to Learn First."
 > - **30 days:** Complete the Beginner checklist → finish Exercises 1–3 → build a 3-tier architecture (Exercise 4).
+
+---
+
+## Start Here
+
+- **Minimum path:** Learn the cloud-agnostic concepts, AWS Level 1 services, and CLI basics. Finish Exercise 1 or 2 before worrying about multi-account design or FinOps depth.
+- **Hiring threshold:** Reach the **Strong** level, where you can build and explain a small production-style architecture with IAM, networking, ALB, RDS, monitoring, and IaC.
+- **Leave for later:** Control Tower, org-level cost optimization, landing zones, and complex multi-account networking.
 
 ---
 
@@ -18,7 +26,7 @@ What this means for you:
 
 - **Demand is growing** -- even junior positions require understanding of at least one cloud provider
 - **Salaries are higher** -- cloud skills can significantly increase your market rate
-- **The entry barrier is lower than it seems** -- AWS/GCP/Azure free tiers allow you to learn for free
+- **The entry barrier is lower than it seems** -- cloud credits and always-free offers can reduce practice cost, but you still need to monitor spend
 - **Window of opportunity** -- the talent shortage means companies are willing to train if you have the right foundation
 
 ---
@@ -59,10 +67,12 @@ These concepts work **in any cloud**. They are your foundation:
 ### AWS as Your First Cloud (recommended)
 
 Why AWS:
-- **Largest market share** (~32%) -- more job postings
+- **Large enterprise footprint** -- broad job market and lots of learning material
 - **Broadest set of services** -- covers all scenarios
 - **Best documentation** and community
-- **Free tier** -- 12 months of free practice
+- **Free Tier / credits** -- useful for getting started, but check the current plan details before relying on them
+
+> AWS changed the Free Tier model in July 2025. New accounts now choose between Free and Paid plans, receive credits, and the Free plan lasts up to 6 months; older accounts may still have legacy 12-month benefits.
 
 Key AWS services to learn (in priority order):
 

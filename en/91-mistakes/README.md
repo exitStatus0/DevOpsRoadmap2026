@@ -53,12 +53,12 @@ The main problem: you never learn to **debug**. In a sandbox everything works. I
 
 ### Do this instead
 
-- Create your **own AWS account** (Free Tier). Do everything there.
+- Create your **own AWS account**. Use the current Free Tier / credit options if they fit your practice plan, but still watch costs.
 - Install **Minikube** on your computer. Debug real problems.
 - When something breaks -- **do not start over**. Debug it. That is the actual learning.
 - Sandboxes are for first exposure (30 minutes). After that -- only real environments.
 
-**Budget tip:** Set a billing alert at $5 and $10. Use `terraform destroy` after every practice session. A month of serious practice should cost $10-30 on AWS free tier.
+**Budget tip:** Set a billing alert at $5 and $10. Use `terraform destroy` after every practice session. AWS Free Tier / credits help, but do not assume all practice will stay free.
 
 ---
 
@@ -70,16 +70,15 @@ The main problem: you never learn to **debug**. In a sandbox everything works. I
 
 ### Why it hurts
 
-Time is a resource that costs money. 2 years of "free" learning = 2 years without a DevOps engineer's salary. At an average salary of $40,000-80,000/year, you are losing $80,000-160,000.
+Time is a resource that costs money. Two years of unstructured learning usually means two years of delayed interviews, delayed feedback, and delayed professional growth.
 
 Free resources are often **unstructured**, **outdated**, and **incomplete**. You spend time searching for information instead of learning.
 
 ### Do this instead
 
-- **Invest in learning wisely.** A good paid course for $200-500 that shortens your learning from 12 to 4 months is the best investment in your career.
+- **Invest in learning wisely.** A good paid course, mentoring session, or lab subscription can be worth it if it saves you months of confusion.
 - **Invest in infrastructure.** $20-50/month on AWS for practice is not an expense -- it is an investment.
-- **Calculate ROI:** If a $300 course shortens your path to employment by 3 months, and your potential salary is $4,000/month -- ROI = $12,000 / $300 = 40x.
-- Free resources are an excellent supplement. But not your only source of learning.
+- Free resources are an excellent supplement. But if they leave you scattered and stuck, add structure.
 
 ---
 
@@ -91,10 +90,10 @@ You learn in silence. Nobody knows you are studying DevOps. No GitHub profile wi
 
 ### Why it hurts
 
-1. **Recruiters cannot find you** -- the LinkedIn algorithm shows active users
+1. **Recruiters cannot find you** -- active public profiles are easier to discover
 2. **No proof of skills** -- in an interview, words without a portfolio = zero
 3. **No feedback** -- you do not know if you understand things correctly
-4. **No networking** -- 60% of positions are filled through referrals
+4. **No networking** -- referrals and community visibility matter
 
 ### Do this instead
 
@@ -169,7 +168,7 @@ The "3 months" rule:
 Recommended stack (one tool per category):
 ├── Containers: Docker (not Podman, not LXC)
 ├── Orchestration: Kubernetes (not Docker Swarm, not Nomad)
-├── IaC: Terraform (not Pulumi, not CDK)
+├── IaC: Terraform / OpenTofu (not Pulumi, not CDK)
 ├── CI/CD: GitHub Actions (not Jenkins, not CircleCI)
 ├── Cloud: AWS (not GCP, not Azure -- at first)
 ├── Monitoring: Prometheus + Grafana (not Datadog -- at first)

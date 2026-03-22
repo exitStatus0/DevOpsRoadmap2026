@@ -16,7 +16,7 @@ Before starting cloud exercises, protect yourself from surprise bills:
 
 - **Set a billing alert first.** AWS: Billing → Budgets → create a $10 alert. Do this before launching anything.
 - **Destroy after every session.** Run `terraform destroy` or check `aws resourcegroupstaggingapi get-resources` to verify nothing is left running.
-- **Use the free tier wisely.** Most exercises fit within the AWS Free Tier (12 months). Check limits before starting.
+- **Use AWS Free Tier / credits wisely.** The current plan depends on when the account was created. Check the current limits before starting and do not assume every exercise is free.
 - **Tag every resource.** Add `Environment=learning` to everything — makes mass cleanup trivial.
 - **Never use your root account.** Create an IAM user with limited permissions for practice.
 
@@ -395,7 +395,6 @@ Focus:
 └── Internal Developer Platform (Backstage)
 
 Role: Platform Engineer / DevSecOps Engineer
-Salary premium: +20-35% above base DevOps
 ```
 
 ### 2. SRE + Observability
@@ -411,7 +410,6 @@ Focus:
 └── Post-mortems and blameless culture
 
 Role: Site Reliability Engineer (SRE)
-Salary premium: +15-30% above base DevOps
 ```
 
 ### 3. Cloud + IaC
@@ -427,7 +425,6 @@ Focus:
 └── DR and Business Continuity
 
 Role: Cloud Engineer / Cloud Architect
-Salary premium: +25-40% above base DevOps
 ```
 
 ### 4. GitOps + Kubernetes
@@ -443,7 +440,6 @@ Focus:
 └── K8s platform for developers
 
 Role: Kubernetes Platform Engineer
-Salary premium: +20-35% above base DevOps
 ```
 
 ---
@@ -451,6 +447,8 @@ Salary premium: +20-35% above base DevOps
 ## Canonical Portfolio Projects
 
 Three projects that cover all six factors. Every factor module links back here — use these as your build targets.
+
+Build them in layers. Start with the minimum viable version, then add security, observability, GitOps, and polish in iterations.
 
 ### Project A: Full-Stack DevOps Platform
 
@@ -470,7 +468,7 @@ Three projects that cover all six factors. Every factor module links back here �
 *Build a reusable Terraform module library with automated tests.*
 
 - [ ] 3+ modules: VPC, EKS, RDS — each with variables, outputs, and inline docs
-- [ ] Remote state (S3 + DynamoDB); state split by component
+- [ ] Remote state with locking enabled; state split by component
 - [ ] Terratest integration tests that run on every PR
 - [ ] CI pipeline: fmt → validate → tflint → checkov → test
 - [ ] Semantic versioning via GitHub Releases
@@ -489,7 +487,7 @@ Three projects that cover all six factors. Every factor module links back here �
 
 ## Portfolio Projects — Full Detail
 
-### Project 1: "Full-Stack DevOps Platform" (4-6 weeks)
+### Project 1: "Full-Stack DevOps Platform" (6-10 weeks)
 
 **Description:** Complete infrastructure for a microservice application.
 
@@ -507,7 +505,7 @@ Components:
 Demonstrates: All 6 factors. This is your "flagship" project.
 ```
 
-### Project 2: "IaC Library" (2-3 weeks)
+### Project 2: "IaC Library" (3-4 weeks)
 
 **Description:** A library of Terraform modules with tests.
 
@@ -523,7 +521,7 @@ Components:
 Demonstrates: Factor 4 (IaC) deeply. Shows maturity of approach.
 ```
 
-### Project 3: "Security Pipeline" (2-3 weeks)
+### Project 3: "Security Pipeline" (3-4 weeks)
 
 **Description:** A full security pipeline from commit to runtime.
 
@@ -540,7 +538,7 @@ Components:
 Demonstrates: Factor 3 (DevSecOps) deeply. Sets you apart from other candidates.
 ```
 
-### Project 4: "MLOps Pipeline" (3-4 weeks)
+### Project 4: "MLOps Pipeline" (4-8 weeks)
 
 **Description:** A full pipeline for ML: from training to serving.
 
@@ -557,7 +555,7 @@ Components:
 Demonstrates: Factor 5 (AI & MLOps). Shows that you are ready for an MLOps role.
 ```
 
-### Project 5: "Incident Response System" (1-2 weeks)
+### Project 5: "Incident Response System" (2-3 weeks)
 
 **Description:** A system for incident management.
 
@@ -601,7 +599,7 @@ Week 5-14:    Phase 1->2 (Core Tools)
 
 Month 4-9:    Phase 2->3 (Scale & Automate)
               K8s -> Terraform -> Observability -> Security -> GitOps
-              OUTPUT: Full platform project (Portfolio Project 1)
+              OUTPUT: Core platform project MVP, then iterate
 
 Month 9+:     Specialization
               Choose a path. Build portfolio. Apply for roles.
@@ -616,7 +614,7 @@ Month 9+:     Specialization
 2. Read the factor module for your current skill gaps
 3. Read the [Common Mistakes](../91-mistakes/) guide so you do not waste time
 4. Start the first exercise in your current phase
-5. Push your work to GitHub -- public repos only
+5. Push your work to GitHub -- public if possible, private with shareable documentation if needed
 
 You have the map. Start walking.
 

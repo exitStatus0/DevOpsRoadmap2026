@@ -2,7 +2,7 @@
 
 ![Containers & Kubernetes](02-containers-and-kubernetes.png)
 
-> If cloud is where things run, containers are how things are packaged. And Kubernetes is how you orchestrate them at scale. In 2026, Docker is not a skill on your resume — it is expected. Kubernetes is what separates junior from mid-level. Let me show you exactly what to learn and what to skip.
+> If cloud is where things run, containers are how things are packaged. And Kubernetes is how you orchestrate them at scale. In 2026, Docker is expected on many teams. Kubernetes is a common mid-level differentiator. Let me show you what to learn and what to skip.
 
 > **Quick start**
 > - **7 days:** Write a Dockerfile → run a multi-container app with Docker Compose. Read "What to Skip."
@@ -10,19 +10,27 @@
 
 ---
 
+## Start Here
+
+- **Minimum path:** Learn Docker first. Do not move into Kubernetes until you can build, run, inspect, and debug containers locally.
+- **Hiring threshold:** Reach the **Strong** level with Deployments, Services, Ingress, Helm, health checks, resources, and systematic debugging.
+- **Leave for later:** Operators, service mesh, multi-cluster setups, and deep Gateway API / Karpenter tuning.
+
+---
+
 ## Why It Matters in 2026
 
 Containers solved the "works on my machine" problem. Kubernetes solved the "how do we run 500 of these reliably" problem. Together, they are the foundation of modern infrastructure.
 
-The numbers:
-- **The vast majority of organizations** are using or evaluating Kubernetes.
-- **Container adoption** is standard in every company with more than 50 engineers.
+In practice:
+- **Many organizations** are using or evaluating Kubernetes.
+- **Containers are standard** across modern application teams.
 - **Every major cloud provider** has a managed Kubernetes service (EKS, GKE, AKS).
-- **Job postings** mentioning Kubernetes have grown substantially and show no sign of slowing.
+- **Kubernetes appears frequently** in platform, cloud, and DevOps job descriptions.
 
-If you are pursuing DevOps in 2026 and you do not know containers and Kubernetes, you are missing the single most in-demand skill set in the field.
+If you are pursuing cloud-native DevOps, platform, or SRE roles in 2026, containers and Kubernetes are important skills to understand.
 
-> "Docker = table stakes. Kubernetes = career accelerator."
+> "Docker = table stakes. Kubernetes = common career accelerator."
 
 ---
 
@@ -335,13 +343,13 @@ Prompt: "Write Kubernetes NetworkPolicies for this setup:
 
 ### Stage 5: Gateway API
 
-The Kubernetes-native replacement for Ingress. Gateway API reached stable status in Kubernetes 1.28 and is the direction the ecosystem is moving.
+The Kubernetes-native successor to Ingress. Gateway API reached stable status in Kubernetes 1.28 and is where the Kubernetes ecosystem is investing.
 
 **Why it matters:**
 - Ingress was designed for a single use case. Gateway API is designed for real multi-tenant clusters.
 - Splits traffic routing into three resources: `GatewayClass` (cluster-level, owned by infra team), `Gateway` (namespace-level, owned by platform team), `HTTPRoute` (owned by app team).
 - Native traffic splitting, header matching, and cross-namespace routing — without annotations hacks.
-- Every major ingress controller now has a Gateway API conformant implementation.
+- Many major implementations now support Gateway API; check the current conformance matrix before standardizing on one.
 
 **Key resources:**
 ```
@@ -360,7 +368,7 @@ Gateway API:
 
 ### Stage 6: Node Autoscaling with Karpenter
 
-Karpenter is the AWS-native node autoscaler that replaced Cluster Autoscaler as the recommended approach for EKS. It provisions exactly the right nodes for your workloads — faster and more efficiently than Cluster Autoscaler.
+Karpenter is the AWS-native node autoscaler that AWS recommends using when possible for EKS data-plane scaling. It provisions nodes based on workload needs with more flexibility than fixed node groups.
 
 **Why Karpenter over Cluster Autoscaler:**
 - Cluster Autoscaler scales node groups — you define the instance types in advance.

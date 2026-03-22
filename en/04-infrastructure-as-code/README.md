@@ -3,8 +3,16 @@
 ![Infrastructure as Code](04-iac.png)
 
 > **Quick start**
-> - **7 days:** Install Terraform → deploy a VPC + EC2 instance on AWS → set up remote state (S3 + DynamoDB). Run `terraform destroy` when done.
+> - **7 days:** Install Terraform → deploy a VPC + EC2 instance on AWS → set up remote state in S3 with locking enabled. Run `terraform destroy` when done.
 > - **30 days:** Complete the Beginner checklist → write a reusable module → set up CI/CD for Terraform (plan on PR, apply on merge).
+
+---
+
+## Start Here
+
+- **Minimum path:** Learn one IaC tool well, write small configurations, set remote state with locking, and get comfortable reading `plan` output before every `apply`.
+- **Hiring threshold:** Reach the **Strong** level with modules, state management, CI checks, and safe team workflows.
+- **Leave for later:** Sentinel, custom providers, org-wide platform design, and large migration programs.
 
 ---
 
@@ -24,7 +32,7 @@ Infrastructure as Code is an approach where all infrastructure is described in c
 - **Automation** -- CI/CD for infrastructure instead of manual `terraform apply`
 - **Testing** -- infrastructure can be tested before deployment
 
-In 2026, IaC is a **mandatory skill** for a DevOps engineer. Not "nice to have" -- mandatory. Without it you will not pass any serious interview.
+In 2026, IaC is an **expected skill** for DevOps, platform, and cloud engineers. On many teams, you will not get far in interviews without it.
 
 ---
 
@@ -49,7 +57,7 @@ In 2026, IaC is a **mandatory skill** for a DevOps engineer. Not "nice to have" 
 
 ### 1. Terraform / OpenTofu — The Primary Tool
 
-Terraform by HashiCorp and OpenTofu (the CNCF open-source fork) are the de facto standards for IaC. **The HCL syntax, provider ecosystem, and state format are identical** between them up to Terraform ~1.5. Everything you learn in one applies directly to the other.
+Terraform by HashiCorp and OpenTofu (the CNCF open-source fork) are the de facto standards for IaC. Their HCL syntax and day-to-day workflows are still very close, especially for configurations that stay near Terraform 1.5.x-era compatibility. Most beginner and intermediate learning transfers between them, but you should still check version-specific docs before assuming perfect parity.
 
 #### Terraform vs OpenTofu — What to Choose
 
@@ -57,9 +65,9 @@ Terraform by HashiCorp and OpenTofu (the CNCF open-source fork) are the de facto
 |--|-----------|----------|
 | License | BSL (restricts competing products) | MPL 2.0 (fully open source) |
 | Governance | HashiCorp / IBM | CNCF community |
-| HCL compatibility | Canonical | API-compatible through ~1.5 |
+| HCL compatibility | Canonical | Broad compatibility with common Terraform workflows |
 | Provider registry | registry.terraform.io | Both registries work |
-| State format | Same | Same |
+| State format | Compatible for common migration paths | Compatible for common migration paths |
 | Enterprise features | Terraform Cloud/Enterprise | Community alternatives |
 
 **Decision framework:**
@@ -79,7 +87,7 @@ Terraform / OpenTofu skills (in priority order):
 │   └── Providers
 ├── State
 │   ├── What state is and why it exists
-│   ├── Remote state (S3 + DynamoDB, Terraform Cloud)
+│   ├── Remote state (S3 + lockfile, Terraform Cloud)
 │   ├── State locking
 │   ├── terraform import
 │   └── terraform state mv / rm
@@ -117,11 +125,11 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "my-terraform-state"
-    key            = "production/terraform.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "terraform-lock"
-    encrypt        = true
+    bucket       = "my-terraform-state"
+    key          = "production/terraform.tfstate"
+    region       = "us-east-1"
+    use_lockfile = true
+    encrypt      = true
   }
 }
 
@@ -168,12 +176,15 @@ output "vpc_id" {
 }
 ```
 
+**Note:** In current Terraform, S3 native locking via `use_lockfile` is the preferred path to teach. OpenTofu still fully supports both S3-native locking and DynamoDB locking.
+
 ### 2. State Management
 
 ```
 Critical rules for working with state:
 ├── NEVER store state locally in production
 ├── ALWAYS use a remote backend with locking
+├── For current Terraform on S3, prefer `use_lockfile`
 ├── NEVER edit state manually (without extreme necessity)
 ├── ALWAYS encrypt state (it contains secrets!)
 ├── Separate state by environments and components
@@ -254,7 +265,7 @@ Testing levels:
 - [ ] Install Terraform, understand the init/plan/apply/destroy cycle
 - [ ] Create resources in AWS: VPC, EC2, S3, Security Group
 - [ ] Use variables, outputs, local values
-- [ ] Set up remote state (S3 + DynamoDB)
+- [ ] Set up remote state with locking enabled
 - [ ] Understand the difference between `resource` and `data`
 - [ ] Use `terraform import` for existing resources
 - [ ] Understand lifecycle: `create_before_destroy`, `prevent_destroy`
@@ -296,7 +307,7 @@ Testing levels:
 ```
 Prompt:
 "Create a Terraform module for an EKS cluster with the following parameters:
-- K8s version: 1.29
+- K8s version: a currently supported EKS release
 - 2 node groups: general (t3.medium, 2-5 nodes) and spot (t3.large, 0-10 nodes)
 - OIDC provider for IRSA
 - Addons: CoreDNS, kube-proxy, vpc-cni, ebs-csi-driver
@@ -466,7 +477,7 @@ module "vpc" {
 
 ```
 Steps:
-1. Create S3 + DynamoDB for remote state (can use CloudFormation bootstrap)
+1. Create an S3 backend for remote state with locking enabled (can use CloudFormation bootstrap)
 2. VPC module: 2 public + 2 private subnets, NAT, IGW
 3. EKS module: cluster + managed node group + IRSA
 4. RDS module: PostgreSQL Multi-AZ in private subnets
@@ -485,7 +496,7 @@ Success criteria: terraform apply from scratch brings up full infrastructure in 
 ```
 Steps:
 1. Set up S3 backend with versioning and encryption
-2. Set up DynamoDB for state locking
+2. Enable backend locking (`use_lockfile` for current Terraform on S3, or DynamoDB only if you are intentionally practicing an older / alternate pattern)
 3. Split an existing state into 2 parts (terraform state mv)
 4. Use terraform import for an existing resource
 5. Set up a data source for reading remote state from another component
@@ -507,7 +518,7 @@ Steps (GitHub Actions):
    - checkov
    - terraform plan -> comment in PR
 2. PR merged to main:
-   - terraform apply -auto-approve
+   - terraform apply in a controlled environment
 3. Add manual approval for production
 4. Set up Terraform state lock timeout
 5. Add Slack notification on success/failure
@@ -574,7 +585,7 @@ Success criteria: all K8s changes go through Git, no manual kubectl apply
 - [ ] Implement GitOps with ArgoCD or Flux
 - [ ] Explain the HashiCorp BSL license change and why OpenTofu was forked
 - [ ] Know when to choose Terraform vs OpenTofu for a new project
-- [ ] Understand that HCL syntax and state format are compatible between the two
+- [ ] Understand where Terraform and OpenTofu are compatible and where version-specific checks are still needed
 - [ ] Use terraform workspaces or directory structure for environments
 - [ ] Know how to work with terraform import at scale
 

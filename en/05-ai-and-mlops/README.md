@@ -3,8 +3,16 @@
 ![AI & MLOps](05-ai-and-mlops.png)
 
 > **Quick start**
-> - **7 days:** Use an AI tool (Claude or Copilot) for 5 DevOps tasks → containerize a simple ML model (FastAPI + scikit-learn). Read "What Not to Learn First."
-> - **30 days:** Complete the Beginner checklist → Exercise 2 (CI/CD for an ML project) → deploy MLflow locally.
+> - **7 days:** Use an AI tool (Claude or Copilot) for 5 DevOps tasks and review the results carefully. Optional: containerize a simple ML model (FastAPI + scikit-learn).
+> - **30 days:** Complete the Beginner checklist. If you want the MLOps track, then do Exercise 2 and deploy MLflow locally.
+
+---
+
+## Start Here
+
+- **Minimum path:** For most students, this module is about using AI well in day-to-day DevOps work.
+- **Hiring threshold:** If AI / ML infrastructure is part of your target role, add MLflow, simple model serving, and a small CI/CD pipeline.
+- **Leave for later:** Kubeflow, multi-GPU training, feature stores, LLM serving, and enterprise ML platforms.
 
 ---
 
@@ -12,7 +20,7 @@
 
 AI changes DevOps in two ways. First, AI becomes your daily assistant. Second, MLOps is a new field that specifically needs DevOps skills.
 
-Most companies are investing in AI, and MLOps has become one of the fastest-growing specializations in the industry.
+Many companies are investing in AI, and MLOps can become a valuable specialization where those workloads exist.
 
 Two dimensions of AI for a DevOps engineer:
 
@@ -31,10 +39,12 @@ Two dimensions of AI for a DevOps engineer:
 - Model monitoring (drift detection)
 
 Why this is critical:
-- **Every other company** is implementing ML/AI -- and they need infrastructure
-- **MLOps is 80% DevOps**: CI/CD, containers, K8s, monitoring, IaC
+- **Many teams** are experimenting with or adopting ML/AI workloads -- and they need infrastructure
+- **A large part of MLOps overlaps with DevOps**: CI/CD, containers, K8s, monitoring, IaC
 - **GPU infrastructure** -- a new scarce skill: few people know how to do it properly
 - **AI assistants** can significantly increase a DevOps engineer's productivity
+
+> For most students, the core takeaway of this factor is AI-assisted DevOps workflows. Full MLOps, GPU infrastructure, and LLM serving should be treated as an advanced specialization track, not a first-job requirement.
 
 ---
 
@@ -72,7 +82,7 @@ This is not about "using ChatGPT." This is about **systematic use of AI** in dai
 
 ```
 An effective DevOps prompt must have:
-├── Context: "I am using AWS EKS 1.29 with Terraform"
+├── Context: "I am using a currently supported EKS version with Terraform"
 ├── Task: "Create a Deployment for a Python API"
 ├── Constraints: "Non-root, resource limits, health probes"
 ├── Format: "Terraform HCL / K8s YAML / Bash script"
@@ -84,7 +94,7 @@ An effective DevOps prompt must have:
 ```
 Prompt 1 (Terraform):
 "Create a Terraform module for AWS EKS with the following specification:
-- K8s version: 1.29
+- K8s version: a currently supported EKS release
 - Node groups: general (t3.medium, 2-5), gpu (g4dn.xlarge, 0-3, spot)
 - IRSA enabled
 - Addons: CoreDNS, vpc-cni, ebs-csi, gpu-device-plugin
@@ -319,7 +329,7 @@ Each step is a separate container with specific resource requests."
 | Claude Code / GitHub Copilot | Coding | Generate Terraform, K8s, CI/CD |
 | ChatGPT / Claude | Troubleshooting | Debugging, explanations, planning |
 | K8sGPT | K8s-specific | Automatic analysis of cluster problems |
-| AWS Application Composer | AWS | Visual architecture design |
+| AWS Infrastructure Composer | AWS | Visual architecture design |
 | Kubecost + AI | FinOps | K8s cost optimization |
 
 ---
@@ -332,7 +342,7 @@ Each step is a separate container with specific resource requests."
 
 **Why it hurts:** Paradox: those who fear AI and ignore it will truly become uncompetitive. Not because of AI, but because of those who use it.
 
-**Fix:** AI is a tool, like Terraform or Docker. It amplifies your skills, it does not replace them. A DevOps engineer with AI does in a day what used to take a week. But AI needs a human who knows what to verify.
+**Fix:** AI is a tool, like Terraform or Docker. It amplifies your skills, it does not replace them. It can compress hours of boilerplate and research into minutes, but it still needs a human who knows what to verify.
 
 ### Trap 2: Ignoring AI Tools
 

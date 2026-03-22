@@ -2,7 +2,7 @@
 
 ![DevSecOps](03-devsecops.png)
 
-> Here is the reality of 2026 — security is not someone else's job anymore. Every DevOps engineer is expected to own security basics. Not penetration testing. Not compliance auditing. But the practical security that stops your infrastructure from being the reason your company makes the news. Let me break down exactly what you need to know.
+> Here is the reality of 2026: security basics are no longer optional for DevOps engineers. Not penetration testing. Not full compliance specialization. The practical controls that prevent avoidable incidents and reduce risk in day-to-day infrastructure work.
 
 > **Quick start**
 > - **7 days:** Run Trivy against a container image → add a gitleaks pre-commit hook → read "What Not to Learn First."
@@ -10,25 +10,30 @@
 
 ---
 
+## Start Here
+
+- **Minimum path:** Focus on secrets, image scanning, RBAC, NetworkPolicies, and one basic security pipeline in CI.
+- **Hiring threshold:** Reach the **Strong** level where you can catch common security mistakes before they reach production.
+- **Leave for later:** Deep compliance frameworks, custom policy engines, org-scale secrets platforms, and advanced service-mesh security.
+
+---
+
 ## Why It Matters in 2026
 
-Security breaches cost companies millions per incident on average. The vast majority of breaches are caused by:
+Security incidents can be expensive, disruptive, and reputation-damaging. Many avoidable incidents still come from common problems such as:
 - Misconfigured cloud resources (public S3 buckets, open security groups)
 - Hardcoded secrets in code repositories
 - Unpatched container images with known vulnerabilities
 - Overly permissive access controls
 - Supply chain attacks through compromised dependencies
 
-All of these are preventable by the DevOps engineer who builds and maintains the infrastructure.
+Many of these risks can be reduced significantly by the DevOps engineer who builds and maintains the delivery pipeline and infrastructure.
 
-The industry responded by moving security "left" — earlier in the development pipeline. This is not a trend; it is now the standard. Job postings for "DevOps Engineer" increasingly list security skills as requirements, not nice-to-haves.
-
-> "$4.5M average breach cost. Most breaches are preventable misconfigurations."
+The industry responded by moving security "left" — earlier in the development pipeline. On mature teams, scanning, secrets hygiene, least privilege, and policy checks are becoming normal engineering work, not separate afterthoughts.
 
 **What this means for your career:**
-- Engineers with security skills typically earn more than those without
-- "DevSecOps" is the fastest-growing specialization within DevOps
-- Companies that have been breached are willing to pay a premium for engineers who can prevent the next one
+- Engineers with practical security skills are more useful on modern DevOps teams
+- DevSecOps is a valuable specialization, but even general DevOps roles increasingly expect security basics
 - Every cloud and K8s skill you learn in [Factor 1](../01-cloud-adoption/) and [Factor 2](../02-containers-and-kubernetes/) becomes more valuable when you can secure it
 
 ---
@@ -56,10 +61,10 @@ The industry responded by moving security "left" — earlier in the development 
 ## What You Must Learn (Core Skills)
 
 ### 1. Secret Management
-This is the highest-ROI security skill. Leaked secrets are the #1 cause of breaches you can prevent.
+This is one of the highest-ROI security skills. Exposed secrets are one of the most common avoidable failures in real teams.
 
 **Tools to learn:**
-- **HashiCorp Vault** — the industry standard for secret management
+- **HashiCorp Vault** — a widely used centralized secret manager
 - **AWS Secrets Manager / SSM Parameter Store** — cloud-native option
 - **External Secrets Operator** — syncs secrets from Vault/AWS into Kubernetes
 - **git-secrets / gitleaks** — pre-commit hooks that prevent secret commits
@@ -80,7 +85,7 @@ Every container image you deploy should be scanned.
 
 **What you must be able to do:**
 - Add Trivy scanning to your CI pipeline
-- Fail builds on CRITICAL/HIGH CVEs
+- Define and enforce a clear policy for CRITICAL/HIGH CVEs
 - Understand the difference between OS-level and application-level vulnerabilities
 - Choose base images that minimize attack surface (distroless, Alpine, scratch)
 - Sign container images and verify signatures before deployment
@@ -184,7 +189,7 @@ Ensuring everything in your pipeline — from source code to deployed images —
 - Can explain RBAC at a conceptual level
 - Knows not to run containers as root
 
-### Strong (months 2-4) — THIS IS THE HIRING THRESHOLD:
+### Strong (months 2-4) — COMMON HIRING THRESHOLD:
 - Can integrate Trivy, Checkov, and secret scanning into a CI pipeline
 - Can write Kubernetes RBAC roles and bindings for different team roles
 - Can write NetworkPolicies that enforce pod-to-pod communication rules
@@ -203,7 +208,7 @@ Ensuring everything in your pipeline — from source code to deployed images —
 - Can design and implement secrets management at organizational scale
 - Can create custom OPA policies for complex business rules
 
-> "Strong level means you do not ship vulnerabilities. Expert means you design the security architecture."
+> "Strong level means you catch common vulnerabilities before they reach production. Expert level means you design the security architecture."
 
 ---
 
@@ -259,7 +264,7 @@ impact, and what is the fastest remediation path?"
 
 ### Trap 1: Ignoring Security Until the Audit
 **What happens:** You build everything without security. An audit (or worse, a breach) happens. Now you have 200 findings to fix while also doing your regular work.
-**Fix:** Build security into your pipeline from day one. It takes 30 minutes to add Trivy and Checkov to CI. It takes weeks to remediate findings after the fact.
+**Fix:** Build security into your pipeline from day one. It often takes under an hour to add basic scanning to CI. It can take far longer to clean up months of findings later.
 
 ### Trap 2: Hardcoded Secrets
 **What happens:** Database passwords, API keys, and tokens are committed to Git. Even if you delete them, they are in the Git history forever. Bots scrape GitHub for exposed secrets within minutes.
@@ -287,8 +292,8 @@ impact, and what is the fastest remediation path?"
 **Requirements:**
 - Deploy HashiCorp Vault (dev mode for practice, HA mode for extra credit)
 - Store application secrets (database password, API keys)
-- Configure automatic secret rotation (every 24 hours)
-- Application reads secrets from Vault at startup (not from environment variables)
+- Configure a rotation policy or simulate secret rotation during the exercise
+- Application reads secrets from Vault at runtime or startup (not from hardcoded values in code)
 - Set up pre-commit hooks with gitleaks to prevent secret commits
 
 ### Exercise 2: Add Security Scanning to CI
