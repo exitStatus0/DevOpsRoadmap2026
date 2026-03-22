@@ -3,14 +3,22 @@
 ![Infrastructure as Code](../../en/04-infrastructure-as-code/04-iac.png)
 
 > **Швидкий старт**
-> - **7 днів:** Встановіть Terraform → розгорніть VPC + EC2 → налаштуйте remote state (S3 + DynamoDB). Запустіть `terraform destroy` після закінчення.
+> - **7 днів:** Встановіть Terraform → розгорніть VPC + EC2 → налаштуйте remote state в S3 з увімкненим locking. Запустіть `terraform destroy` після закінчення.
 > - **30 днів:** Завершіть чек-лист початківця → напишіть власний модуль → налаштуйте CI/CD для Terraform (plan на PR, apply на merge).
+
+---
+
+## Старт тут
+
+- **Мінімальний шлях:** Освойте один IaC-інструмент, пишіть невеликі конфігурації, налаштовуйте remote state з locking і звикайте читати `plan` перед кожним `apply`.
+- **Поріг найму:** Вийдіть на рівень **впевнений** з модулями, керуванням state, CI-перевірками та безпечним командним workflow.
+- **Залиште на потім:** Sentinel, custom providers, платформений дизайн org-рівня та великі програми міграції.
 
 ---
 
 ## Чому це важливо у 2026
 
-Якщо ваша інфраструктура не описана в коді — її не існує. У 2026 році ручне налаштування серверів — це технічний борг, який коштує компаніям мільйони.
+Якщо ваша інфраструктура не описана в коді — її складно відтворювати, перевіряти та безпечно змінювати. У 2026 році ручне налаштування серверів — це дорогий технічний борг.
 
 Більшість зрілих DevOps-команд використовують IaC. Роками Terraform був беззаперечним стандартом. У серпні 2023 року HashiCorp змінив ліцензію Terraform з open-source (MPL 2.0) на Business Source License (BSL), яка обмежує комерційне використання в конкуруючих продуктах. Спільнота CNCF відповіла форком останньої open-source версії — **OpenTofu**, який є проєктом CNCF sandbox.
 
@@ -24,7 +32,7 @@
 - **Автоматизація** — CI/CD для інфраструктури, а не ручний `terraform apply`
 - **Тестування** — інфраструктуру можна тестувати до деплою
 
-У 2026 році IaC — це **обов'язкова навичка** для DevOps-інженера. Не «бажана» — обов'язкова. Без неї ви не пройдете жодну серйозну співбесіду.
+У 2026 році IaC — це **очікувана навичка** для DevOps-, platform- і cloud-інженерів. На багатьох співбесідах без неї буде складно показати зрілий інфраструктурний підхід.
 
 ---
 
@@ -49,7 +57,7 @@
 
 ### 1. Terraform / OpenTofu — основний інструмент
 
-Terraform від HashiCorp та OpenTofu (CNCF open-source форк) — де-факто стандарти IaC. **HCL-синтаксис, екосистема провайдерів та формат стейту ідентичні** між ними до Terraform ~1.5. Все, що ви вчите в одному, безпосередньо застосовується до іншого.
+Terraform від HashiCorp та OpenTofu (CNCF open-source форк) — де-факто стандарти IaC. Їх HCL-синтаксис і щоденні workflow досі дуже близькі, особливо якщо ви тримаєтесь поширених сценаріїв, близьких до епохи Terraform 1.5.x. Більшість beginner і middle-level практики переноситься між ними, але version-specific документацію все одно потрібно перевіряти окремо.
 
 #### Terraform vs OpenTofu — що обрати
 
@@ -57,9 +65,9 @@ Terraform від HashiCorp та OpenTofu (CNCF open-source форк) — де-ф
 |--|-----------|----------|
 | Ліцензія | BSL (обмежує конкуруючі продукти) | MPL 2.0 (повністю open source) |
 | Управління | HashiCorp / IBM | Спільнота CNCF |
-| Сумісність HCL | Канонічна | API-сумісний до ~1.5 |
+| Сумісність HCL | Канонічна | Широка сумісність із поширеними Terraform workflow |
 | Реєстр провайдерів | registry.terraform.io | Обидва реєстри працюють |
-| Формат стейту | Однаковий | Однаковий |
+| Формат стейту | Сумісний для типових міграцій | Сумісний для типових міграцій |
 | Enterprise-функції | Terraform Cloud/Enterprise | Альтернативи спільноти |
 
 **Фреймворк прийняття рішення:**
@@ -79,7 +87,7 @@ Terraform / OpenTofu навички (в порядку пріоритету):
 │   └── Providers
 ├── Стан (State)
 │   ├── Що таке state і навіщо він
-│   ├── Remote state (S3 + DynamoDB, Terraform Cloud)
+│   ├── Remote state (S3 + lockfile, Terraform Cloud)
 │   ├── State locking
 │   ├── terraform import
 │   └── terraform state mv / rm
@@ -117,11 +125,11 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "my-terraform-state"
-    key            = "production/terraform.tfstate"
-    region         = "us-east-1"
-    dynamodb_table = "terraform-lock"
-    encrypt        = true
+    bucket       = "my-terraform-state"
+    key          = "production/terraform.tfstate"
+    region       = "us-east-1"
+    use_lockfile = true
+    encrypt      = true
   }
 }
 
@@ -174,6 +182,7 @@ output "vpc_id" {
 Критичні правила роботи зі стейтом:
 ├── НІКОЛИ не зберігати state локально в production
 ├── ЗАВЖДИ використовувати remote backend з locking
+├── Для поточного Terraform на S3 віддавати перевагу `use_lockfile`
 ├── НІКОЛИ не редагувати state вручну (без крайньої необхідності)
 ├── ЗАВЖДИ шифрувати state (містить секрети!)
 ├── Розділяти state по середовищах та компонентах
@@ -254,7 +263,7 @@ ArgoCD-навички:
 - [ ] Встановити Terraform, зрозуміти init/plan/apply/destroy цикл
 - [ ] Створити ресурси в AWS: VPC, EC2, S3, Security Group
 - [ ] Використовувати змінні, виводи, локальні значення
-- [ ] Налаштувати remote state (S3 + DynamoDB)
+- [ ] Налаштувати remote state (S3 з locking)
 - [ ] Зрозуміти різницю між `resource` та `data`
 - [ ] Використовувати `terraform import` для існуючих ресурсів
 - [ ] Зрозуміти lifecycle: `create_before_destroy`, `prevent_destroy`
@@ -296,7 +305,7 @@ ArgoCD-навички:
 ```
 Промпт:
 "Створи Terraform-модуль для EKS-кластера з наступними параметрами:
-- Версія K8s: 1.29
+- Версія K8s: актуальний підтримуваний реліз EKS
 - 2 node groups: general (t3.medium, 2-5 нод) та spot (t3.large, 0-10 нод)
 - OIDC provider для IRSA
 - Addons: CoreDNS, kube-proxy, vpc-cni, ebs-csi-driver
@@ -371,13 +380,15 @@ ArgoCD-навички:
 ```hcl
 # Remote state з locking — з ПЕРШОГО ДНЯ
 backend "s3" {
-  bucket         = "company-terraform-state"
-  key            = "production/networking/terraform.tfstate"
-  region         = "us-east-1"
-  dynamodb_table = "terraform-lock"
-  encrypt        = true
+  bucket       = "company-terraform-state"
+  key          = "production/networking/terraform.tfstate"
+  region       = "us-east-1"
+  use_lockfile = true
+  encrypt      = true
 }
 ```
+
+Для поточного Terraform на S3 це доречніший базовий шлях. Якщо ви окремо вивчаєте OpenTofu або legacy-стек, DynamoDB locking можна розібрати як додатковий варіант, а не як основну рекомендацію.
 
 Розділяйте state:
 ```
@@ -464,7 +475,7 @@ module "vpc" {
 
 ```
 Кроки:
-1. Створити S3 + DynamoDB для remote state (можна через CloudFormation bootstrap)
+1. Створити S3 backend з versioning, encryption і ввімкненим locking для remote state
 2. Модуль VPC: 2 public + 2 private підмережі, NAT, IGW
 3. Модуль EKS: кластер + managed node group + IRSA
 4. Модуль RDS: PostgreSQL Multi-AZ у private підмережах
@@ -483,7 +494,7 @@ module "vpc" {
 ```
 Кроки:
 1. Налаштувати S3 backend з versioning та encryption
-2. Налаштувати DynamoDB для state locking
+2. Перевірити, що locking справді працює
 3. Розділити існуючий state на 2 частини (terraform state mv)
 4. Використати terraform import для існуючого ресурсу
 5. Налаштувати data source для читання remote state іншого компонента
