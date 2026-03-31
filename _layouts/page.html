@@ -1,0 +1,84 @@
+---
+layout: default
+---
+
+{% assign segments = page.url | split: '/' %}
+{% assign lang = segments[1] %}
+{% assign module_dir = segments[2] %}
+
+{% assign is_lang_page = false %}
+{% assign is_module_page = false %}
+
+{% if lang == 'en' or lang == 'ua' or lang == 'other' %}
+  {% if module_dir and module_dir != '' and module_dir != 'index.html' %}
+    {% assign is_module_page = true %}
+  {% else %}
+    {% assign is_lang_page = true %}
+  {% endif %}
+{% endif %}
+
+{% if lang == 'en' %}
+  {% assign lang_name = 'English' %}
+{% elsif lang == 'ua' %}
+  {% assign lang_name = 'Українська' %}
+{% elsif lang == 'other' %}
+  {% assign lang_name = 'Русский' %}
+{% endif %}
+
+<div class="page-wrapper">
+  <article class="prose">
+    {% if is_module_page %}
+    <nav class="breadcrumb">
+      <a href="{{ '/' | relative_url }}">Home</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="{{ '/' | append: lang | append: '/' | relative_url }}">{{ lang_name }}</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">{{ page.title }}</span>
+    </nav>
+    {% elsif is_lang_page %}
+    <nav class="breadcrumb">
+      <a href="{{ '/' | relative_url }}">Home</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">{{ lang_name }}</span>
+    </nav>
+    {% endif %}
+
+    {{ content }}
+
+    {% if is_module_page %}
+    <nav class="module-nav">
+      {% assign current_index = -1 %}
+      {% for mod in site.modules %}
+        {% if mod.dir == module_dir %}
+          {% assign current_index = forloop.index0 %}
+        {% endif %}
+      {% endfor %}
+
+      {% if current_index > 0 %}
+        {% assign prev_index = current_index | minus: 1 %}
+        {% assign prev_mod = site.modules[prev_index] %}
+        <a href="{{ '/' | append: lang | append: '/' | append: prev_mod.dir | append: '/' | relative_url }}" class="prev">
+          <span class="nav-label">Previous</span>
+          <span class="nav-title">{{ prev_mod[lang] }}</span>
+        </a>
+      {% else %}
+        <span></span>
+      {% endif %}
+
+      {% assign next_index = current_index | plus: 1 %}
+      {% if next_index < site.modules.size and current_index >= 0 %}
+        {% assign next_mod = site.modules[next_index] %}
+        <a href="{{ '/' | append: lang | append: '/' | append: next_mod.dir | append: '/' | relative_url }}" class="next">
+          <span class="nav-label">Next</span>
+          <span class="nav-title">{{ next_mod[lang] }}</span>
+        </a>
+      {% endif %}
+    </nav>
+    {% endif %}
+  </article>
+
+  <aside class="toc-sidebar">
+    <div class="toc-title">On this page</div>
+    <ul class="toc-list"></ul>
+  </aside>
+</div>

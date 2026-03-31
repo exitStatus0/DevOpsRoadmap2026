@@ -1,0 +1,85 @@
+title: DevOps Roadmap 2026
+description: >-
+  A practical mini-course for engineers and career-switchers who want to break into
+  DevOps, Platform Engineering, or SRE — and do it right.
+baseurl: "/DevOpsRoadmap2026"
+url: "https://exitstatus0.github.io"
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
+
+plugins:
+  - jekyll-optional-front-matter
+  - jekyll-readme-index
+  - jekyll-relative-links
+  - jekyll-titles-from-headings
+
+optional_front_matter:
+  remove_originals: true
+
+readme_index:
+  enabled: true
+  remove_originals: true
+
+titles_from_headings:
+  enabled: true
+  strip_title: false
+
+relative_links:
+  enabled: true
+  collections: true
+
+modules:
+  - dir: "01-cloud-adoption"
+    en: "Cloud Adoption"
+    ua: "Хмарне впровадження"
+    other: "Облачное внедрение"
+  - dir: "02-containers-and-kubernetes"
+    en: "Containers & Kubernetes"
+    ua: "Контейнери та Kubernetes"
+    other: "Контейнеры и Kubernetes"
+  - dir: "03-devsecops"
+    en: "DevSecOps"
+    ua: "DevSecOps"
+    other: "DevSecOps"
+  - dir: "04-infrastructure-as-code"
+    en: "Infrastructure as Code"
+    ua: "Інфраструктура як код"
+    other: "Инфраструктура как код"
+  - dir: "05-ai-and-mlops"
+    en: "AI & MLOps"
+    ua: "ШІ та MLOps"
+    other: "ИИ и MLOps"
+  - dir: "06-observability-and-sre"
+    en: "Observability & SRE"
+    ua: "Спостережуваність та SRE"
+    other: "Наблюдаемость и SRE"
+  - dir: "90-roadmap"
+    en: "Learning Roadmap"
+    ua: "Дорожня карта навчання"
+    other: "Дорожная карта обучения"
+  - dir: "91-mistakes"
+    en: "Top Mistakes"
+    ua: "Типові помилки"
+    other: "Типичные ошибки"
+
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .claude
+  - .DS_Store
+  - MEMORY.md
